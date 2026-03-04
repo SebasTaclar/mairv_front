@@ -29,6 +29,18 @@ const router = createRouter({
     },
 
     {
+      path: '/calendar',
+      name: 'calendar',
+      component: () => import('../views/CalendarPage.vue'),
+    },
+
+    {
+      path: '/games',
+      name: 'games',
+      component: () => import('../views/GamesPage.vue'),
+    },
+
+    {
       path: '/iphone',
       name: 'iphone',
       component: () => import('../views/IphonePage.vue'),

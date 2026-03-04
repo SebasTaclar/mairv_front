@@ -3,11 +3,11 @@
 @import './styles/modern-ecommerce.css';
 
 :root {
-  /* SOYDANI Brand Colors - Rojo, Negro, Blanco */
-  --primary-red: #DC2626;        /* Rojo principal */
-  --secondary-red: #EF4444;      /* Rojo claro */
-  --tertiary-red: #B91C1C;       /* Rojo medio */
-  --dark-red: #991B1B;           /* Rojo oscuro */
+  /* MAIRV Brand Colors - Cian/Azul Moderno, Negro, Blanco */
+  --primary-red: #22d3ee;        /* Cian principal */
+  --secondary-red: #06b6d4;      /* Cian oscuro */
+  --tertiary-red: #0891b2;       /* Azul medio */
+  --dark-red: #0e7490;           /* Azul oscuro */
   --black: #000000;              /* Negro */
   --white: #ffffff;              /* Blanco */
 
@@ -20,20 +20,20 @@
   --accent-color-light: var(--white);
 
   /* Brand Color with Alpha */
-  --primary-color-alpha-30: rgba(220, 38, 38, 0.3);
-  --primary-color-alpha-40: rgba(220, 38, 38, 0.4);
-  --primary-color-alpha-60: rgba(220, 38, 38, 0.6);
-  --primary-color-alpha-80: rgba(220, 38, 38, 0.8);
+  --primary-color-alpha-30: rgba(34, 211, 238, 0.3);
+  --primary-color-alpha-40: rgba(34, 211, 238, 0.4);
+  --primary-color-alpha-60: rgba(34, 211, 238, 0.6);
+  --primary-color-alpha-80: rgba(34, 211, 238, 0.8);
 
   /* Secondary Color with Alpha */
-  --secondary-color-alpha-30: rgba(239, 68, 68, 0.3);
-  --secondary-color-alpha-40: rgba(239, 68, 68, 0.4);
-  --secondary-color-alpha-60: rgba(239, 68, 68, 0.6);
-  --secondary-color-alpha-80: rgba(239, 68, 68, 0.8);
+  --secondary-color-alpha-30: rgba(6, 182, 212, 0.3);
+  --secondary-color-alpha-40: rgba(6, 182, 212, 0.4);
+  --secondary-color-alpha-60: rgba(6, 182, 212, 0.6);
+  --secondary-color-alpha-80: rgba(6, 182, 212, 0.8);
 
   /* Gradients */
-  --primary-gradient: linear-gradient(135deg, var(--primary-red) 0%, var(--dark-red) 100%);
-  --primary-gradient-hover: linear-gradient(135deg, var(--dark-red) 0%, var(--primary-red) 100%);
+  --primary-gradient: linear-gradient(135deg, var(--primary-red) 0%, var(--tertiary-red) 100%);
+  --primary-gradient-hover: linear-gradient(135deg, var(--tertiary-red) 0%, var(--primary-red) 100%);
   --secondary-gradient: linear-gradient(135deg, var(--secondary-red) 0%, var(--primary-red) 100%);
   --secondary-gradient-hover: linear-gradient(135deg, var(--primary-red) 0%, var(--secondary-red) 100%);
 
@@ -47,7 +47,7 @@
   --bg-color: #000000;
   --text-color: #ffffff;
   --text-secondary: rgba(255, 255, 255, 0.9);
-  --border-color: rgba(220, 38, 38, 0.3);
+  --border-color: rgba(34, 211, 238, 0.3);
   --card-bg: rgba(20, 20, 20, 0.9);
   --card-hover-bg: rgba(255, 255, 255, 0.15);
 }

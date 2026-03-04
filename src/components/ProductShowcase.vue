@@ -1,87 +1,133 @@
 <template>
   <section class="showcase-section">
     <div class="container">
-      <h2 class="showcase-title">Novedades</h2>
-      <p class="showcase-subtitle">Descubre nuestros productos más recientes</p>
+      <h2 class="showcase-title">📅 Próximos Eventos</h2>
+      <p class="showcase-subtitle">Acompáñanos en nuestras actividades espirituales</p>
 
-      <!-- Sección: Tecnología -->
-      <div v-if="technologyProducts.length > 0" class="category-section">
-        <h3 class="category-title">📱 Tecnología</h3>
-        <div class="products-carousel">
-          <div
-            v-for="product in technologyProducts"
-            :key="product.id"
-            class="product-card"
-            @click="showProductDetail(product)"
-          >
-            <div class="product-image-wrapper">
-              <img :src="product.image" :alt="product.name" class="product-image" />
+      <!-- Sección: Eventos Destacados -->
+      <div v-if="highlightedEvents.length > 0" class="category-section">
+        <h3 class="category-title">✨ Eventos Destacados</h3>
+        <div class="events-carousel">
+          <div v-for="event in highlightedEvents" :key="event.id" class="event-card highlighted"
+            @click="showEventDetail(event)">
+            <div class="event-date">
+              <span class="month">{{ formatMonth(event.date) }}</span>
+              <span class="day">{{ formatDay(event.date) }}</span>
             </div>
-            <div class="product-info">
-              <h4 class="product-name">{{ product.name }}</h4>
-              <span class="product-category">{{ product.category }}</span>
+            <div class="event-info">
+              <h4 class="event-name">{{ event.name }}</h4>
+              <p class="event-time">⏰ {{ event.time }}</p>
+              <span class="event-category">{{ event.icon }} {{ event.category }}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Sección: Navidad -->
-      <div v-if="christmasProducts.length > 0" class="category-section">
-        <h3 class="category-title">🎄 Navidad</h3>
-        <div class="products-carousel">
-          <div
-            v-for="product in christmasProducts"
-            :key="product.id"
-            class="product-card"
-            @click="showProductDetail(product)"
-          >
-            <div class="product-image-wrapper">
-              <img :src="product.image" :alt="product.name" class="product-image" />
+      <!-- Sección: Bautizos -->
+      <div v-if="baptismEvents.length > 0" class="category-section">
+        <h3 class="category-title">💧 Bautizos</h3>
+        <div class="events-carousel">
+          <div v-for="event in baptismEvents" :key="event.id" class="event-card" @click="showEventDetail(event)">
+            <div class="event-date">
+              <span class="month">{{ formatMonth(event.date) }}</span>
+              <span class="day">{{ formatDay(event.date) }}</span>
             </div>
-            <div class="product-info">
-              <h4 class="product-name">{{ product.name }}</h4>
-              <span class="product-category">{{ product.category }}</span>
+            <div class="event-info">
+              <h4 class="event-name">{{ event.name }}</h4>
+              <p class="event-time">⏰ {{ event.time }}</p>
+              <span class="event-category">{{ event.icon }} {{ event.category }}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Sección: Hogar -->
-      <div v-if="homeProducts.length > 0" class="category-section">
-        <h3 class="category-title">🏠 Hogar</h3>
-        <div class="products-carousel">
-          <div
-            v-for="product in homeProducts"
-            :key="product.id"
-            class="product-card"
-            @click="showProductDetail(product)"
-          >
-            <div class="product-image-wrapper">
-              <img :src="product.image" :alt="product.name" class="product-image" />
+      <!-- Sección: Salidas de Campo -->
+      <div v-if="fieldTripEvents.length > 0" class="category-section">
+        <h3 class="category-title">🚌 Salidas de Campo</h3>
+        <div class="events-carousel">
+          <div v-for="event in fieldTripEvents" :key="event.id" class="event-card" @click="showEventDetail(event)">
+            <div class="event-date">
+              <span class="month">{{ formatMonth(event.date) }}</span>
+              <span class="day">{{ formatDay(event.date) }}</span>
             </div>
-            <div class="product-info">
-              <h4 class="product-name">{{ product.name }}</h4>
-              <span class="product-category">{{ product.category }}</span>
+            <div class="event-info">
+              <h4 class="event-name">{{ event.name }}</h4>
+              <p class="event-time">⏰ {{ event.time }}</p>
+              <span class="event-category">{{ event.icon }} {{ event.category }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección: Retiros Espirituales -->
+      <div v-if="retreatEvents.length > 0" class="category-section">
+        <h3 class="category-title">🏔️ Retiros Espirituales</h3>
+        <div class="events-carousel">
+          <div v-for="event in retreatEvents" :key="event.id" class="event-card" @click="showEventDetail(event)">
+            <div class="event-date">
+              <span class="month">{{ formatMonth(event.date) }}</span>
+              <span class="day">{{ formatDay(event.date) }}</span>
+            </div>
+            <div class="event-info">
+              <h4 class="event-name">{{ event.name }}</h4>
+              <p class="event-time">⏰ {{ event.time }}</p>
+              <span class="event-category">{{ event.icon }} {{ event.category }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección: Otros Eventos -->
+      <div v-if="otherEvents.length > 0" class="category-section">
+        <h3 class="category-title">🎉 Otros Eventos</h3>
+        <div class="events-carousel">
+          <div v-for="event in otherEvents" :key="event.id" class="event-card" @click="showEventDetail(event)">
+            <div class="event-date">
+              <span class="month">{{ formatMonth(event.date) }}</span>
+              <span class="day">{{ formatDay(event.date) }}</span>
+            </div>
+            <div class="event-info">
+              <h4 class="event-name">{{ event.name }}</h4>
+              <p class="event-time">⏰ {{ event.time }}</p>
+              <span class="event-category">{{ event.icon }} {{ event.category }}</span>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Modal de detalle del producto -->
+    <!-- Modal de detalle del evento -->
     <div v-if="showModal" class="modal-overlay" @click.self="showModal = false">
       <div class="modal-content">
         <div class="modal-header">
-          <h3 class="modal-title">{{ selectedProduct?.name }}</h3>
+          <div class="modal-header-left">
+            <span class="modal-icon">{{ selectedEvent?.icon }}</span>
+            <h3 class="modal-title">{{ selectedEvent?.name }}</h3>
+          </div>
           <button class="modal-close" @click="showModal = false">✕</button>
         </div>
         <div class="modal-body">
-          <div class="modal-image">
-            <img :src="selectedProduct?.image" :alt="selectedProduct?.name" />
+          <div class="modal-details">
+            <div class="detail-item">
+              <span class="detail-label">📅 Fecha:</span>
+              <span class="detail-value">{{ formatFullDate(selectedEvent?.date) }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">⏰ Hora:</span>
+              <span class="detail-value">{{ selectedEvent?.time }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">📍 Ubicación:</span>
+              <span class="detail-value">{{ selectedEvent?.location }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">👥 Categoría:</span>
+              <span class="detail-value">{{ selectedEvent?.category }}</span>
+            </div>
           </div>
-          <div class="modal-info">
-            <span class="modal-category">{{ selectedProduct?.category }}</span>
-            <p class="modal-description">{{ selectedProduct?.description }}</p>
+          <div class="modal-description">
+            <h4>Descripción</h4>
+            <p>{{ selectedEvent?.description }}</p>
           </div>
         </div>
       </div>
@@ -90,103 +136,191 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
-import { useProducts } from '@/composables/useProducts'
+import { computed, ref } from 'vue'
 
-// Usar el composable de productos para novedades
-const { showcaseProducts, getCategoryById, loadShowcaseProducts } = useProducts()
+interface Event {
+  id: number
+  name: string
+  date: Date
+  time: string
+  location: string
+  category: string
+  icon: string
+  description: string
+  type: 'baptism' | 'fieldTrip' | 'retreat' | 'highlighted' | 'other'
+}
 
 // Estado para el modal
 const showModal = ref(false)
-const selectedProduct = ref<{
-  id: number
-  name: string
-  description: string
-  image: string
-  category: string
-} | null>(null)
+const selectedEvent = ref<Event | null>(null)
 
-// Cargar productos showcase al montar el componente
-onMounted(async () => {
-  console.log('🌟 [ProductShowcase] Cargando productos showcase...')
-  await loadShowcaseProducts()
+// Próximos eventos de la iglesia
+const events = ref<Event[]>([
+  {
+    id: 1,
+    name: 'Bautizo Comunitario',
+    date: new Date(2026, 2, 15),
+    time: '10:00 AM',
+    location: 'Río Principal - Centro',
+    category: 'Bautizos',
+    icon: '💧',
+    description: 'Celebración especial de bautizos. Acompáñanos en este momento significativo de fe.',
+    type: 'baptism'
+  },
+  {
+    id: 2,
+    name: 'Salida de Campo - Naturaleza',
+    date: new Date(2026, 2, 22),
+    time: '8:00 AM',
+    location: 'Parque Nacional Los Nevados',
+    category: 'Salidas de Campo',
+    icon: '🚌',
+    description: 'Convivencia en la naturaleza para conocernos mejor y fortalecer nuestros lazos comunitarios.',
+    type: 'fieldTrip'
+  },
+  {
+    id: 3,
+    name: 'Retiro Espiritual',
+    date: new Date(2026, 3, 10),
+    time: '6:00 PM',
+    location: 'Hacienda El Descanso',
+    category: 'Retiros Espirituales',
+    icon: '🏔️',
+    description: 'Fin de semana de reflexión, oración y crecimiento espiritual profundo.',
+    type: 'retreat'
+  },
+  {
+    id: 4,
+    name: 'Conferencia Especial',
+    date: new Date(2026, 2, 18),
+    time: '7:00 PM',
+    location: 'Templo Principal',
+    category: 'Eventos Destacados',
+    icon: '✨',
+    description: 'Conferencia magistral con un orador invitado sobre liderazgo cristiano.',
+    type: 'highlighted'
+  },
+  {
+    id: 5,
+    name: 'Bautizo de Niños',
+    date: new Date(2026, 3, 5),
+    time: '11:00 AM',
+    location: 'Iglesia Central',
+    category: 'Bautizos',
+    icon: '💧',
+    description: 'Ceremonia especial de dedicación de niños. Momento especial para las familias.',
+    type: 'baptism'
+  },
+  {
+    id: 6,
+    name: 'Caminata Misionera',
+    date: new Date(2026, 3, 20),
+    time: '9:00 AM',
+    location: 'Zona Rural de Tolimá',
+    category: 'Salidas de Campo',
+    icon: '🚌',
+    description: 'Salida de campo para llevar ayuda y compartir el evangelio en zonas rurales.',
+    type: 'fieldTrip'
+  },
+  {
+    id: 7,
+    name: 'Noche de Alabanza',
+    date: new Date(2026, 2, 28),
+    time: '7:30 PM',
+    location: 'Templo Principal',
+    category: 'Otros Eventos',
+    icon: '🎉',
+    description: 'Noche especial de música, alabanza y adoración colectiva.',
+    type: 'other'
+  }
+])
+
+// Filtrar eventos por categoría
+const highlightedEvents = computed(() => {
+  return events.value.filter(e => e.type === 'highlighted').slice(0, 4)
 })
 
-// Mapear los productos del composable al formato que usa el template
-const products = computed(() => {
-  return showcaseProducts.value.map(product => ({
-    id: parseInt(product.id),
-    name: product.name,
-    description: product.description,
-    image: product.image,
-    price: product.price,
-    category: getCategoryById(product.category)?.name || 'Sin categoría'
-  }))
+const baptismEvents = computed(() => {
+  return events.value.filter(e => e.type === 'baptism').slice(0, 4)
 })
 
-// Filtrar productos por categoría principal
-const technologyProducts = computed(() => {
-  return products.value.filter(p => {
-    const cat = p.category.toLowerCase()
-    return cat.includes('iphone') || cat.includes('tecnología') ||
-           cat.includes('tecnologia') || cat.includes('tech')
-  }).slice(0, 6)
+const fieldTripEvents = computed(() => {
+  return events.value.filter(e => e.type === 'fieldTrip').slice(0, 4)
 })
 
-const christmasProducts = computed(() => {
-  return products.value.filter(p => {
-    const cat = p.category.toLowerCase()
-    return cat.includes('navidad') || cat.includes('christmas') ||
-           cat.includes('árbol') || cat.includes('arbol') ||
-           cat.includes('bola') || cat.includes('decoración navideña')
-  }).slice(0, 6)
+const retreatEvents = computed(() => {
+  return events.value.filter(e => e.type === 'retreat').slice(0, 4)
 })
 
-const homeProducts = computed(() => {
-  return products.value.filter(p => {
-    const cat = p.category.toLowerCase()
-    return cat.includes('hogar') || cat.includes('home') ||
-           cat.includes('casa') || cat.includes('decoración') ||
-           cat.includes('watch') || cat.includes('accesorio')
-  }).slice(0, 6)
+const otherEvents = computed(() => {
+  return events.value.filter(e => e.type === 'other').slice(0, 4)
 })
+
+// Funciones de formato de fecha
+const formatMonth = (date: Date) => {
+  const months = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC']
+  return months[date.getMonth()]
+}
+
+const formatDay = (date: Date) => {
+  return date.getDate().toString().padStart(2, '0')
+}
+
+const formatFullDate = (date: Date | undefined) => {
+  if (!date) return ''
+  return date.toLocaleDateString('es-CO', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })
+}
 
 // Funciones para el modal
-const showProductDetail = (product: {
-  id: number
-  name: string
-  description: string
-  image: string
-  category: string
-}) => {
-  selectedProduct.value = product
+const showEventDetail = (event: Event) => {
+  selectedEvent.value = event
   showModal.value = true
 }
 </script>
 
 <style scoped>
-/* Variables de tema SOYDANI */
+/* Variables de tema MAIRV */
 :root {
-  --primary-red: #DC2626;
+  --primary-cyan: #22d3ee;
+  --dark-cyan: #0891b2;
   --black: #000000;
-  --white: #FFFFFF;
+  --white: #ffffff;
 }
 
 /* Animaciones */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* Contenedor principal - ESTILO OSCURO */
 .showcase-section {
   width: 100%;
-  background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
+  background: linear-gradient(180deg, #0a0a0a 0%, #1a1a2e 100%);
   padding: 5rem 0;
   position: relative;
   overflow: hidden;
@@ -199,7 +333,7 @@ const showProductDetail = (product: {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 50% 0%, rgba(220, 38, 38, 0.15) 0%, transparent 60%);
+  background: radial-gradient(circle at 50% 0%, rgba(34, 211, 238, 0.15) 0%, transparent 60%);
   pointer-events: none;
 }
 
@@ -239,79 +373,109 @@ const showProductDetail = (product: {
 .category-title {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--primary-red);
+  color: var(--primary-cyan);
   margin-bottom: 2rem;
   padding-left: 1rem;
-  border-left: 4px solid var(--primary-red);
-  text-shadow: 0 2px 10px rgba(220, 38, 38, 0.3);
+  border-left: 4px solid var(--primary-cyan);
+  text-shadow: 0 2px 10px rgba(34, 211, 238, 0.3);
 }
 
-/* Carrusel de productos */
-.products-carousel {
+/* Carrusel de eventos */
+.events-carousel {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 2rem;
   padding: 0 1rem;
 }
 
-/* Tarjeta de producto */
-.product-card {
-  background: rgba(30, 30, 30, 0.8);
+/* Tarjeta de evento */
+.event-card {
+  background: rgba(30, 30, 40, 0.8);
   border-radius: 16px;
   overflow: hidden;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(34, 211, 238, 0.2);
   backdrop-filter: blur(10px);
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem;
 }
 
-.product-card:hover {
+.event-card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(220, 38, 38, 0.3),
-              0 0 0 1px rgba(220, 38, 38, 0.5);
-  border-color: var(--primary-red);
+  box-shadow: 0 20px 40px rgba(34, 211, 238, 0.3),
+    0 0 0 1px rgba(34, 211, 238, 0.5);
+  border-color: var(--primary-cyan);
+  background: rgba(34, 211, 238, 0.08);
 }
 
-.product-image-wrapper {
-  width: 100%;
-  height: 250px;
-  overflow: hidden;
-  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
-  position: relative;
+.event-card.highlighted {
+  border-color: var(--primary-cyan);
+  background: rgba(34, 211, 238, 0.12);
 }
 
-.product-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s ease;
+.event-card.highlighted:hover {
+  box-shadow: 0 20px 40px rgba(34, 211, 238, 0.4),
+    0 0 0 2px rgba(34, 211, 238, 0.6);
 }
 
-.product-card:hover .product-image {
-  transform: scale(1.1);
+.event-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--primary-cyan) 0%, var(--dark-cyan) 100%);
+  border-radius: 12px;
+  min-width: 70px;
+  min-height: 70px;
+  font-weight: 700;
+  text-align: center;
 }
 
-.product-info {
-  padding: 1.25rem;
+.event-date .month {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.8);
+  letter-spacing: 1px;
 }
 
-.product-name {
+.event-date .day {
+  font-size: 1.75rem;
+  color: var(--white);
+}
+
+.event-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.event-name {
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--white);
-  margin: 0 0 0.75rem 0;
-  line-height: 1.4;
+  margin: 0;
+  line-height: 1.3;
 }
 
-.product-category {
-  display: inline-block;
-  font-size: 0.85rem;
-  color: var(--primary-red);
-  background: rgba(220, 38, 38, 0.15);
-  padding: 0.35rem 0.75rem;
-  border-radius: 12px;
+.event-time {
+  font-size: 0.9rem;
+  color: var(--primary-cyan);
+  margin: 0;
   font-weight: 500;
-  border: 1px solid rgba(220, 38, 38, 0.3);
+}
+
+.event-category {
+  display: inline-block;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(34, 211, 238, 0.15);
+  padding: 0.3rem 0.6rem;
+  border-radius: 8px;
+  font-weight: 500;
+  width: fit-content;
+  border: 1px solid rgba(34, 211, 238, 0.3);
 }
 
 /* Modal */
@@ -331,13 +495,13 @@ const showProductDetail = (product: {
 }
 
 .modal-content {
-  background: #1a1a1a;
+  background: #1a1a2e;
   border-radius: 24px;
-  max-width: 800px;
+  max-width: 600px;
   width: 90%;
   max-height: 90vh;
   overflow: auto;
-  border: 1px solid rgba(220, 38, 38, 0.3);
+  border: 1px solid rgba(34, 211, 238, 0.3);
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
 }
 
@@ -345,9 +509,19 @@ const showProductDetail = (product: {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(10, 10, 10, 0.5);
+  padding: 2rem;
+  border-bottom: 1px solid rgba(34, 211, 238, 0.2);
+  background: rgba(10, 10, 20, 0.8);
+}
+
+.modal-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.modal-icon {
+  font-size: 2.5rem;
 }
 
 .modal-title {
@@ -373,8 +547,8 @@ const showProductDetail = (product: {
 }
 
 .modal-close:hover {
-  background: rgba(220, 38, 38, 0.2);
-  color: var(--primary-red);
+  background: rgba(34, 211, 238, 0.2);
+  color: var(--primary-cyan);
   transform: rotate(90deg);
 }
 
@@ -382,51 +556,58 @@ const showProductDetail = (product: {
   padding: 2rem;
 }
 
-.modal-image {
-  width: 100%;
-  height: 400px;
-  border-radius: 16px;
-  overflow: hidden;
+.modal-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
   margin-bottom: 2rem;
-  background: #0a0a0a;
+  padding: 1.5rem;
+  background: rgba(34, 211, 238, 0.08);
+  border-radius: 12px;
+  border: 1px solid rgba(34, 211, 238, 0.2);
+}
+
+.detail-item {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.modal-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.modal-info {
-  text-align: center;
-}
-
-.modal-category {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  background: rgba(220, 38, 38, 0.2);
-  color: var(--primary-red);
-  border-radius: 20px;
+.detail-label {
   font-size: 0.9rem;
+  color: var(--primary-cyan);
   font-weight: 600;
-  margin-bottom: 1rem;
-  border: 1px solid rgba(220, 38, 38, 0.4);
+}
+
+.detail-value {
+  font-size: 1rem;
+  color: var(--white);
+  font-weight: 500;
 }
 
 .modal-description {
-  font-size: 1.05rem;
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.8);
+  background: rgba(34, 211, 238, 0.05);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border-left: 3px solid var(--primary-cyan);
+}
+
+.modal-description h4 {
+  margin: 0 0 1rem 0;
+  color: var(--primary-cyan);
+  font-size: 1.1rem;
+}
+
+.modal-description p {
   margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
 }
 
 /* Responsive Design */
 @media (max-width: 1024px) {
-  .products-carousel {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  .events-carousel {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1.5rem;
   }
 }
@@ -437,18 +618,16 @@ const showProductDetail = (product: {
   }
 
   .container {
-    padding: 0;
+    padding: 0 1rem;
   }
 
   .showcase-title {
     font-size: 2.25rem;
-    padding: 0 1.5rem;
   }
 
   .showcase-subtitle {
     font-size: 1rem;
     margin-bottom: 3rem;
-    padding: 0 1.5rem;
   }
 
   .category-section {
@@ -457,46 +636,21 @@ const showProductDetail = (product: {
 
   .category-title {
     font-size: 1.5rem;
-    padding-left: 1.5rem;
-    margin-left: 0;
   }
 
-  /* Carrusel horizontal deslizable en móvil */
-  .products-carousel {
-    display: flex;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    gap: 1rem;
-    padding: 0 1.5rem;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
+  .event-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1.25rem;
   }
 
-  .products-carousel::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+  .event-info {
+    align-items: center;
   }
 
-  .product-card {
-    flex: 0 0 280px;
-    scroll-snap-align: start;
-  }
-
-  .product-image-wrapper {
-    height: 280px;
-  }
-
-  .modal-content {
-    width: 95%;
-  }
-
-  .modal-image {
-    height: 300px;
-  }
-
-  .modal-body {
-    padding: 1.5rem;
+  .modal-details {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -509,24 +663,21 @@ const showProductDetail = (product: {
     font-size: 1.25rem;
   }
 
-  .product-card {
-    flex: 0 0 260px;
+  .events-carousel {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
-  .product-image-wrapper {
-    height: 260px;
+  .modal-content {
+    width: 95%;
   }
 
-  .product-info {
-    padding: 1rem;
+  .modal-header {
+    padding: 1.5rem;
   }
 
-  .product-name {
-    font-size: 1rem;
-  }
-
-  .modal-image {
-    height: 250px;
+  .modal-body {
+    padding: 1.5rem;
   }
 }
 </style>

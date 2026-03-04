@@ -6,27 +6,24 @@
         <div class="brand-container">
           <div class="creative-logo">
             <div class="logo-circle">
-              <span class="logo-letter">S</span>
-              <span class="logo-letter">D</span>
+              <span class="logo-letter">M</span>
+              <span class="logo-letter">A</span>
             </div>
             <div class="logo-glow"></div>
           </div>
           <div class="brand-info">
-            <div class="brand-title"><span class="highlight">SOYDANI</span></div>
-            <div class="brand-tagline">Tu tienda virtual</div>
+            <div class="brand-title"><span class="highlight">MAIRV</span></div>
+            <div class="brand-tagline">MAI restaurando vidas</div>
           </div>
         </div>
       </RouterLink>
 
       <!-- Navegación principal -->
       <div class="nav-menu desktop-nav">
-        <RouterLink to="/iphone" class="nav-link" :class="{ active: isCurrentRoute('/iphone') }" @click="closeMobileMenu">Tecnología</RouterLink>
-        <RouterLink to="/mac" class="nav-link" :class="{ active: isCurrentRoute('/mac') }" @click="closeMobileMenu">Navidad</RouterLink>
-        <RouterLink to="/ipad" class="nav-link" :class="{ active: isCurrentRoute('/ipad') }" @click="closeMobileMenu">Hogar</RouterLink>
-        <RouterLink to="/watch" class="nav-link" :class="{ active: isCurrentRoute('/watch') }" @click="closeMobileMenu">Ofertas</RouterLink>
-        <RouterLink to="/airpods" class="nav-link" :class="{ active: isCurrentRoute('/airpods') }" @click="closeMobileMenu">Destacados</RouterLink>
-        <!-- <a href="#products" class="nav-link" @click="closeMobileMenu(); scrollToProductStore()">Compra Ahora</a>
-        <a href="#contact" class="nav-link" @click="closeMobileMenu(); scrollToContact()">Contáctanos</a> -->
+        <RouterLink to="/calendar" class="nav-link" :class="{ active: isCurrentRoute('/calendar') }"
+          @click="closeMobileMenu">📅 Calendario</RouterLink>
+        <RouterLink to="/games" class="nav-link" :class="{ active: isCurrentRoute('/games') }" @click="closeMobileMenu">
+          🎮 Juegos</RouterLink>
       </div>
 
       <!-- Controles de usuario -->
@@ -50,14 +47,10 @@
       <div class="mobile-menu" :class="{ 'active': isMobileMenuOpen }">
         <div class="mobile-menu-content">
           <div class="mobile-nav-links">
-            <RouterLink to="/iphone" class="mobile-link" :class="{ active: isCurrentRoute('/iphone') }" @click="closeMobileMenu">Tecnología</RouterLink>
-            <RouterLink to="/mac" class="mobile-link" :class="{ active: isCurrentRoute('/mac') }" @click="closeMobileMenu">Navidad</RouterLink>
-            <RouterLink to="/ipad" class="mobile-link" :class="{ active: isCurrentRoute('/ipad') }" @click="closeMobileMenu">Hogar</RouterLink>
-            <RouterLink to="/watch" class="mobile-link" :class="{ active: isCurrentRoute('/watch') }" @click="closeMobileMenu">Ofertas</RouterLink>
-            <RouterLink to="/airpods" class="mobile-link" :class="{ active: isCurrentRoute('/airpods') }" @click="closeMobileMenu">Destacados</RouterLink>
-            <RouterLink to="/accesorios" class="mobile-link" :class="{ active: isCurrentRoute('/accesorios') }" @click="closeMobileMenu">Todos</RouterLink>
-            <!-- <a href="#products" class="mobile-link" @click="closeMobileMenu(); scrollToProductStore()">Compra Ahora</a>
-            <a href="#contact" class="mobile-link" @click="closeMobileMenu(); scrollToContact()">Contáctanos</a> -->
+            <RouterLink to="/calendar" class="mobile-link" :class="{ active: isCurrentRoute('/calendar') }"
+              @click="closeMobileMenu">📅 Calendario</RouterLink>
+            <RouterLink to="/games" class="mobile-link" :class="{ active: isCurrentRoute('/games') }"
+              @click="closeMobileMenu">🎮 Juegos</RouterLink>
           </div>
 
           <div class="mobile-controls">
@@ -67,7 +60,8 @@
             <div v-if="isLoggedIn" class="mobile-user-greeting">
               <span>Hola, {{ username }}</span>
             </div>
-            <RouterLink v-if="isLoggedIn && isAdmin" class="mobile-btn admin-btn" to="/admin/products" @click="closeMobileMenu">
+            <RouterLink v-if="isLoggedIn && isAdmin" class="mobile-btn admin-btn" to="/admin/products"
+              @click="closeMobileMenu">
               ⚙️ Panel Admin
             </RouterLink>
             <button v-if="isLoggedIn" @click="handleMobileLogout" class="mobile-btn logout-btn">
@@ -185,9 +179,9 @@ watch(route, () => {
   z-index: 1000;
   height: 75px;
   padding: 0 clamp(20px, 5vw, 60px);
-  box-shadow: 0 2px 24px rgba(220, 38, 38, 0.15), 0 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 24px rgba(34, 211, 238, 0.15), 0 1px 3px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(220, 38, 38, 0.2);
+  border-bottom: 1px solid rgba(34, 211, 238, 0.2);
 }
 
 /* Logo y marca */
@@ -207,7 +201,7 @@ watch(route, () => {
 .logo-circle {
   width: 50px;
   height: 50px;
-  background: linear-gradient(135deg, var(--primary-red) 0%, #a10000 100%);
+  background: linear-gradient(135deg, var(--primary-red) 0%, #0891b2 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -215,9 +209,9 @@ watch(route, () => {
   position: relative;
   overflow: hidden;
   border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5),
-              0 0 30px rgba(220, 38, 38, 0.3),
-              inset 0 2px 8px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 20px rgba(34, 211, 238, 0.5),
+    0 0 30px rgba(34, 211, 238, 0.3),
+    inset 0 2px 8px rgba(255, 255, 255, 0.2);
   animation: logoFloat 4s ease-in-out infinite;
   transition: all 0.3s ease;
 }
@@ -226,7 +220,7 @@ watch(route, () => {
   content: '';
   position: absolute;
   inset: -3px;
-  background: linear-gradient(135deg, var(--primary-red) 0%, #a10000 100%);
+  background: linear-gradient(135deg, var(--primary-red) 0%, #0891b2 100%);
   border-radius: 50%;
   z-index: 0;
 }
@@ -235,7 +229,7 @@ watch(route, () => {
   content: '';
   position: absolute;
   inset: 3px;
-  background: linear-gradient(135deg, rgba(220, 38, 38, 0.8) 0%, rgba(161, 0, 0, 0.9) 100%);
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.8) 0%, rgba(8, 145, 178, 0.9) 100%);
   border-radius: 50%;
   z-index: 1;
 }
@@ -247,7 +241,7 @@ watch(route, () => {
   font-size: 14px;
   color: var(--white);
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5),
-               0 0 20px rgba(255, 255, 255, 0.3);
+    0 0 20px rgba(255, 255, 255, 0.3);
   letter-spacing: -1px;
 }
 
@@ -261,7 +255,7 @@ watch(route, () => {
 .logo-glow {
   position: absolute;
   inset: -10px;
-  background: radial-gradient(circle, rgba(220, 38, 38, 0.4) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.4) 0%, transparent 70%);
   border-radius: 50%;
   opacity: 0;
   pointer-events: none;
@@ -270,9 +264,9 @@ watch(route, () => {
 
 .creative-logo:hover .logo-circle {
   transform: scale(1.08);
-  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.6),
-              0 0 40px rgba(220, 38, 38, 0.4),
-              inset 0 2px 12px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 24px rgba(34, 211, 238, 0.6),
+    0 0 40px rgba(34, 211, 238, 0.4),
+    inset 0 2px 12px rgba(255, 255, 255, 0.3);
 }
 
 .creative-logo:hover .logo-glow {
@@ -280,8 +274,15 @@ watch(route, () => {
 }
 
 @keyframes logoFloat {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-4px) rotate(2deg); }
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-4px) rotate(2deg);
+  }
 }
 
 
@@ -307,8 +308,8 @@ watch(route, () => {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
-  filter: drop-shadow(0 2px 8px rgba(220, 38, 38, 0.3));
+  text-shadow: 0 2px 8px rgba(34, 211, 238, 0.3);
+  filter: drop-shadow(0 2px 8px rgba(34, 211, 238, 0.3));
 }
 
 .brand-tagline {
@@ -362,7 +363,7 @@ watch(route, () => {
 
 .nav-link:hover {
   color: var(--white);
-  background-color: rgba(220, 38, 38, 0.1);
+  background-color: rgba(34, 211, 238, 0.1);
   transform: translateY(-2px);
 }
 
@@ -372,7 +373,7 @@ watch(route, () => {
 
 .nav-link.active {
   color: var(--primary-red);
-  background: rgba(220, 38, 38, 0.15);
+  background: rgba(34, 211, 238, 0.15);
 }
 
 .nav-link.active::after {
@@ -416,7 +417,7 @@ watch(route, () => {
 .access-btn {
   background: linear-gradient(135deg, var(--primary-red) 0%, var(--dark-red) 100%);
   color: #ffffff;
-  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.35);
+  box-shadow: 0 4px 16px rgba(34, 211, 238, 0.35);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -424,7 +425,7 @@ watch(route, () => {
 
 .access-btn:hover {
   background: linear-gradient(135deg, var(--dark-red) 0%, var(--tertiary-red) 100%);
-  box-shadow: 0 6px 24px rgba(220, 38, 38, 0.5);
+  box-shadow: 0 6px 24px rgba(34, 211, 238, 0.5);
   transform: translateY(-3px);
 }
 
@@ -444,13 +445,13 @@ watch(route, () => {
   background: linear-gradient(135deg, var(--black) 0%, #1a1a1a 100%);
   color: var(--primary-red);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(220, 38, 38, 0.3);
+  border: 1px solid rgba(34, 211, 238, 0.3);
   font-weight: 700;
 }
 
 .admin-btn:hover {
   background: linear-gradient(135deg, #1a1a1a 0%, var(--black) 100%);
-  box-shadow: 0 6px 24px rgba(220, 38, 38, 0.4);
+  box-shadow: 0 6px 24px rgba(34, 211, 238, 0.4);
   transform: translateY(-3px);
   border-color: var(--primary-red);
 }
@@ -473,10 +474,10 @@ watch(route, () => {
   font-weight: 700;
   font-size: 14px;
   padding: 10px 16px;
-  background: rgba(220, 38, 38, 0.15);
+  background: rgba(34, 211, 238, 0.15);
   border-radius: 12px;
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(220, 38, 38, 0.3);
+  border: 1px solid rgba(34, 211, 238, 0.3);
   letter-spacing: 0.3px;
 }
 
@@ -719,6 +720,7 @@ watch(route, () => {
     opacity: 0;
     transform: scaleX(0.5);
   }
+
   to {
     opacity: 1;
     transform: scaleX(1);
