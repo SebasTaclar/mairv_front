@@ -4,10 +4,10 @@
       <!-- Header de la sección -->
       <div class="store-header">
         <h2 class="store-title">
-          Nuestra Tienda
+          🛍️ Nuestra Tienda
         </h2>
         <p class="store-subtitle">
-          Descubre nuestros productos Apple originales con garantía oficial
+          Lleva contigo el mensaje de fe con nuestros productos exclusivos MAIRV
         </p>
       </div>
 
@@ -15,41 +15,30 @@
       <div class="search-bar">
         <div class="search-input-wrapper">
           <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-            <path fill="currentColor" d="M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16zm8.707 17.293-4.387-4.387a9 9 0 1 0-1.414 1.414l4.387 4.387a1 1 0 0 0 1.414-1.414z"/>
+            <path fill="currentColor"
+              d="M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16zm8.707 17.293-4.387-4.387a9 9 0 1 0-1.414 1.414l4.387 4.387a1 1 0 0 0 1.414-1.414z" />
           </svg>
 
-          <input
-            type="search"
-            v-model="searchTerm"
-            placeholder="Buscar por Nombre del Producto..."
-            aria-label="Buscar productos por título"
-            class="search-input"
-          />
+          <input type="search" v-model="searchTerm" placeholder="Buscar por Nombre del Producto..."
+            aria-label="Buscar productos por título" class="search-input" />
 
-          <button v-if="searchTerm" class="search-clear" @click.prevent="searchTerm = ''" aria-label="Limpiar búsqueda">X</button>
+          <button v-if="searchTerm" class="search-clear" @click.prevent="searchTerm = ''"
+            aria-label="Limpiar búsqueda">X</button>
         </div>
       </div>
 
       <!-- Filtros de categoría -->
       <div class="category-filters">
-        <button
-          v-for="category in categoryOptions"
-          :key="category"
-          @click="selectedCategory = category"
-          :class="['filter-btn', { 'active': selectedCategory === category }]"
-        >
+        <button v-for="category in categoryOptions" :key="category" @click="selectedCategory = category"
+          :class="['filter-btn', { 'active': selectedCategory === category }]">
           {{ category }}
         </button>
       </div>
 
       <!-- Grid de productos -->
       <div class="products-grid">
-        <div
-          v-for="product in filteredProducts"
-          :key="product.id"
-          class="product-card"
-          @click="openProductModal(product)"
-        >
+        <div v-for="product in filteredProducts" :key="product.id" class="product-card"
+          @click="openProductModal(product)">
           <!-- Categoría encima de la imagen -->
           <span class="product-category-top">{{ product.category }}</span>
 
@@ -75,11 +64,8 @@
               <p class="truncated">
                 {{ product.description }}
               </p>
-              <button
-                v-if="shouldShowReadMore(product.description)"
-                @click.stop="openProductModal(product)"
-                class="read-more-btn"
-              >
+              <button v-if="shouldShowReadMore(product.description)" @click.stop="openProductModal(product)"
+                class="read-more-btn">
                 Ver más
               </button>
             </div>
@@ -93,13 +79,13 @@
             </div>
           </div>
         </div>
-      </div>      <!-- Botón del carrito flotante -->
+      </div> <!-- Botón del carrito flotante -->
       <div v-if="totalItems > 0" class="floating-cart" @click="toggleCart">
         <div class="cart-icon">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="m5 7 1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12"/>
-            <path d="M22 7H2"/>
-            <path d="m9 3 2-2 2 2"/>
+            <path d="m5 7 1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12" />
+            <path d="M22 7H2" />
+            <path d="m9 3 2-2 2 2" />
           </svg>
           <span class="cart-badge">{{ totalItems }}</span>
         </div>
@@ -114,8 +100,8 @@
           <h3>Tu Carrito</h3>
           <button @click="closeCart" class="close-btn">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="m18 6-12 12"/>
-              <path d="m6 6 12 12"/>
+              <path d="m18 6-12 12" />
+              <path d="m6 6 12 12" />
             </svg>
           </button>
         </div>
@@ -126,11 +112,7 @@
           </div>
 
           <div v-else class="cart-items">
-            <div
-              v-for="item in cartItems"
-              :key="item.id"
-              class="cart-item"
-            >
+            <div v-for="item in cartItems" :key="item.id" class="cart-item">
               <img :src="item.image" :alt="item.name" />
               <div class="item-details">
                 <h4>{{ item.name }}</h4>
@@ -140,15 +122,17 @@
               </div>
               <div class="item-controls">
                 <div class="quantity-controls">
-                  <button @click="updateQuantity(item.id, item.quantity - 1, item.selectedColor)" class="quantity-btn minus">-</button>
+                  <button @click="updateQuantity(item.id, item.quantity - 1, item.selectedColor)"
+                    class="quantity-btn minus">-</button>
                   <span>{{ item.quantity }}</span>
-                  <button @click="updateQuantity(item.id, item.quantity + 1, item.selectedColor)" class="quantity-btn plus">+</button>
+                  <button @click="updateQuantity(item.id, item.quantity + 1, item.selectedColor)"
+                    class="quantity-btn plus">+</button>
                 </div>
                 <button @click="removeFromCart(item.id, item.selectedColor)" class="remove-btn">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 6h18"/>
-                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
-                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                    <path d="M3 6h18" />
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
                   </svg>
                 </button>
               </div>
@@ -177,31 +161,20 @@
       <div class="modal-content" @click.stop>
         <button class="modal-close floating" @click="closeModal">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="m18 6-12 12"/>
-            <path d="m6 6 12 12"/>
+            <path d="m18 6-12 12" />
+            <path d="m6 6 12 12" />
           </svg>
         </button>
         <div class="modal-body">
           <div class="modal-image">
             <div class="image-gallery">
-              <img
-                v-for="(image, index) in selectedProduct?.images"
-                :key="index"
-                :src="image"
-                :alt="`${selectedProduct?.name} - ${index + 1}`"
-                :class="{ active: selectedImageIndex === index }"
-                @click="selectedImageIndex = index"
-                loading="lazy"
-                decoding="async"
-              />
+              <img v-for="(image, index) in selectedProduct?.images" :key="index" :src="image"
+                :alt="`${selectedProduct?.name} - ${index + 1}`" :class="{ active: selectedImageIndex === index }"
+                @click="selectedImageIndex = index" loading="lazy" decoding="async" />
             </div>
             <div v-if="selectedProduct?.images && selectedProduct.images.length > 1" class="image-dots">
-              <button
-                v-for="(image, index) in selectedProduct.images"
-                :key="index"
-                :class="{ active: selectedImageIndex === index }"
-                @click="selectedImageIndex = index"
-              ></button>
+              <button v-for="(image, index) in selectedProduct.images" :key="index"
+                :class="{ active: selectedImageIndex === index }" @click="selectedImageIndex = index"></button>
             </div>
           </div>
 
@@ -216,23 +189,18 @@
 
             <div class="modal-price">
               <span class="modal-current-price">${{ selectedProduct?.price?.toLocaleString() }}</span>
-              <span v-if="selectedProduct?.originalPrice" class="modal-original-price">${{ selectedProduct?.originalPrice?.toLocaleString() }}</span>
+              <span v-if="selectedProduct?.originalPrice" class="modal-original-price">${{
+                selectedProduct?.originalPrice?.toLocaleString() }}</span>
             </div>
 
             <div v-if="selectedProduct?.colors && selectedProduct.colors.length > 0" class="modal-colors">
               <h4>Seleccionar color:</h4>
               <div class="color-options">
-                <div
-                  v-for="colorName in selectedProduct.colors"
-                  :key="colorName"
-                  class="color-option"
-                  :class="{ active: modalSelectedColor === colorName }"
-                  @click="modalSelectedColor = colorName"
-                >
-                  <div
-                    class="color-circle"
-                    :style="{ backgroundColor: getColorHex(colorName), border: '2px solid ' + (modalSelectedColor === colorName ? '#26F7D7' : getColorHex(colorName)) }"
-                  ></div>
+                <div v-for="colorName in selectedProduct.colors" :key="colorName" class="color-option"
+                  :class="{ active: modalSelectedColor === colorName }" @click="modalSelectedColor = colorName">
+                  <div class="color-circle"
+                    :style="{ backgroundColor: getColorHex(colorName), border: '2px solid ' + (modalSelectedColor === colorName ? '#26F7D7' : getColorHex(colorName)) }">
+                  </div>
                   <span class="color-name">{{ colorName }}</span>
                 </div>
               </div>
@@ -244,11 +212,9 @@
               </span>
             </div>
 
-            <button
-              @click="addToCartFromModal"
+            <button @click="addToCartFromModal"
               :disabled="selectedProduct?.status !== 'available' || (selectedProduct?.colors && selectedProduct.colors.length > 0 && !modalSelectedColor)"
-              class="modal-add-to-cart"
-            >
+              class="modal-add-to-cart">
               {{ selectedProduct?.status === 'available' ? 'Agregar al carrito' : 'No disponible' }}
             </button>
           </div>
@@ -264,6 +230,7 @@
   background: linear-gradient(135deg, #dad1d1 0%, #f3f0f0 100%);
   position: relative;
 }
+
 .product-store {
   padding: 3rem 0;
   background: linear-gradient(135deg, #dad1d1 0%, #f3f0f0 100%);
@@ -481,7 +448,8 @@
     border-radius: 0;
     padding: 0;
     background: #000;
-    overflow-y: auto; /* scroll para TODO el modal */
+    overflow-y: auto;
+    /* scroll para TODO el modal */
     -webkit-overflow-scrolling: touch;
   }
 
@@ -500,8 +468,8 @@
     top: 1rem;
     right: 1rem;
     z-index: 1000;
-    background: rgba(0,0,0,0.6);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     width: 40px;
     height: 40px;
     display: flex;
@@ -524,8 +492,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 1rem auto; /* centrar horizontalmente en móvil */
-    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    margin: 1rem auto;
+    /* centrar horizontalmente en móvil */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
   }
 
   .modal-image img {
@@ -606,7 +575,8 @@
     font-size: 0.9375rem;
   }
 }
-</style><script setup lang="ts">
+</style>
+<script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCart } from '@/composables/useCart'
@@ -638,24 +608,111 @@ const {
   loadCategories
 } = useProducts()
 
+// Productos locales de merchandising (iglesia MAIRV)
+const localChurchProducts = ref<ProductType[]>([
+  {
+    id: 'church-tshirt-1',
+    name: 'Camiseta MAIRV - Edición Fe',
+    description: 'Camiseta 100% algodón con diseño exclusivo MAIRV. Mensaje: "Fe que mueve montañas". Disponible en varios colores.',
+    price: 45000,
+    originalPrice: 60000,
+    images: ['https://via.placeholder.com/400x400/22d3ee/ffffff?text=Camiseta+MAIRV'],
+    category: 'merchandising',
+    status: 'available',
+    colors: ['Blanco', 'Negro', 'Azul', 'Gris'],
+    createdAt: new Date()
+  },
+  {
+    id: 'church-cap-1',
+    name: 'Gorra MAIRV - Clásica',
+    description: 'Gorra bordada con logo MAIRV. Ajustable, perfecta para eventos al aire libre.',
+    price: 35000,
+    originalPrice: 45000,
+    images: ['https://via.placeholder.com/400x400/22d3ee/ffffff?text=Gorra+MAIRV'],
+    category: 'merchandising',
+    status: 'available',
+    colors: ['Negro', 'Azul', 'Blanco'],
+    createdAt: new Date()
+  },
+  {
+    id: 'church-hoodie-1',
+    name: 'Sudadera MAIRV - Premium',
+    description: 'Sudadera con capucha, material de alta calidad. Diseño "Juntos en Cristo". Ideal para clima frío.',
+    price: 85000,
+    originalPrice: 110000,
+    images: ['https://via.placeholder.com/400x400/22d3ee/ffffff?text=Sudadera+MAIRV'],
+    category: 'merchandising',
+    status: 'available',
+    colors: ['Negro', 'Gris', 'Azul marino'],
+    createdAt: new Date()
+  },
+  {
+    id: 'church-tshirt-2',
+    name: 'Camiseta MAIRV - Edición Esperanza',
+    description: 'Camiseta con diseño "Esperanza Viva". Material transpirable y cómodo para uso diario.',
+    price: 45000,
+    images: ['https://via.placeholder.com/400x400/22d3ee/ffffff?text=Camiseta+Esperanza'],
+    category: 'merchandising',
+    status: 'available',
+    colors: ['Blanco', 'Rosa', 'Celeste'],
+    createdAt: new Date()
+  },
+  {
+    id: 'church-bag-1',
+    name: 'Bolso MAIRV - Estudio Bíblico',
+    description: 'Bolso de lona resistente con múltiples compartimentos. Perfecto para llevar tu Biblia y materiales de estudio.',
+    price: 55000,
+    images: ['https://via.placeholder.com/400x400/22d3ee/ffffff?text=Bolso+MAIRV'],
+    category: 'merchandising',
+    status: 'available',
+    colors: ['Beige', 'Negro', 'Azul'],
+    createdAt: new Date()
+  },
+  {
+    id: 'church-mug-1',
+    name: 'Taza MAIRV - Café con Cristo',
+    description: 'Taza cerámica de 350ml con diseño inspirador. Apta para lavavajillas y microondas.',
+    price: 25000,
+    images: ['https://via.placeholder.com/400x400/22d3ee/ffffff?text=Taza+MAIRV'],
+    category: 'merchandising',
+    status: 'available',
+    createdAt: new Date()
+  },
+  {
+    id: 'church-notebook-1',
+    name: 'Libreta MAIRV - Devocional',
+    description: 'Libreta de notas con tapa dura y 200 páginas. Ideal para tus devocionales diarios.',
+    price: 30000,
+    images: ['https://via.placeholder.com/400x400/22d3ee/ffffff?text=Libreta+MAIRV'],
+    category: 'merchandising',
+    status: 'available',
+    createdAt: new Date()
+  },
+  {
+    id: 'church-bracelet-1',
+    name: 'Pulsera MAIRV - Fe y Amor',
+    description: 'Pulsera tejida con mensaje "Fe y Amor". Ajustable, unisex.',
+    price: 15000,
+    images: ['https://via.placeholder.com/400x400/22d3ee/ffffff?text=Pulsera+MAIRV'],
+    category: 'merchandising',
+    status: 'available',
+    colors: ['Multicolor', 'Azul', 'Rojo'],
+    createdAt: new Date()
+  }
+])
+
 // Cargar productos y categorías al montar el componente
 onMounted(async () => {
   console.log('🏪 [ProductStore] onMounted - Iniciando carga...')
-  console.log('🏪 [ProductStore] availableProducts ANTES de cargar:', availableProducts.value.length)
+  console.log('🏪 [ProductStore] Productos locales de merchandising:', localChurchProducts.value.length)
 
   await loadCategories()
   console.log('🏪 [ProductStore] Categorías cargadas:', categories.value.length)
 
   await loadProducts()
-  console.log('🏪 [ProductStore] loadProducts ejecutado')
-  console.log('🏪 [ProductStore] availableProducts DESPUÉS de cargar:', availableProducts.value.length)
-  console.log('🏪 [ProductStore] availableProducts:', availableProducts.value)
+  console.log('🏪 [ProductStore] Productos del backend cargados:', availableProducts.value.length)
+  console.log('🏪 [ProductStore] Total productos (backend + merchandising):', products.value.length)
 })
-
-// Watcher para debug: observar cambios en productos
-watch(availableProducts, (newProducts) => {
-  console.log('🔔 [ProductStore Watch] availableProducts cambiaron:', newProducts.length, newProducts)
-}, { immediate: true })
 
 // Estado local
 const selectedCategory = ref('Todos')
@@ -668,8 +725,8 @@ const selectedProduct = ref<ProductType | null>(null)
 const modalSelectedColor = ref('')
 const selectedImageIndex = ref(0)
 
-// Productos y categorías desde el composable
-const products = computed(() => availableProducts.value)
+// Combinar productos del backend con productos locales de merchandising
+const products = computed(() => [...availableProducts.value, ...localChurchProducts.value])
 
 // Función para determinar si la descripción es lo suficientemente larga (más de 4 líneas aprox 150 caracteres)
 const shouldShowReadMore = (description: string) => {
@@ -752,7 +809,7 @@ const getStatusClass = (status: string) => {
 
 // Categorías disponibles para filtrado
 const categoryOptions = computed(() => {
-  const categoryNames = ['Todos']
+  const categoryNames = ['Todos', 'Merchandising']
   categories.value.forEach(cat => {
     const categoryName = cat.name
     if (!categoryNames.includes(categoryName)) {
@@ -762,44 +819,9 @@ const categoryOptions = computed(() => {
   return categoryNames
 })
 
-// Productos filtrados
-const filteredProducts = computed(() => {
-  const term = searchTerm.value.trim().toLowerCase()
-
-  const mapAndEnhance = (list: ProductType[]) => list
-    .map((p: ProductType) => ({
-      ...p,
-      category: getCategoryById(p.category)?.name || 'Sin categoría',
-      inStock: p.status === 'available'
-    }))
-    .sort((a: ProductType, b: ProductType) => {
-      // Primero los disponibles (available), luego los próximamente (coming-soon)
-      if (a.status === 'available' && b.status !== 'available') return -1
-      if (a.status !== 'available' && b.status === 'available') return 1
-      return 0
-    })
-
-  let baseList = []
-  if (selectedCategory.value === 'Todos') {
-    baseList = products.value.filter(p => p.status === 'available' || p.status === 'coming-soon')
-  } else {
-    baseList = products.value.filter(p => getCategoryById(p.category)?.name === selectedCategory.value && (p.status === 'available' || p.status === 'coming-soon'))
-  }
-
-  // Si hay término de búsqueda, filtrar SÓLO por el nombre (título)
-  if (term) {
-    baseList = baseList.filter(p => {
-      const name = String(p.name || '').toLowerCase()
-      return name.includes(term)
-    })
-  }
-
-  return mapAndEnhance(baseList)
-})
-
-// Colores de Apple predeterminados (incluye variantes en inglés y español)
+// Colores predeterminados (incluye variantes en inglés y español)
 const appleColors: Record<string, string> = {
-  // Nueva paleta actualizada
+  // Paleta original
   'naranja cósmico': '#ff5e00',
   'naranja cosmico': '#ff5e00',
   'azul profundo': '#003d5c',
@@ -825,7 +847,17 @@ const appleColors: Record<string, string> = {
   'purple': '#9c27b0',
   'morado': '#9c27b0',
   'oro': '#ffd700',
-  'gold': '#ffd700'
+  'gold': '#ffd700',
+  // Colores adicionales para merchandising
+  'gris': '#808080',
+  'gray': '#808080',
+  'azul marino': '#000080',
+  'navy': '#000080',
+  'celeste': '#87ceeb',
+  'beige': '#f5f5dc',
+  'rojo': '#ff0000',
+  'red': '#ff0000',
+  'multicolor': 'linear-gradient(90deg, #ff0000, #00ff00, #0000ff)'
 }
 
 // Normaliza nombres y obtiene color; fallback a gris claro
@@ -834,6 +866,52 @@ const getColorHex = (colorName: string): string => {
   const key = colorName.trim().toLowerCase()
   return appleColors[key] || '#cccccc'
 }
+
+// Productos filtrados
+const filteredProducts = computed(() => {
+  const term = searchTerm.value.trim().toLowerCase()
+
+  const mapAndEnhance = (list: ProductType[]) => list
+    .map((p: ProductType) => {
+      // Para productos locales (merchandising), usar category directamente
+      // Para productos del backend, obtener el nombre de la categoría
+      const categoryName = p.category === 'merchandising'
+        ? 'Merchandising'
+        : (getCategoryById(p.category)?.name || 'Sin categoría')
+
+      return {
+        ...p,
+        category: categoryName,
+        inStock: p.status === 'available'
+      }
+    })
+    .sort((a: ProductType, b: ProductType) => {
+      // Primero los disponibles (available), luego los próximamente (coming-soon)
+      if (a.status === 'available' && b.status !== 'available') return -1
+      if (a.status !== 'available' && b.status === 'available') return 1
+      return 0
+    })
+
+  let baseList = []
+  if (selectedCategory.value === 'Todos') {
+    baseList = products.value.filter(p => p.status === 'available' || p.status === 'coming-soon')
+  } else if (selectedCategory.value === 'Merchandising') {
+    // Filtrar solo productos de merchandising
+    baseList = products.value.filter(p => p.category === 'merchandising' && (p.status === 'available' || p.status === 'coming-soon'))
+  } else {
+    baseList = products.value.filter(p => getCategoryById(p.category)?.name === selectedCategory.value && (p.status === 'available' || p.status === 'coming-soon'))
+  }
+
+  // Si hay término de búsqueda, filtrar SÓLO por el nombre (título)
+  if (term) {
+    baseList = baseList.filter(p => {
+      const name = String(p.name || '').toLowerCase()
+      return name.includes(term)
+    })
+  }
+
+  return mapAndEnhance(baseList)
+})
 </script>
 
 <style scoped>
@@ -883,13 +961,13 @@ const getColorHex = (colorName: string): string => {
   position: relative;
 }
 
-.search-input-wrapper{
+.search-input-wrapper {
   position: relative;
   width: 100%;
   max-width: 720px;
 }
 
-.search-icon{
+.search-icon {
   position: absolute;
   left: 14px;
   top: 50%;
@@ -907,7 +985,7 @@ const getColorHex = (colorName: string): string => {
   background: #f5f5f7;
   font-size: 1rem;
   color: var(--brand-primary);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
   outline: none;
 }
@@ -933,7 +1011,7 @@ const getColorHex = (colorName: string): string => {
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(0,0,0,0.08);
+  background: rgba(0, 0, 0, 0.08);
   border: none;
   cursor: pointer;
   font-size: 0.9rem;
@@ -949,13 +1027,19 @@ const getColorHex = (colorName: string): string => {
 }
 
 .search-clear:hover {
-  background: rgba(0,0,0,0.12);
+  background: rgba(0, 0, 0, 0.12);
   transform: translateY(-50%) scale(1.05);
 }
 
-@media (max-width: 768px){
-  .search-input { max-width: 92%; }
-  .search-input-wrapper{ max-width: 92%; margin: 0 auto; }
+@media (max-width: 768px) {
+  .search-input {
+    max-width: 92%;
+  }
+
+  .search-input-wrapper {
+    max-width: 92%;
+    margin: 0 auto;
+  }
 }
 
 /* Filtros */
@@ -1183,7 +1267,8 @@ const getColorHex = (colorName: string): string => {
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-height: calc(1.5em * 4); /* 4 líneas con line-height 1.5 */
+  max-height: calc(1.5em * 4);
+  /* 4 líneas con line-height 1.5 */
 }
 
 .read-more-btn {
@@ -1570,9 +1655,11 @@ const getColorHex = (colorName: string): string => {
 .cart-modal {
   background: var(--brand-surface);
   border-radius: 20px;
-  max-width: 900px; /* Cambiado de 600px a 900px para desktop */
+  max-width: 900px;
+  /* Cambiado de 600px a 900px para desktop */
   width: 100%;
-  max-height: 85vh; /* Aumentado un poco */
+  max-height: 85vh;
+  /* Aumentado un poco */
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -2392,80 +2479,82 @@ const getColorHex = (colorName: string): string => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-  .color-name {
-    font-size: 0.8rem;
-    color: #666;
-    text-align: center;
-  }
+.color-name {
+  font-size: 0.8rem;
+  color: #666;
+  text-align: center;
+}
 
-  .modal-status {
-    margin-bottom: 1.5rem;
-  }
+.modal-status {
+  margin-bottom: 1.5rem;
+}
 
-  .image-navigation {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    transform: translateY(-50%);
-    display: flex;
-    justify-content: space-between;
-    padding: 0 1rem;
-    pointer-events: none;
-  }
+.image-navigation {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1rem;
+  pointer-events: none;
+}
 
-  .nav-btn {
-    background: rgba(0, 0, 0, 0.5);
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    pointer-events: auto;
-  }
+.nav-btn {
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  pointer-events: auto;
+}
 
-  .nav-btn:hover {
-    background: rgba(0, 0, 0, 0.7);
-  }
+.nav-btn:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
 
-  .nav-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+.nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
-  .image-thumbnails {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    overflow-x: auto;
-    padding: 0.5rem;
-    scrollbar-width: thin;
-  }
+.image-thumbnails {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  overflow-x: auto;
+  padding: 0.5rem;
+  scrollbar-width: thin;
+}
 
-  .thumbnail {
-    width: 60px;
-    height: 60px;
-    border: 2px solid transparent;
-    border-radius: 8px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
+.thumbnail {
+  width: 60px;
+  height: 60px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
 
-  .thumbnail.active {
-    border-color: var(--brand-success);
-  }
+.thumbnail.active {
+  border-color: var(--brand-success);
+}
 
-  .thumbnail img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }.modal-add-to-cart {
+.thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modal-add-to-cart {
   width: 100%;
   padding: 1rem 2rem;
   background: linear-gradient(135deg, var(--brand-success) 0%, #0d9466 100%);
