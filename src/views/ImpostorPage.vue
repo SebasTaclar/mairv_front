@@ -152,6 +152,11 @@
           <div v-if="wordMode === 'custom'" class="custom-word-input">
             <input v-model="customWord" type="text" placeholder="Escribe la palabra para este juego" class="name-input"
               maxlength="50" />
+            <div v-if="showHintsToImpostor" class="custom-hint-input">
+              <label>Pista para los Impostores (opcional):</label>
+              <input v-model="customHint" type="text" placeholder="Escribe la pista" class="name-input"
+                maxlength="100" />
+            </div>
           </div>
 
           <div v-if="wordMode === 'random'" class="word-categories">
@@ -195,7 +200,7 @@
             <div :class="['flip-card-back', { impostor: impostorIndices.includes(playerOrder[previewOrderIndex]) }]">
               <template v-if="impostorIndices.includes(playerOrder[previewOrderIndex])">
                 <p class="impostor-text">ERES EL IMPOSTOR</p>
-                <p v-if="showHintsToImpostor && wordMode === 'random'" class="impostor-hint">pista: {{ currentHint }}
+                <p v-if="showHintsToImpostor && currentHint" class="impostor-hint">pista: {{ currentHint }}
                 </p>
               </template>
               <p v-else class="word-text">{{ currentWord }}</p>
@@ -251,7 +256,7 @@
             <div :class="['flip-card-back', { impostor: isCurrentPlayerImpostor }]">
               <template v-if="isCurrentPlayerImpostor">
                 <p class="impostor-text">ERES EL IMPOSTOR</p>
-                <p v-if="showHintsToImpostor && wordMode === 'random'" class="impostor-hint">pista: {{ currentHint }}
+                <p v-if="showHintsToImpostor && currentHint" class="impostor-hint">pista: {{ currentHint }}
                 </p>
               </template>
               <p v-else class="word-text">{{ currentWord }}</p>
@@ -344,6 +349,8 @@ const loadGameState = () => {
         numImpostors.value = state.numImpostors || 1
         currentWord.value = state.currentWord || ''
         currentHint.value = state.currentHint || ''
+        customWord.value = state.customWord || ''
+        customHint.value = state.customHint || ''
         impostorIndices.value = state.impostorIndices || []
         startingPlayerIndex.value = state.startingPlayerIndex || 0
         playerOrder.value = state.playerOrder || []
@@ -377,6 +384,8 @@ const saveGameState = () => {
     numImpostors: numImpostors.value,
     currentWord: currentWord.value,
     currentHint: currentHint.value,
+    customWord: customWord.value,
+    customHint: customHint.value,
     impostorIndices: impostorIndices.value,
     startingPlayerIndex: startingPlayerIndex.value,
     playerOrder: playerOrder.value,
@@ -399,6 +408,7 @@ const currentHint = ref('')
 const impostorIndices = ref<number[]>([])
 const wordMode = ref<'random' | 'custom'>('random')
 const customWord = ref('')
+const customHint = ref('')
 const selectedCategory = ref<string | null>(null)
 const startingPlayerIndex = ref(0)
 const playerOrder = ref<number[]>([])
@@ -504,6 +514,7 @@ const decreaseImpostorCount = () => {
 const goToSelectWord = () => {
   wordMode.value = 'random'
   customWord.value = ''
+  customHint.value = ''
   selectedCategory.value = null
   currentStep.value = 'selectWord'
 }
@@ -511,7 +522,7 @@ const goToSelectWord = () => {
 const selectWord = () => {
   if (wordMode.value === 'custom') {
     currentWord.value = customWord.value.trim()
-    currentHint.value = ''
+    currentHint.value = customHint.value.trim()
   } else {
     // Select random word
     let categoriesToUse = categoryList.value
@@ -613,6 +624,7 @@ const quickRestartGame = () => {
   impostorIndices.value = []
   wordMode.value = 'random'
   customWord.value = ''
+  customHint.value = ''
   selectedCategory.value = null
   startingPlayerIndex.value = 0
   playerOrder.value = []
@@ -634,6 +646,7 @@ const resetGame = () => {
   impostorIndices.value = []
   wordMode.value = 'random'
   customWord.value = ''
+  customHint.value = ''
   selectedCategory.value = null
   startingPlayerIndex.value = 0
   playerOrder.value = []
@@ -660,6 +673,8 @@ watch(() => currentStep.value, saveGameState)
 watch(() => playerNames.value, saveGameState, { deep: true })
 watch(() => currentWord.value, saveGameState)
 watch(() => currentHint.value, saveGameState)
+watch(() => customWord.value, saveGameState)
+watch(() => customHint.value, saveGameState)
 watch(() => impostorIndices.value, saveGameState, { deep: true })
 watch(() => playerOrder.value, saveGameState, { deep: true })
 watch(() => currentPlayerIndex.value, saveGameState)
