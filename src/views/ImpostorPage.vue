@@ -22,7 +22,7 @@
           <div class="input-group">
             <button @click="decreasePlayerCount" class="btn-decrease">-</button>
             <input v-model.number="numPlayers" type="number" id="playerCount" min="3" max="25"
-              @input="validatePlayerCount" class="input-number" />
+              @blur="validatePlayerCount" class="input-number" />
             <button @click="increasePlayerCount" class="btn-increase">+</button>
           </div>
           <p class="player-range">Minimo 3 - Maximo 25 jugadores</p>
