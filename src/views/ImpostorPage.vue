@@ -185,7 +185,9 @@
       </div>
 
       <div class="card-container">
-        <div :class="['flip-card', { flipped: previewCardFlipped }]" @click="togglePreviewCardFlip">
+        <div :class="['flip-card', { flipped: previewCardFlipped }]" @mousedown="previewCardFlipped = true"
+          @mouseup="previewCardFlipped = false" @mouseleave="previewCardFlipped = false"
+          @touchstart="previewCardFlipped = true" @touchend="previewCardFlipped = false">
           <div class="flip-card-inner">
             <div class="flip-card-front">
               <p>Presiona para ver</p>
@@ -202,7 +204,7 @@
         </div>
       </div>
 
-      <p class="card-hint">Mantén presionado o haz click para voltear la tarjeta</p>
+      <p class="card-hint">Mantén presionado para voltear la tarjeta</p>
 
       <div class="button-group">
         <button @click="nextCardPreview" class="btn-next">
@@ -239,7 +241,9 @@
       </div>
 
       <div class="card-container">
-        <div :class="['flip-card', { flipped: cardFlipped }]" @click="toggleCardFlip">
+        <div :class="['flip-card', { flipped: cardFlipped }]" @mousedown="cardFlipped = true"
+          @mouseup="cardFlipped = false" @mouseleave="cardFlipped = false" @touchstart="cardFlipped = true"
+          @touchend="cardFlipped = false">
           <div class="flip-card-inner">
             <div class="flip-card-front">
               <p>Presiona para ver</p>
@@ -256,7 +260,7 @@
         </div>
       </div>
 
-      <p class="card-hint">Mantén presionado o haz click para voltear la tarjeta</p>
+      <p class="card-hint">Mantén presionado para voltear la tarjeta</p>
 
       <div class="button-group">
         <button @click="previousPlayer" class="btn-back" :disabled="currentOrderIndex === 0">
@@ -561,10 +565,6 @@ const nextCardPreview = () => {
   }
 }
 
-const togglePreviewCardFlip = () => {
-  previewCardFlipped.value = !previewCardFlipped.value
-}
-
 const selectNewStart = () => {
   startingPlayerIndex.value = Math.floor(Math.random() * numPlayers.value)
   // Crear orden de jugadores comenzando desde el jugador inicial
@@ -577,10 +577,6 @@ const selectNewStart = () => {
 
 const initializeGameplay = () => {
   currentStep.value = 'gameEnd'
-}
-
-const toggleCardFlip = () => {
-  cardFlipped.value = !cardFlipped.value
 }
 
 const nextPlayer = () => {

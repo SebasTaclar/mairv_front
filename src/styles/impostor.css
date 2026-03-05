@@ -22,9 +22,20 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   margin-bottom: 15px;
   gap: 15px;
-  flex-wrap: wrap;
+}
+
+.header-top > h1,
+.header-top > p {
+  text-align: center;
+  margin: 0;
+}
+
+.header-top > button {
+  align-self: center;
+  flex-shrink: 0;
 }
 
 .back-btn {
@@ -407,22 +418,24 @@
 .card-container {
   perspective: 1000px;
   margin-bottom: 40px;
-  height: 300px;
+  height: 400px;
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
 
 .flip-card {
   background-color: transparent;
-  width: 250px;
-  height: 300px;
+  width: 300px;
+  height: 350px;
   border-radius: 12px;
   cursor: pointer;
-  transition: transform 0.6s;
+  transition: transform 0.3s ease-out;
   transform-style: preserve-3d;
   position: relative;
   perspective: 1000px;
+  box-shadow: 0 10px 30px rgba(34, 211, 238, 0.25);
 }
 
 .flip-card.flipped {
@@ -476,23 +489,25 @@
 
 .impostor-text {
   color: #0d6efd;
-  font-size: 32px;
+  font-size: 42px;
   letter-spacing: 3px;
   margin: 0;
   font-weight: 900;
+  text-shadow: 0 2px 10px rgba(13, 110, 253, 0.3);
 }
 
 .impostor-hint {
   color: #0d6efd;
-  font-size: 16px;
-  margin-top: 12px;
+  font-size: 18px;
+  margin-top: 15px;
   font-weight: 600;
 }
 
 .word-text {
   color: #22d3ee;
-  font-size: 32px;
+  font-size: 42px;
   margin: 0;
+  text-shadow: 0 2px 10px rgba(34, 211, 238, 0.3);
 }
 
 .card-hint {
@@ -561,6 +576,15 @@
 
   .header-top {
     flex-direction: column;
+    align-items: center;
+  }
+
+  .header-top > h1,
+  .header-top > p,
+  .header-top > button {
+    flex: none;
+    min-width: auto;
+    width: 100%;
   }
 
   .back-btn,
@@ -622,21 +646,26 @@
   }
 
   .flip-card {
-    width: 200px;
-    height: 250px;
+    width: 240px;
+    height: 300px;
   }
 
   .flip-card-front,
   .flip-card-back {
     font-size: 20px;
+    padding: 20px;
   }
 
   .impostor-text {
-    font-size: 24px;
+    font-size: 30px;
   }
 
   .word-text {
-    font-size: 24px;
+    font-size: 30px;
+  }
+
+  .impostor-hint {
+    font-size: 16px;
   }
 
   .current-player-name {
@@ -717,26 +746,33 @@
   }
 
   .card-container {
-    height: 250px;
+    height: 280px;
     margin-bottom: 30px;
   }
 
   .flip-card {
-    width: 180px;
-    height: 220px;
+    width: 200px;
+    height: 250px;
   }
 
   .flip-card-front,
   .flip-card-back {
+    padding: 15px;
+    border-radius: 8px;
     font-size: 18px;
   }
 
   .impostor-text {
-    font-size: 20px;
+    font-size: 24px;
+    letter-spacing: 1px;
   }
 
   .word-text {
-    font-size: 20px;
+    font-size: 24px;
+  }
+
+  .impostor-hint {
+    font-size: 14px;
   }
 
   .current-player-name {
@@ -799,7 +835,7 @@
 
 .category-buttons {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 10px;
 }
 
@@ -814,6 +850,8 @@
   cursor: pointer;
   transition: all 0.3s ease;
   text-transform: capitalize;
+  white-space: normal;
+  word-wrap: break-word;
 }
 
 .category-btn:hover {
