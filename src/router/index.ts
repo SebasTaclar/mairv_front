@@ -41,6 +41,12 @@ const router = createRouter({
     },
 
     {
+      path: '/impostor',
+      name: 'impostor',
+      component: () => import('../views/ImpostorPage.vue'),
+    },
+
+    {
       path: '/iphone',
       name: 'iphone',
       component: () => import('../views/IphonePage.vue'),

@@ -45,6 +45,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 interface Game {
  id: string
@@ -54,6 +55,8 @@ interface Game {
  rating: number
  players: number
 }
+
+const router = useRouter()
 
 const games = ref<Game[]>([
  {
@@ -103,12 +106,26 @@ const games = ref<Game[]>([
   icon: '⚡',
   rating: 4.4,
   players: 1600
+ },
+ {
+  id: '7',
+  title: 'El Impostor',
+  description: 'Descubre quién es el impostor entre los jugadores',
+  icon: '🎭',
+  rating: 4.9,
+  players: 3400
  }
 ])
 
 const selectedGame = ref<Game | null>(null)
 
 const playGame = (gameId: string) => {
+ // Si es El Impostor, navegar directamente
+ if (gameId === '7') {
+  router.push('/impostor')
+  return
+ }
+
  const game = games.value.find(g => g.id === gameId)
  if (game) {
   selectedGame.value = game

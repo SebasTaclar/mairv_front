@@ -577,7 +577,7 @@
 }
 </style>
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCart } from '@/composables/useCart'
 import { useProducts, type Product as ProductType } from '@/composables/useProducts'
