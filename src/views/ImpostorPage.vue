@@ -161,12 +161,27 @@
 
           <div v-if="wordMode === 'random'" class="word-categories">
             <p>Categoria (opcional):</p>
-            <div class="category-buttons">
-              <button v-for="cat in categoryList" :key="cat"
-                @click="selectedCategory = selectedCategory === cat ? null : cat"
-                :class="['category-btn', { active: selectedCategory === cat }]">
-                {{ cat }}
-              </button>
+
+            <div class="biblical-section">
+              <h3 class="section-title">📖 Bíblica</h3>
+              <div class="category-buttons">
+                <button v-for="cat in categoryList.slice(0, 5)" :key="cat"
+                  @click="selectedCategory = selectedCategory === cat ? null : cat"
+                  :class="['category-btn', { active: selectedCategory === cat }]">
+                  {{ cat }}
+                </button>
+              </div>
+            </div>
+
+            <div class="other-section">
+              <h3 class="section-title">🌍 Otras</h3>
+              <div class="category-buttons">
+                <button v-for="cat in categoryList.slice(5)" :key="cat"
+                  @click="selectedCategory = selectedCategory === cat ? null : cat"
+                  :class="['category-btn', { active: selectedCategory === cat }]">
+                  {{ cat }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -418,9 +433,13 @@ const previewCardFlipped = ref(false)
 const previewOrderIndex = ref(0)
 const showHintsToImpostor = ref(true)
 
-// Get categories from word dictionary
+// Get categories from word dictionary - ordered by biblical first, then others
 const categoryList = computed(() => {
-  return Object.keys(wordDictionary) as Array<keyof typeof wordDictionary>
+  const categories = Object.keys(wordDictionary) as Array<keyof typeof wordDictionary>
+  const biblicalCategories = ['biblia', 'libros', 'personajes_biblicos', 'acontecimientos', 'dichos_o_refranes']
+  const biblicalCats = categories.filter(cat => biblicalCategories.includes(cat as string))
+  const otherCats = categories.filter(cat => !biblicalCategories.includes(cat as string))
+  return [...biblicalCats, ...otherCats]
 })
 
 // Computed
@@ -632,28 +651,6 @@ const quickRestartGame = () => {
   previewCardFlipped.value = false
   previewOrderIndex.value = 0
   currentStep.value = 'playerNames'
-}
-
-const resetGame = () => {
-  currentStep.value = 'playerCount'
-  numPlayers.value = 3
-  playerNames.value = []
-  numImpostors.value = 1
-  currentPlayerIndex.value = 0
-  cardFlipped.value = false
-  currentWord.value = ''
-  currentHint.value = ''
-  impostorIndices.value = []
-  wordMode.value = 'random'
-  customWord.value = ''
-  customHint.value = ''
-  selectedCategory.value = null
-  startingPlayerIndex.value = 0
-  playerOrder.value = []
-  currentOrderIndex.value = 0
-  previewCardFlipped.value = false
-  previewOrderIndex.value = 0
-  showConfirmClearNames.value = false
 }
 
 // Load config on mount and setup auto-save watchers
