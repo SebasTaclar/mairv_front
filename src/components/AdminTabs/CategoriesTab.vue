@@ -34,7 +34,7 @@
           <span class="category-count">{{ getProductsInCategory(category.id) }} productos</span>
         </div>
         <div class="category-actions">
-          <button class="btn btn-sm btn-secondary" @click="editCategory(category)">✏️</button>
+          <button class="btn btn-sm btn-secondary" @click="openForm(category)">✏️</button>
           <button class="btn btn-sm btn-danger" @click="deleteCategory(category.id)">🗑️</button>
         </div>
       </div>

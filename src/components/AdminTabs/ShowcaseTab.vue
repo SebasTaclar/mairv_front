@@ -37,7 +37,7 @@
           <span class="category-name">{{ getCategoryName(product.category) }}</span>
         </div>
         <div class="showcase-actions">
-          <button class="btn btn-sm btn-secondary" @click="editProduct(product)">✏️</button>
+          <button class="btn btn-sm btn-secondary" @click="openForm(product)">✏️</button>
           <button class="btn btn-sm btn-danger" @click="deleteProduct(product.id)">🗑️</button>
         </div>
       </div>
@@ -148,6 +148,7 @@ const form = ref({
   name: '',
   description: '',
   image: '',
+  price: 0,
   category: ''
 })
 
@@ -172,7 +173,7 @@ const isFormValid = computed(() =>
 )
 
 const getCategoryName = (id: string | number) =>
-  getCategoryById(id)?.name || 'Sin categoría'
+  getCategoryById(String(id))?.name || 'Sin categoría'
 
 const openForm = (product?: ShowcaseProduct) => {
   if (product) {
@@ -181,7 +182,7 @@ const openForm = (product?: ShowcaseProduct) => {
     uploadMethod.value = product.image.startsWith('http') ? 'url' : 'file'
   } else {
     editingProduct.value = null
-    form.value = { name: '', description: '', image: '', category: '' }
+    form.value = { name: '', description: '', image: '', price: 0, category: '' }
     uploadMethod.value = 'url'
   }
   showForm.value = true
@@ -190,7 +191,7 @@ const openForm = (product?: ShowcaseProduct) => {
 const closeForm = () => {
   showForm.value = false
   editingProduct.value = null
-  form.value = { name: '', description: '', image: '', category: '' }
+  form.value = { name: '', description: '', image: '', price: 0, category: '' }
   if (fileInput.value) fileInput.value.value = ''
 }
 

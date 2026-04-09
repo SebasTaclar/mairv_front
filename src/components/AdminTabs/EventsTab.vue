@@ -568,7 +568,7 @@ const addImageFromUrl = () => {
   }
 }
 
-const handleImageFileSelect = (event: Event) => {
+const handleImageFileSelect = (event: any) => {
   const target = event.target as HTMLInputElement
   const files = target.files
   if (files) {
