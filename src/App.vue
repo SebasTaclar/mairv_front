@@ -1,33 +1,29 @@
 <template>
   <header>
-    <nav class="navbar">
+    <nav :class="['navbar', { 'transparent': isAtTop }]">
       <!-- Logo y marca -->
       <RouterLink class="link-navbar home" to="/" @click="closeMobileMenu">
         <div class="brand-container">
-          <div class="creative-logo">
-            <div class="logo-circle">
-              <span class="logo-letter">M</span>
-              <span class="logo-letter">A</span>
-            </div>
-            <div class="logo-glow"></div>
-          </div>
-          <div class="brand-info">
+          <img src="/images/logo.jpg" alt="MAIRV" class="site-logo" />
+          <!-- <div class="brand-info">
             <div class="brand-title"><span class="highlight">MAIRV</span></div>
             <div class="brand-tagline">MAI restaurando vidas</div>
-          </div>
+          </div> -->
         </div>
       </RouterLink>
 
-      <!-- Navegación principal -->
+      <!-- Navegación principal (centrada) -->
       <div class="nav-menu desktop-nav">
-        <RouterLink to="/calendar" class="nav-link" :class="{ active: isCurrentRoute('/calendar') }"
-          @click="closeMobileMenu">📅 Calendario</RouterLink>
-        <RouterLink to="/games" class="nav-link" :class="{ active: isCurrentRoute('/games') }" @click="closeMobileMenu">
-          🎮 Juegos</RouterLink>
+        <RouterLink to="/" class="nav-link" :class="{ active: isCurrentRoute('/') }" @click="closeMobileMenu">Inicio</RouterLink>
+        <RouterLink to="/about" class="nav-link" :class="{ active: isCurrentRoute('/about') }" @click="closeMobileMenu">Nosotros</RouterLink>
+        <RouterLink to="/events" class="nav-link" :class="{ active: isCurrentRoute('/events') }" @click="closeMobileMenu">Eventos</RouterLink>
+        <RouterLink to="/messages" class="nav-link" :class="{ active: isCurrentRoute('/messages') }" @click="closeMobileMenu">Mensajes</RouterLink>
+              <a href="#contact" class="nav-link" :class="{ active: isContactVisible }" @click.prevent="scrollToContact">Conectar</a>
       </div>
 
       <!-- Controles de usuario -->
       <div class="nav-controls desktop-nav">
+        <RouterLink class="btn live-btn" to="/live">+ Ver en Vivo</RouterLink>
         <RouterLink v-if="!isLoggedIn" class="btn access-btn" to="/login">Acceder</RouterLink>
         <RouterLink v-if="isLoggedIn && isAdmin" class="btn admin-btn" to="/admin/products">⚙️ Panel Admin</RouterLink>
         <RouterLink v-if="isLoggedIn" @click="logout" class="btn logout-btn" to="/">Cerrar sesión</RouterLink>
@@ -47,10 +43,11 @@
       <div class="mobile-menu" :class="{ 'active': isMobileMenuOpen }">
         <div class="mobile-menu-content">
           <div class="mobile-nav-links">
-            <RouterLink to="/calendar" class="mobile-link" :class="{ active: isCurrentRoute('/calendar') }"
-              @click="closeMobileMenu">📅 Calendario</RouterLink>
-            <RouterLink to="/games" class="mobile-link" :class="{ active: isCurrentRoute('/games') }"
-              @click="closeMobileMenu">🎮 Juegos</RouterLink>
+            <RouterLink to="/" class="mobile-link" :class="{ active: isCurrentRoute('/') }" @click="closeMobileMenu">Inicio</RouterLink>
+            <RouterLink to="/about" class="mobile-link" :class="{ active: isCurrentRoute('/about') }" @click="closeMobileMenu">Nosotros</RouterLink>
+            <RouterLink to="/events" class="mobile-link" :class="{ active: isCurrentRoute('/events') }" @click="closeMobileMenu">Eventos</RouterLink>
+                  <a href="#contact" class="mobile-link" :class="{ active: isContactVisible }" @click.prevent="scrollToContact">Conectar</a>
+
           </div>
 
           <div class="mobile-controls">
@@ -74,21 +71,18 @@
   </header>
 
   <RouterView />
-
-  <!-- Botones flotantes de redes sociales -->
-  <SocialFloating />
 </template>
 
 <script setup lang="ts">
 import { RouterLink, RouterView, useRoute } from 'vue-router';
 import { authService } from '@/services/api';
-import { onMounted, ref, watch, computed } from 'vue';
+import { onMounted, ref, watch, computed, onUnmounted } from 'vue';
 import router from './router';
-import SocialFloating from '@/components/SocialFloating.vue';
 
 const isLoggedIn = ref(false);
 const username = ref('');
 const isMobileMenuOpen = ref(false);
+const isAtTop = ref(true);
 
 // Router hooks
 const currentRoute = useRoute();
@@ -121,16 +115,38 @@ const closeMobileMenu = () => {
   }
 }; */
 
-// Función para hacer scroll a la sección de contacto
-/* const scrollToContact = () => {
-  const contactSection = document.querySelector('.contact-section');
-  if (contactSection) {
-    contactSection.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
-    });
+// Función y observador para la sección de contacto
+const isContactVisible = ref(false);
+let contactObserver: IntersectionObserver | null = null;
+
+const observeContact = () => {
+  const el = document.querySelector('.contact-section') as HTMLElement | null;
+  if (!el) return;
+  if (contactObserver) contactObserver.disconnect();
+  contactObserver = new IntersectionObserver((entries) => {
+    isContactVisible.value = entries.some(e => e.isIntersecting);
+  }, { threshold: 0.3 });
+  contactObserver.observe(el);
+};
+
+const scrollToContact = async () => {
+  closeMobileMenu();
+  const scrollNow = () => {
+    const el = document.querySelector('.contact-section') as HTMLElement | null;
+    if (el) {
+      (el as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      console.warn('Contact section not found');
+    }
+  };
+  if (currentRoute.path !== '/') {
+    await router.push('/');
+    // wait a bit for DOM to render
+    setTimeout(() => { observeContact(); scrollNow(); }, 120);
+  } else {
+    scrollNow();
   }
-}; */
+};
 
 const checkAuthStatus = () => {
   isLoggedIn.value = authService.isAuthenticated();
@@ -157,6 +173,22 @@ const handleMobileLogout = () => {
 
 onMounted(() => {
   checkAuthStatus();
+  // header transparency on scroll
+  const handleScroll = () => {
+    isAtTop.value = window.scrollY <= 10;
+  };
+  handleScroll();
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  // expose for cleanup in onUnmounted
+  ;(window as any).__app_handleHeaderScroll = handleScroll;
+  // observe contact section visibility
+  observeContact();
+});
+
+onUnmounted(() => {
+  const fn = (window as any).__app_handleHeaderScroll;
+  if (fn) window.removeEventListener('scroll', fn);
+  if (contactObserver) { contactObserver.disconnect(); contactObserver = null; }
 });
 
 const route = useRoute();
@@ -182,6 +214,14 @@ watch(route, () => {
   box-shadow: 0 2px 24px rgba(34, 211, 238, 0.15), 0 1px 3px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(34, 211, 238, 0.2);
+  transition: background 0.28s ease, box-shadow 0.28s ease, border-bottom 0.28s ease, backdrop-filter 0.28s ease, padding 0.28s ease;
+}
+
+.navbar.transparent {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-bottom: none !important;
+  backdrop-filter: none !important;
 }
 
 /* Logo y marca */
@@ -198,10 +238,26 @@ watch(route, () => {
   height: 50px;
 }
 
+.site-logo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  border: 2px solid rgba(255,255,255,0.18);
+  box-shadow: 0 6px 20px rgba(255,255,255,0.06), 0 0 20px rgba(255,255,255,0.04);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.site-logo:hover {
+  transform: scale(1.06);
+  box-shadow: 0 10px 30px rgba(255,255,255,0.12), 0 0 30px rgba(255,255,255,0.06);
+}
+
 .logo-circle {
   width: 50px;
   height: 50px;
-  background: linear-gradient(135deg, var(--primary-red) 0%, #0891b2 100%);
+  background: linear-gradient(135deg, var(--primary-red) 0%, #ffffff 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -209,9 +265,9 @@ watch(route, () => {
   position: relative;
   overflow: hidden;
   border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 6px 20px rgba(34, 211, 238, 0.5),
-    0 0 30px rgba(34, 211, 238, 0.3),
-    inset 0 2px 8px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 20px rgb(255, 255, 255),
+    0 0 30px rgb(255, 255, 255),
+    inset 0 2px 8px rgb(255, 255, 255);
   animation: logoFloat 4s ease-in-out infinite;
   transition: all 0.3s ease;
 }
@@ -229,7 +285,7 @@ watch(route, () => {
   content: '';
   position: absolute;
   inset: 3px;
-  background: linear-gradient(135deg, rgba(34, 211, 238, 0.8) 0%, rgba(8, 145, 178, 0.9) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(0, 0, 0, 0.9) 100%);
   border-radius: 50%;
   z-index: 1;
 }
@@ -262,12 +318,7 @@ watch(route, () => {
   transition: opacity 0.3s ease;
 }
 
-.creative-logo:hover .logo-circle {
-  transform: scale(1.08);
-  box-shadow: 0 8px 24px rgba(34, 211, 238, 0.6),
-    0 0 40px rgba(34, 211, 238, 0.4),
-    inset 0 2px 12px rgba(255, 255, 255, 0.3);
-}
+
 
 .creative-logo:hover .logo-glow {
   opacity: 1;
@@ -288,7 +339,7 @@ watch(route, () => {
 
 
 .brand-info {
-  display: flex;
+  color: var(--white);
   flex-direction: column;
   align-items: flex-start;
   gap: 2px;
@@ -307,8 +358,8 @@ watch(route, () => {
   background: linear-gradient(135deg, var(--white) 0%, var(--primary-red) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: 0 2px 8px rgba(34, 211, 238, 0.3);
+  background: transparent;
+  transition: width 0.28s ease, background 0.18s ease;
   filter: drop-shadow(0 2px 8px rgba(34, 211, 238, 0.3));
 }
 
@@ -333,12 +384,17 @@ watch(route, () => {
   display: flex;
   align-items: center;
   gap: 30px;
-  margin-left: auto;
-  margin-right: 30px;
+}
+
+.nav-menu.desktop-nav {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .nav-link {
-  color: rgba(255, 255, 255, 0.85);
+  color: rgb(255, 255, 255);
   text-decoration: none;
   font-weight: 600;
   font-size: 15px;
@@ -363,33 +419,42 @@ watch(route, () => {
 
 .nav-link:hover {
   color: var(--white);
-  background-color: rgba(34, 211, 238, 0.1);
+  background-color: rgba(255, 255, 255, 0.06);
   transform: translateY(-2px);
 }
 
 .nav-link:hover::after {
   width: 70%;
+  background: var(--white);
 }
 
-.nav-link.active {
-  color: var(--primary-red);
-  background: rgba(34, 211, 238, 0.15);
-}
 
-.nav-link.active::after {
-  width: 70%;
-}
 
 .share-btn {
-  background: linear-gradient(135deg, #22d3ee 0%, #0891b2 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
   color: #ffffff !important;
   font-weight: 600;
-  box-shadow: 0 2px 10px rgba(34, 211, 238, 0.3);
+  box-shadow: 0 2px 10px rgba(34, 54, 238, 0.3);
+}
+
+/* Botón de ver en vivo (encabezado) */
+.live-btn {
+  background: rgba(207, 207, 207, 0.527);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: 800;
+}
+
+.live-btn:hover {
+  background: rgba(173, 30, 30, 0.808);
+  transform: translateY(-2px);
 }
 
 .share-btn:hover {
-  background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
-  box-shadow: 0 4px 15px rgba(34, 211, 238, 0.5);
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.5);
   transform: translateY(-2px);
 }
 
@@ -415,17 +480,15 @@ watch(route, () => {
 }
 
 .access-btn {
-  background: linear-gradient(135deg, var(--primary-red) 0%, var(--dark-red) 100%);
+  background: #22265D;
   color: #ffffff;
-  box-shadow: 0 4px 16px rgba(34, 211, 238, 0.35);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .access-btn:hover {
-  background: linear-gradient(135deg, var(--dark-red) 0%, var(--tertiary-red) 100%);
-  box-shadow: 0 6px 24px rgba(34, 211, 238, 0.5);
+  background: #22265D;
   transform: translateY(-3px);
 }
 
@@ -694,26 +757,16 @@ watch(route, () => {
   text-decoration: none !important;
 }
 
+/* (WhatsApp FAB removed) */
+
 /* Estilos para enlaces activos */
 .nav-link.active,
 .mobile-link.active {
-  color: #0071e3;
   font-weight: 600;
   position: relative;
 }
 
-.nav-link.active::after,
-.mobile-link.active::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: #0071e3;
-  border-radius: 2px;
-  animation: fadeIn 0.3s ease-in-out;
-}
+
 
 @keyframes fadeIn {
   from {

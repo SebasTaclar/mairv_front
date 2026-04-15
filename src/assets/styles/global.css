@@ -22,8 +22,17 @@
   --brand-accent-gradient: linear-gradient(135deg, var(--brand-accent) 0%, var(--brand-accent-alt) 100%);
   --brand-danger: #ef4444;
   --brand-success: #10b981;
-  --brand-warning: #f59e0b;
+  --brand-warning: #FFC107; /* user requested amber */
   --brand-info: #DC2626;
+
+  /* Azul y grises personalizados (valores solicitados por el usuario) */
+  --brand-blue: #22265D; /* azul principal solicitado */
+  --brand-dark: #333333; /* gris oscuro solicitado */
+
+  /* Mapas de uso para compatibilidad con variables existentes */
+  --primary-blue: var(--brand-blue);
+  --secondary-blue: #60a5fa; /* fallback / accents */
+  --dark-blue: #1b244a;
 
   /* Colores adicionales */
   --light-gray: #f5f5f5;
@@ -32,7 +41,7 @@
 
   /* Colores de estado */
   --success: #4caf50;
-  --warning: #ff9800;
+  --warning: #FFC107; /* actualizar para coincidir con el ámbar */
   --danger: #DC2626;
   --info: var(--secondary-red);
 
@@ -62,15 +71,17 @@
   /* Variables centralizadas para tema claro */
   --app-bg-primary: var(--white);
   --app-bg-secondary: var(--light-gray);
-  --app-text-primary: var(--black);
+  --app-text-primary: var(--brand-dark); /* usar #333333 pedido por el usuario */
   --app-text-secondary: var(--dark-gray);
   --app-border-color: #e0e0e0;
   --app-hover-bg: rgba(220, 38, 38, 0.05);
   --app-input-bg: var(--white);
   --app-table-header-bg: var(--light-gray);
+    /* Gray principal solicitado por el usuario */
+    --brand-gray: #EBEBEB;
   --app-shadow: var(--shadow-light);
 
-  /* Variables adicionales para consistencia */
+    --light-gray: var(--brand-gray);
   --app-text-on-surface: var(--black);
   --app-text-muted: var(--medium-gray);
   --app-surface-elevated: var(--white);
@@ -79,16 +90,51 @@
 
   /* Variables específicas para componentes */
   --app-surface: var(--white);
-  --app-border: #e0e0e0;
+  --app-border: var(--brand-gray);
   --app-primary: var(--primary-red);
   --app-primary-dark: var(--dark-red);
   --app-primary-light: var(--secondary-red);
   --app-accent: #DC2626;
   --app-success: #4caf50;
-  --app-warning: #ff9800;
+  --app-warning: var(--brand-warning);
   --app-error: #DC2626;
   --app-info: #DC2626;
+  /* Tipografías principales del proyecto */
+  --font-sans: 'Outfit', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --font-serif: 'BioRhyme', Georgia, 'Times New Roman', serif;
+  --font-display: 'Playfair Display', 'BioRhyme', Georgia, serif;
+  --font-script: 'Great Vibes', cursive;
 }
+
+/* Placeholders / guía para fuentes custom
+   - Si tienes archivos .woff2/.woff para 'Beastly', 'Ohno Blaze', 'Lust', etc,
+     colócalos en `public/fonts/` y descomenta los @font-face siguientes.
+   - Luego cambia la variable `--font-display` a 'Beastly' o la fuente que prefieras.
+*/
+
+@font-face {
+  /* Ejemplo: Beastly (reemplaza los nombres de archivo con los tuyos) */
+  font-family: 'Beastly';
+  src: url('/fonts/Beastly.woff2') format('woff2'),
+       url('/fonts/Beastly.woff') format('woff');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  /* Ejemplo: Zaphino (script) */
+  font-family: 'Zaphino';
+  src: url('/fonts/Zaphino.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Uso: una vez disponibles los archivos, actualiza:
+   --font-display: 'Beastly', 'Playfair Display', serif;
+   --font-script: 'Zaphino', cursive;
+ */
 
 /* Modo Oscuro */
 :root[data-theme='dark'] {
@@ -108,7 +154,7 @@
   --app-surface-elevated: #1e1e1e;
   --app-border-light: rgba(255, 255, 255, 0.12);
   --app-accent-text: var(--secondary-blue);
-
+    --app-border-color: var(--brand-gray);
   /* Variables específicas para componentes */
   --app-surface: #1e1e1e;
   --app-border: rgba(255, 255, 255, 0.12);
@@ -118,7 +164,7 @@
   --app-accent: #ff5722;
   --app-success: #4caf50;
   --app-warning: #ff9800;
-  --app-error: #f44336;
+    --app-border-light: var(--brand-gray);
   --app-info: #2196f3;
 
   /* Ajustes de marca en modo oscuro (acentos un poco más vibrantes) */
@@ -141,11 +187,22 @@
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--font-sans);
   background-color: var(--app-bg-primary);
   color: var(--app-text-primary);
   line-height: 1.6;
   transition: background-color var(--transition-normal), color var(--transition-normal);
+}
+
+/* Reglas globales de tipografía */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  color: var(--app-text-primary);
+  font-weight: 700;
+}
+
+p, li, a, span, input, button {
+  font-family: var(--font-sans);
 }
 
 /* Clases utilitarias globales para todos los componentes */
