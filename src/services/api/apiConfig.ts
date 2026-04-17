@@ -1,8 +1,8 @@
 // Configuración base para la API
 export const API_CONFIG = {
-  baseURL: false
+  baseURL: import.meta.env.DEV
     ? 'http://localhost:7071/api/v1'
-    : '',
+    : 'https://bxa2a8b4ena3bsh6.centralus-01.azurewebsites.net/api/v1',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -45,7 +45,6 @@ export class ApiClient {
 
     // Obtener token del localStorage si existe
     const token = localStorage.getItem('authToken')
-    console.log('🔑 [apiClient] Token presente:', token ? '✅ Sí' : '❌ No', token ? `(${token.substring(0, 20)}...)` : '')
 
     // Preparar headers
     let headers = { ...this.defaultHeaders }
