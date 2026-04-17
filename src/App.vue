@@ -15,15 +15,31 @@
       <!-- Navegación principal (centrada) -->
       <div class="nav-menu desktop-nav">
         <RouterLink to="/" class="nav-link" :class="{ active: isCurrentRoute('/') }" @click="closeMobileMenu">Inicio</RouterLink>
-        <RouterLink to="/about" class="nav-link" :class="{ active: isCurrentRoute('/about') }" @click="closeMobileMenu">Nosotros</RouterLink>
-        <RouterLink to="/events" class="nav-link" :class="{ active: isCurrentRoute('/events') }" @click="closeMobileMenu">Eventos</RouterLink>
-        <RouterLink to="/messages" class="nav-link" :class="{ active: isCurrentRoute('/messages') }" @click="closeMobileMenu">Mensajes</RouterLink>
+        <div class="nav-item dropdown" @mouseenter="isNosotrosOpen = true" @mouseleave="isNosotrosOpen = false">
+          <a class="nav-link dropdown-toggle" href="#" @click.prevent="toggleNosotros">Nosotros</a>
+          <div class="dropdown-menu" :class="{ open: isNosotrosOpen }">
+            <RouterLink :to="{ path: '/about', hash: '#pst' }" class="dropdown-item" @click="closeMobileMenu">Pst</RouterLink>
+            <RouterLink :to="{ path: '/about', hash: '#historia' }" class="dropdown-item" @click="closeMobileMenu">Mistoria</RouterLink>
+            <RouterLink :to="{ path: '/about', hash: '#mision' }" class="dropdown-item" @click="closeMobileMenu">Misión / Visión</RouterLink>
+          </div>
+        </div>
+        <RouterLink to="/events" class="nav-link" :class="{ active: isCurrentRoute('/events') }" @click="closeMobileMenu">Ministerios</RouterLink>
               <a href="#contact" class="nav-link" :class="{ active: isContactVisible }" @click.prevent="scrollToContact">Conectar</a>
       </div>
 
       <!-- Controles de usuario -->
       <div class="nav-controls desktop-nav">
-        <RouterLink class="btn live-btn" to="/live">+ Ver en Vivo</RouterLink>
+        <form class="header-search" @submit.prevent="handleSearch" role="search">
+          <div class="search-input-wrapper header">
+            <svg class="header-search-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path fill="currentColor"
+                d="M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16zm8.707 17.293-4.387-4.387a9 9 0 1 0-1.414 1.414l4.387 4.387a1 1 0 0 0 1.414-1.414z" />
+            </svg>
+
+            <input class="header-search-input" type="search" v-model="searchTerm" placeholder="Buscar..." aria-label="Buscar" />
+          </div>
+        </form>
+
         <RouterLink v-if="!isLoggedIn" class="btn access-btn" to="/login">Acceder</RouterLink>
         <RouterLink v-if="isLoggedIn && isAdmin" class="btn admin-btn" to="/admin/products">⚙️ Panel Admin</RouterLink>
         <RouterLink v-if="isLoggedIn" @click="logout" class="btn logout-btn" to="/">Cerrar sesión</RouterLink>
@@ -42,10 +58,27 @@
       <!-- Menu mobile desplegable -->
       <div class="mobile-menu" :class="{ 'active': isMobileMenuOpen }">
         <div class="mobile-menu-content">
+          <form class="mobile-search" @submit.prevent="handleSearch" role="search">
+            <div class="search-input-wrapper mobile">
+              <svg class="header-search-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path fill="currentColor"
+                  d="M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16zm8.707 17.293-4.387-4.387a9 9 0 1 0-1.414 1.414l4.387 4.387a1 1 0 0 0 1.414-1.414z" />
+              </svg>
+
+              <input class="header-search-input mobile" type="search" v-model="searchTerm" placeholder="Buscar..." aria-label="Buscar" />
+            </div>
+          </form>
           <div class="mobile-nav-links">
             <RouterLink to="/" class="mobile-link" :class="{ active: isCurrentRoute('/') }" @click="closeMobileMenu">Inicio</RouterLink>
-            <RouterLink to="/about" class="mobile-link" :class="{ active: isCurrentRoute('/about') }" @click="closeMobileMenu">Nosotros</RouterLink>
-            <RouterLink to="/events" class="mobile-link" :class="{ active: isCurrentRoute('/events') }" @click="closeMobileMenu">Eventos</RouterLink>
+            <button class="mobile-link mobile-nosotros-toggle" @click="isNosotrosOpen = !isNosotrosOpen">
+              Nosotros <span class="mobile-nosotros-chevron" :class="{ open: isNosotrosOpen }">▾</span>
+            </button>
+            <div v-if="isNosotrosOpen" class="mobile-nosotros-items">
+              <RouterLink :to="{ path: '/about', hash: '#pst' }" class="mobile-link mobile-sub" @click="closeMobileMenu">Pst</RouterLink>
+              <RouterLink :to="{ path: '/about', hash: '#historia' }" class="mobile-link mobile-sub" @click="closeMobileMenu">Mistoria</RouterLink>
+              <RouterLink :to="{ path: '/about', hash: '#mision' }" class="mobile-link mobile-sub" @click="closeMobileMenu">Misión / Visión</RouterLink>
+            </div>
+            <RouterLink to="/events" class="mobile-link" :class="{ active: isCurrentRoute('/events') }" @click="closeMobileMenu">Ministerios</RouterLink>
                   <a href="#contact" class="mobile-link" :class="{ active: isContactVisible }" @click.prevent="scrollToContact">Conectar</a>
 
           </div>
@@ -83,6 +116,7 @@ const isLoggedIn = ref(false);
 const username = ref('');
 const isMobileMenuOpen = ref(false);
 const isAtTop = ref(true);
+const isNosotrosOpen = ref(false);
 
 // Router hooks
 const currentRoute = useRoute();
@@ -102,6 +136,12 @@ const toggleMobileMenu = () => {
 
 const closeMobileMenu = () => {
   isMobileMenuOpen.value = false;
+  isNosotrosOpen.value = false;
+};
+
+const toggleNosotros = (e?: Event) => {
+  if (e && e.preventDefault) e.preventDefault();
+  isNosotrosOpen.value = !isNosotrosOpen.value;
 };
 
 // Función para hacer scroll a la sección de productos
@@ -171,6 +211,73 @@ const handleMobileLogout = () => {
   logout();
 };
 
+const searchTerm = ref('');
+
+/**
+ * Buscar en la página actual: encuentra el primer elemento con texto coincidente,
+ * hace scroll y aplica un resaltado temporal.
+ */
+function performInPageSearch(term: string) {
+  if (!term) return
+  const q = term.trim().toLowerCase()
+  if (!q) return
+
+  // Selectores que contienen contenido legible en la página
+  const selectors = 'h1,h2,h3,h4,h5,p,li,span,a,button,td,th,figcaption'
+  const els = Array.from(document.querySelectorAll(selectors)) as HTMLElement[]
+  let found: HTMLElement | null = null
+  for (const el of els) {
+    const text = (el.textContent || '').trim().toLowerCase()
+    if (text && text.includes(q)) { found = el; break }
+  }
+
+  // Intento secundario: buscar coincidencias en atributos alt/title
+  if (!found) {
+    const attrEls = Array.from(document.querySelectorAll('[alt],[title]')) as HTMLElement[]
+    for (const el of attrEls) {
+      const alt = (el.getAttribute('alt') || '') + ' ' + (el.getAttribute('title') || '')
+      if (alt.toLowerCase().includes(q)) { found = el; break }
+    }
+  }
+
+  if (found) {
+    try {
+      found.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    } catch (e) {}
+    const prevBg = found.style.backgroundColor
+    const prevOutline = found.style.outline
+    found.style.transition = 'background-color 0.35s ease, outline 0.35s ease'
+    found.style.backgroundColor = 'rgba(250,204,21,0.22)'
+    found.style.outline = '3px solid rgba(250,204,21,0.22)'
+    setTimeout(() => {
+      found && (found.style.backgroundColor = prevBg || '')
+      found && (found.style.outline = prevOutline || '')
+    }, 3000)
+  }
+}
+
+const handleSearch = async (e?: Event) => {
+  if (e) e.preventDefault()
+  const term = searchTerm.value.trim()
+  if (!term) return
+
+  // Emit evento global para que componentes puedan reaccionar
+  window.dispatchEvent(new CustomEvent('global-search', { detail: { term } }))
+
+  // Si no estamos en la home, navegar y luego ejecutar búsqueda en la página destino
+  if (route.path !== '/') {
+    await router.push({ path: '/', query: { q: term } })
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('global-search', { detail: { term } }))
+      performInPageSearch(term)
+    }, 250)
+  } else {
+    // Reemplazar query para el home y ejecutar búsqueda inmediatamente con pequeña demora
+    router.replace({ path: '/', query: { q: term } })
+    setTimeout(() => performInPageSearch(term), 180)
+  }
+}
+
 onMounted(() => {
   checkAuthStatus();
   // header transparency on scroll
@@ -239,8 +346,8 @@ watch(route, () => {
 }
 
 .site-logo {
-  width: 50px;
-  height: 50px;
+  width: 63px;
+  height: 63px;
   border-radius: 50%;
   object-fit: cover;
   display: block;
@@ -397,7 +504,7 @@ watch(route, () => {
   color: rgb(255, 255, 255);
   text-decoration: none;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 17px;
   padding: 10px 18px;
   border-radius: 12px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -584,7 +691,7 @@ watch(route, () => {
 .mobile-menu {
   display: none;
   position: fixed;
-  top: 70px;
+  top: 60px;
   left: 0;
   width: 100%;
   height: calc(100vh - 70px);
@@ -654,7 +761,7 @@ watch(route, () => {
 }
 
 .mobile-btn.access-btn {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: #22265D;
   color: #ffffff;
   box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
 }
@@ -736,6 +843,11 @@ watch(route, () => {
     gap: 10px;
   }
 
+  .site-logo{
+    width: 44px;
+    height: 44px ;
+  }
+
   .brand-title {
     font-size: 16px;
   }
@@ -783,4 +895,88 @@ watch(route, () => {
 .link-navbar:hover {
   text-decoration: none !important;
 }
+
+/* Header y mobile search */
+.header-search {
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.header-search .search-input-wrapper.header {
+  position: relative;
+  width: 220px;
+}
+
+.header-search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ffffff;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.header-search-input {
+  width: 100%;
+  padding: 8px 12px 8px 34px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.39);
+  color: var(--white);
+  font-size: 14px;
+}
+
+.header-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.986);
+}
+
+.header-search-input:focus {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.18);
+  box-shadow: 0 0 0 6px rgba(34,211,238,0.06);
+}
+
+.mobile-search { display: none; margin-bottom: 10px; }
+.mobile-search .search-input-wrapper.mobile { position: relative; width: 100%; }
+.mobile-search .header-search-input.mobile { padding: 10px 14px 10px 36px; border-radius: 10px; background: rgba(255,255,255,0.04); color: var(--white); border: 1px solid rgba(255,255,255,0.06); }
+
+@media (max-width: 768px) {
+  .header-search { display: none; }
+  .header-search .search-input-wrapper.header { width: 140px; }
+  .header-search-input { font-size: 13px; padding: 7px 10px 7px 32px; }
+  .mobile-search { display: block; }
+}
+
+/* Dropdown 'Nosotros' styles */
+.nav-item.dropdown { position: relative; }
+.dropdown-toggle { cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 180px;
+  background: rgba(8,8,8,0.95);
+  border-radius: 8px;
+  padding: 6px 0;
+  display: none;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+  z-index: 1002;
+}
+.nav-item.dropdown:hover .dropdown-menu,
+.dropdown-menu.open { display: block; }
+.dropdown-item {
+  display: block;
+  padding: 8px 14px;
+  color: var(--white);
+  text-decoration: none;
+  font-weight: 700;
+}
+.dropdown-item:hover { background: rgba(255,255,255,0.03); }
+
+/* Mobile 'Nosotros' submenu */
+.mobile-nosotros-items .mobile-sub { padding-left: 18px; }
+.mobile-nosotros-toggle { display: flex; justify-content: space-between; align-items: center; }
+.mobile-nosotros-chevron { transition: transform 0.2s ease; }
+.mobile-nosotros-chevron.open { transform: rotate(180deg); }
 </style>

@@ -231,12 +231,12 @@ const formatEventDate = (date: Date) => {
 }
 
 .calendar-grid {
- background: rgba(255, 255, 255, 0.05);
- border: 1px solid rgba(34, 211, 238, 0.3);
- border-radius: 20px;
- padding: 30px;
- backdrop-filter: blur(20px);
- animation: slideInLeft 0.6s ease;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(var(--brand-blue-rgb), 0.3);
+  border-radius: 20px;
+  padding: 30px;
+  backdrop-filter: blur(20px);
+  animation: slideInLeft 0.6s ease;
 }
 
 .month-selector {
@@ -248,29 +248,29 @@ const formatEventDate = (date: Date) => {
 }
 
 .month-selector h2 {
- font-size: 24px;
- color: #22d3ee;
- margin: 0;
- flex: 1;
- text-align: center;
+  font-size: 24px;
+  color: var(--brand-blue);
+  margin: 0;
+  flex: 1;
+  text-align: center;
 }
 
 .nav-btn {
- width: 40px;
- height: 40px;
- border-radius: 10px;
- border: none;
- background: linear-gradient(135deg, #22d3ee 0%, #0891b2 100%);
- color: white;
- font-size: 18px;
- cursor: pointer;
- transition: all 0.3s ease;
- font-weight: bold;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  background: var(--primary-gradient);
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
 }
 
 .nav-btn:hover {
- transform: scale(1.1);
- box-shadow: 0 4px 15px rgba(34, 211, 238, 0.4);
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px var(--primary-color-alpha-40);
 }
 
 .weekdays {
@@ -281,39 +281,31 @@ const formatEventDate = (date: Date) => {
 }
 
 .weekday {
- text-align: center;
- color: #22d3ee;
- font-weight: 600;
- font-size: 14px;
- padding: 10px 0;
+  text-align: center;
+  color: var(--brand-blue);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 0;
 }
-
-.days {
- display: grid;
- grid-template-columns: repeat(7, 1fr);
- gap: 10px;
-}
-
 .day {
- aspect-ratio: 1;
- display: flex;
- flex-direction: column;
- align-items: center;
- justify-content: center;
- border: 2px solid rgba(34, 211, 238, 0.2);
- border-radius: 12px;
- cursor: pointer;
- transition: all 0.3s ease;
- background: rgba(255, 255, 255, 0.02);
- color: rgba(255, 255, 255, 0.7);
- position: relative;
- font-weight: 600;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(var(--brand-blue-rgb), 0.2);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(255, 255, 255, 0.7);
+  position: relative;
+  font-weight: 600;
 }
-
 .day:hover {
- background: rgba(34, 211, 238, 0.1);
- border-color: rgba(34, 211, 238, 0.5);
- color: #22d3ee;
+  background: rgba(var(--brand-blue-rgb), 0.1);
+  border-color: rgba(var(--brand-blue-rgb), 0.5);
+  color: var(--brand-blue);
 }
 
 .day.other-month {
@@ -322,10 +314,10 @@ const formatEventDate = (date: Date) => {
 }
 
 .day.today {
- background: linear-gradient(135deg, #22d3ee 0%, #0891b2 100%);
- border-color: #22d3ee;
- color: #000000;
- font-weight: 700;
+  background: var(--primary-gradient);
+  border-color: var(--brand-blue);
+  color: #000000;
+  font-weight: 700;
 }
 
 .day.has-event .event-indicator {
@@ -340,19 +332,19 @@ const formatEventDate = (date: Date) => {
 }
 
 .events-section {
- background: rgba(255, 255, 255, 0.05);
- border: 1px solid rgba(34, 211, 238, 0.3);
- border-radius: 20px;
- padding: 30px;
- backdrop-filter: blur(20px);
- animation: slideInRight 0.6s ease;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(var(--brand-blue-rgb), 0.3);
+  border-radius: 20px;
+  padding: 30px;
+  backdrop-filter: blur(20px);
+  animation: slideInRight 0.6s ease;
 }
 
 .events-section h3 {
- font-size: 22px;
- color: #22d3ee;
- margin-top: 0;
- margin-bottom: 20px;
+  font-size: 22px;
+  color: var(--brand-blue);
+  margin-top: 0;
+  margin-bottom: 20px;
 }
 
 .events-list {
@@ -364,17 +356,17 @@ const formatEventDate = (date: Date) => {
 }
 
 .event-card {
- background: linear-gradient(135deg, rgba(34, 211, 238, 0.1) 0%, rgba(8, 145, 178, 0.05) 100%);
- border: 1px solid rgba(34, 211, 238, 0.3);
- border-radius: 12px;
- padding: 15px;
- transition: all 0.3s ease;
+  background: linear-gradient(135deg, rgba(var(--brand-blue-rgb), 0.1) 0%, rgba(var(--brand-blue-rgb), 0.03) 100%);
+  border: 1px solid rgba(var(--brand-blue-rgb), 0.3);
+  border-radius: 12px;
+  padding: 15px;
+  transition: all 0.3s ease;
 }
 
 .event-card:hover {
- transform: translateX(5px);
- border-color: rgba(34, 211, 238, 0.6);
- background: linear-gradient(135deg, rgba(34, 211, 238, 0.15) 0%, rgba(8, 145, 178, 0.1) 100%);
+  transform: translateX(5px);
+  border-color: rgba(var(--brand-blue-rgb), 0.6);
+  background: linear-gradient(135deg, rgba(var(--brand-blue-rgb), 0.15) 0%, rgba(var(--brand-blue-rgb), 0.06) 100%);
 }
 
 .event-date {

@@ -5,9 +5,16 @@
     <section class="section">
       <MainBanner @showRules="openRulesModal" />
     </section>
+
     <section class="section">
-      <ContactSection />
+      <HelpSection />
     </section>
+
+    <section class="section">
+      <StoriesSection />
+    </section>
+
+    <!-- ContactSection removed per request -->
 
     <section class="section">
       <EventCard />
@@ -17,9 +24,7 @@
       <MessageCard/>
     </section>
 
-    <section class="section">
-      <LiveNowStrip />
-    </section>
+    <!-- LiveNowStrip removed per request -->
 
 
     <section class="section offset">
@@ -39,14 +44,12 @@
 <script setup lang="ts">
 import { ref, defineAsyncComponent } from 'vue'
 import MainBanner from '@/components/MainBanner.vue';
-import LiveNowStrip from '@/components/LiveNowStrip.vue';
-import EventCard from '@/components/EventCard.vue';
-import MessageCard from '@/components/MessageCard.vue';
+import HelpSection from '@/components/HelpSection.vue';
+import StoriesSection from '@/components/StoriesSection.vue';
+// import EventCard from '@/components/EventCard.vue';
+// import MessageCard from '@/components/MessageCard.vue';
 
 // Carga diferida (code splitting) de secciones pesadas
-const ProductShowcase = defineAsyncComponent(() => import('@/components/ProductShowcase.vue'))
-const ProductStore = defineAsyncComponent(() => import('@/components/ProductStore.vue'))
-const ContactSection = defineAsyncComponent(() => import('@/components/ContactSection.vue'))
 const Footer_ = defineAsyncComponent(() => import('@/components/Footer_.vue'))
 
 // Estado del modal de reglas

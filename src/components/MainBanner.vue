@@ -15,12 +15,9 @@
 
     <!-- Hero content centrado (título + CTAs) -->
     <div class="hero-content">
-      <h1 class="hero-title">Un lugar para<br/>nuevos comienzos</h1>
+      <h3 class="banner-topline">MAI RESTAURANDO VIDAS</h3>
+      <h1 class="hero-title hero-title--handwritten">UN LUGAR DONDE LA VERDAD CAMBIARÁ TU REALIDAD</h1>
       <!-- <p class="hero-subtitle">Acompáñanos en comunidad, en línea y en persona.</p> -->
-      <div class="hero-ctas">
-        <button class="btn-visit" @click="visit">Visítanos</button>
-        <button class="btn-live" @click="viewLive">Ver en Línea</button>
-      </div>
     </div>
 
     <!-- Navegación -->
@@ -281,7 +278,7 @@ defineExpose({
   height: 100%;
   object-fit: cover;
   object-position: center top;
-  opacity: 0.7;
+  opacity: 0.5; /* imagen ligeramente traslúcida */
 }
 
 /* Overlay con acento rojo SOYDANI */
@@ -439,7 +436,7 @@ defineExpose({
   text-align: center;
   color: #fff;
   padding: 0 20px;
-  max-width: 980px;
+  width: 100%;
 }
 
 .hero-title {
@@ -449,6 +446,27 @@ defineExpose({
   margin: 0 0 1rem 0;
   text-shadow: 0 8px 30px rgba(0,0,0,0.6);
   color: #ffffff;
+}
+
+/* Banner specific styles to match provided design */
+.banner-topline {
+  font-size: 1.95rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.952);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 0.6rem;
+  opacity: 0.95;
+}
+
+.hero-title--handwritten {
+  font-size: clamp(3rem, 8vw, 6rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  text-shadow: 0 6px 30px rgba(0,0,0,0.7);
+  margin: 0;
 }
 
 .hero-subtitle {
@@ -550,6 +568,50 @@ defineExpose({
   }  .carousel-navigation {
     bottom: 1rem;
   }
+@media (max-width: 768px) {
+  .hero-carousel {
+    margin-top: 0 !important;
+    height: 72vh !important;
+    min-height: 520px !important;
+  }
+  .carousel-slide img {
+    object-position: center center !important;
+  }
+  .hero-content {
+    top: 48% !important;
+    transform: translate(-50%, -48%) !important;
+    padding: 0 14px !important;
+    max-width: 92%;
+  }
+  .hero-title--handwritten {
+    font-size: clamp(2rem, 6.5vw, 3.2rem) !important;
+    line-height: 1.02 !important;
+  }
+  .carousel-navigation { bottom: 0.9rem !important; }
+  .nav-dots { gap: 0.6rem !important; }
+}
+
+@media (max-width: 480px) {
+  .hero-carousel {
+    margin-top: 0 !important;
+    height: 70vh !important;
+    min-height: 620px !important;
+  }
+  .hero-content {
+    top: 46% !important;
+    transform: translate(-50%, -46%) !important;
+    padding: 0 12px !important;
+  }
+  .hero-title--handwritten {
+    font-size: clamp(1.6rem, 8.5vw, 2.6rem) !important;
+    line-height: 1.02 !important;
+  }
+  .carousel-slide img { object-position: center center !important; }
+  .carousel-navigation { bottom: 0.6rem !important; }
+  .nav-arrows { display: none !important; }
+}
+
+
 
   .nav-dots {
     gap: 0.8rem;

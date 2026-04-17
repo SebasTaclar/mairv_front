@@ -1,47 +1,59 @@
 <template>
   <footer class="modern-footer footer-cosmic">
-    <div class="footer-main">
-      <!-- Izquierda: dirección -->
-      <div class="footer-left">
-        <div class="address">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" />
-          </svg>
-          <span>Cra 20a # 99-10, Bogotá, Colombia</span>
+    <div class="footer-top">
+      <div class="footer-main">
+        <!-- Izquierda: dirección y horarios -->
+        <div class="footer-left">
+          <div class="address-block">
+            <div class="label">Dirección</div>
+            <div class="meta-row">
+              <svg class="info-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" fill="currentColor"/>
+              </svg>
+              <div class="address-text">Cra 20a # 99 - 10 <br>Bogotá, Colombia</div>
+            </div>
+          </div>
+
+          <div class="schedules-block">
+            <div class="label">Horarios</div>
+            <div class="meta-row">
+                <svg class="info-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16.93V20h-2v-1.07A8.003 8.003 0 0 1 4.07 13H6v-2H4.07A8.003 8.003 0 0 1 11 4.07V6h2V4.07A8.003 8.003 0 0 1 19.93 11H18v2h1.93A8.003 8.003 0 0 1 13 18.93z" fill="currentColor"/>
+                </svg>
+              <div class="schedules">
+                <div>Domingos: <br>9:00 AM y 11:00 AM</div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-
-
-      <!-- Derecha: redes sociales -->
-      <div class="footer-right">
-        <div class="social-icons">
-          <a class="social-icon-link whatsapp" href="https://wa.me/573209860099" target="_blank" rel="noopener" aria-label="WhatsApp">
-            <i class="social-icon fab fa-whatsapp" aria-hidden="true"></i>
-          </a>
-          <a class="social-icon-link" href="https://www.facebook.com/MAIRestaurandoVidas/?locale=es_LA" target="_blank" rel="noopener" aria-label="Facebook">
-            <i class="social-icon fab fa-facebook-f" aria-hidden="true"></i>
-          </a>
-          <a class="social-icon-link tiktok" href="https://www.tiktok.com/@mai.restaurandovidas" target="_blank" rel="noopener" aria-label="TikTok">
-            <i class="social-icon fab fa-tiktok" aria-hidden="true"></i>
-          </a>
-          <a class="social-icon-link" href="https://www.youtube.com/@MAIRestaurandoVidas" target="_blank" rel="noopener" aria-label="YouTube">
-            <i class="social-icon fab fa-youtube" aria-hidden="true"></i>
-          </a>
-          <a class="social-icon-link instagram" href="https://www.instagram.com/mairestaurandovidas/" target="_blank" rel="noopener" aria-label="Instagram">
-            <i class="social-icon fab fa-instagram" aria-hidden="true"></i>
-          </a>
+        <!-- Derecha: usuario y redes sociales -->
+        <div class="footer-right">
+          <div class="social-username">@mairestaurandovidas</div>
+          <!-- Copia móvil del username: se muestra sólo en pantallas pequeñas y queda encima de las redes -->
+          <div class="social-username social-username--mobile">@mairestaurandovidas</div>
+            <div class="social-icons" role="list">
+            <a class="social-icon-link instagram" href="https://www.instagram.com/mairestaurandovidas/" target="_blank" rel="noopener" aria-label="Instagram" role="listitem">
+              <img class="social-icon-img" src="https://cdn.simpleicons.org/instagram/ffffff" alt="Instagram" width="24" height="24"/>
+            </a>
+            <a class="social-icon-link facebook" href="https://www.facebook.com/MAIRestaurandoVidas/?locale=es_LA" target="_blank" rel="noopener" aria-label="Facebook" role="listitem">
+              <img class="social-icon-img" src="https://cdn.simpleicons.org/facebook/ffffff" alt="Facebook" width="24" height="24"/>
+            </a>
+            <a class="social-icon-link youtube" href="https://www.youtube.com/@MAIRestaurandoVidas" target="_blank" rel="noopener" aria-label="YouTube" role="listitem">
+              <img class="social-icon-img" src="https://cdn.simpleicons.org/youtube/ffffff" alt="YouTube" width="24" height="24"/>
+            </a>
+            <a class="social-icon-link tiktok" href="https://www.tiktok.com/@mai.restaurandovidas" target="_blank" rel="noopener" aria-label="TikTok" role="listitem">
+              <img class="social-icon-img" src="https://cdn.simpleicons.org/tiktok/ffffff" alt="TikTok" width="24" height="24"/>
+            </a>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Barra inferior -->
-    <!-- <div class="footer-bottom">
-      <div class="footer-container">
-        <p class="copyright">&copy; 2025 MAIRV. Todos los derechos reservados.</p>
-        <p class="made-with">Creado por DataOr</p>
-      </div>
-    </div> -->
+    <div class="footer-bottom">
+      <div class="divider" aria-hidden="true"></div>
+      <p class="copyright">© 2026 Mai Restaurando Vidas. Todos los derechos reservados | Desarrollado por DataOr</p>
+    </div>
   </footer>
 </template>
 
@@ -78,57 +90,48 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Footer cósmico con fondo imagen */
+/* Footer cósmico con fondo ajustado a la paleta de marca */
 .footer-cosmic{
-  background:rgb(34, 35, 43);
-  color: #fff;
-  padding: 0 0 8px 0;
+  background: #333333;
+  color: var(--text-primary);
+  padding: 28px 0 18px 0;
   position: relative;
+  box-shadow: 0 -4px 30px rgba(0,0,0,0.35) inset;
 }
 
 .footer-main{
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   display:flex;
-  align-items:center;
+  align-items:flex-start;
   justify-content:space-between;
-  gap: 20px;
+  gap: 28px;
   padding: 8px 20px;
-  height: 64px;
 }
 
-.footer-left{ flex:1; display:flex; align-items:center; }
-.address{ display:flex; align-items:center; gap:10px; color: rgba(255,255,255,0.95); font-weight:600; }
-.address svg{ width:18px; height:18px; color:#fff; opacity:0.95; }
+.footer-left{ flex:1; display:flex; gap:28px; align-items:flex-start; }
+.address-block, .schedules-block { display:flex; flex-direction:column; gap:6px; }
+.label{ color: #DCF4FF; font-weight:700; letter-spacing:0.6px; font-size:1.09rem; }
+.address-text, .schedules div { color: var(--text-secondary); font-weight:600; }
+.meta-row { display:flex; align-items:flex-start; gap:10px; }
+.info-icon { width:23px; height:23px; flex-shrink:0; color: #DCF4FF; }
+.info-icon path { fill: currentColor; }
+.address-text { line-height:1.3; }
 
-.footer-center{ flex:0 0 auto; display:flex; align-items:center; justify-content:center; gap:12px; }
-.dots{ display:flex; gap:14px; align-items:center; }
-.dots button{ width:12px; height:12px; border-radius:50%; background: rgba(255,255,255,0.35); border:none; cursor:pointer; transition: all .18s; }
-.dots button:hover{ transform: scale(1.1); }
-.dots button.active{
-  width:14px;
-  height:14px;
-  background: #fff;
- }
+.footer-center{ display:none; }
 
-.footer-right{ flex:1; display:flex; align-items:center; justify-content:flex-end; gap:12px; }
-.social-icons a{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:36px;
-  height:36px;
-  border-radius:8px;
-  background: rgba(255,255,255,0.06);
-  color:#fff;
-  transition: transform .18s;
+.footer-right{ flex:1; display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
+.social-username{ color: #DCF4FF; font-weight:700; margin-bottom:6px;font-size: 18px; }
+.social-username--mobile { display: none; }
+.social-icons{ display:flex; gap:5px; align-items:center; }
+.social-icon-link{
+  display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:10px; background: rgba(255,255,255,0.03); color:var(--text-primary); transition: all .18s; box-shadow: 0 6px 18px rgba(0,0,0,0.35);
 }
-.social-icons a:hover{ transform: translateY(-4px); background: rgba(255,255,255,0.12); }
+.social-icon-link:hover{ transform: translateY(-4px); background: linear-gradient(135deg,var(--brand-yellow), #f0c36a); color:#fff; box-shadow: 0 12px 36px rgba(255,193,7,0.12); }
+.social-icon{ width:28px; height:28px; display:inline-block; color: currentColor; }
+.social-icon img, .social-icon-img { width:25px; height:25px; display:block; filter: brightness(0) invert(1); }
 
-/* Ajuste tamaño de SVG dentro de footer social icons */
-.social-icons .social-icon{ font-size:18px; width:auto; height:auto; display:inline-block; color: #df0e0e !important; opacity: 1 !important; line-height:1; font-family: "Font Awesome 6 Brands", "Font Awesome 6 Free", sans-serif; }
-
-/* WhatsApp: circular verde con icono blanco */
+/* WhatsApp: keep green CTA */
 .social-icons a.whatsapp{
   background: #25D366;
   border-color: #25D366;
@@ -150,8 +153,8 @@ onUnmounted(() => {
   background: linear-gradient(45deg,#F58529 0%,#DD2A7B 40%,#8134AF 70%,#515BD4 100%);
   border-color: transparent;
   border-radius: 50%;
-  width:36px;
-  height:36px;
+  width:46px;
+  height:46px;
 }
 .social-icons a.instagram .social-icon{
   color: #ffffff !important;
@@ -161,15 +164,15 @@ onUnmounted(() => {
   transform: translateY(-6px) scale(1.04);
 }
 
-.footer-bottom{ padding:10px 0; text-align:center; background: linear-gradient(180deg, rgba(0,0,0,0.12), transparent); margin-top:6px; }
-.footer-bottom .footer-container{ max-width:1400px; margin:0 auto; padding:0 20px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
-.footer-bottom p{ margin:0; color: rgba(255,255,255,0.75); font-size:0.9rem; }
+.footer-bottom{ margin-top:18px; padding-top:12px; }
+.footer-bottom .divider{ height:1px; background: linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)); max-width:1200px; margin:0 auto 12px auto; border-radius:2px; }
+.footer-bottom p{ margin:0; color: rgba(255,255,255,0.72); font-size:0.95rem; text-align:center; }
 
 @media (max-width:768px){
-  .footer-main{ flex-direction:column; height:auto; padding:16px; }
-  .carousel-preview img{ width:180px; height:56px; }
-  .footer-bottom .footer-container{ flex-direction:column; gap:6px; padding:12px 0; }
-  .footer-left, .footer-right{ width:100%; justify-content:center; }
+  .footer-main{ flex-direction:column; gap:14px; align-items:center; padding:14px 20px; }
+  .footer-left{ width:100%; justify-content:center; align-items:center; text-align:center; }
+  .footer-right{ width:100%; align-items:center; }
+  .social-username{ margin-bottom:4px; }
 }
 
 /* Remove unwanted dark border / blur when hovering or focusing the footer */
@@ -211,4 +214,69 @@ onUnmounted(() => {
   border: none !important;
   background: none !important;
 }
+
+/* Mobile-specific fixes (placed after broad overrides to ensure precedence) */
+@media (max-width: 768px) {
+  .footer-main { padding: 12px 16px !important; }
+
+  /* Apilar los bloques de la izquierda y centrar su contenido */
+
+  /* Dirección y horarios en una sola fila en móvil (después del @) */
+  .footer-left {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 12px !important;
+    align-items: center !important;
+    text-align: left !important;
+    justify-content: center !important;
+    width: 100% !important;
+  }
+
+  .footer-left .meta-row {
+    justify-content: flex-start !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  .address-block, .schedules-block {
+    flex: 1 1 45% !important;
+    max-width: 45% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    text-align: left !important;
+  }
+
+  .label { font-size: 1rem !important; }
+  .address-text, .schedules div { font-size: 0.92rem !important; }
+
+  /* Mostrar la copia móvil del username y ocultar la original dentro de footer-right */
+  .social-username { display: none !important; }
+  .social-username--mobile { display: block !important; color: #DCF4FF; font-weight:700; margin-bottom:6px; font-size: 18px; text-align: center; }
+
+  /* Social icons: tamaño y restauración de fondo/sombra (contrarresta los overrides globales) */
+  .social-icons { gap: 10px !important; }
+  .social-icon-link {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 10px !important;
+    background: rgba(255,255,255,0.03) !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12) !important;
+    transform: none !important;
+  }
+  .social-icons a.instagram { width: 44px !important; height: 44px !important; border-radius: 50% !important; }
+  .social-icon-img { width: 20px !important; height: 20px !important; }
+
+  .social-username { font-size: 16px !important; white-space: nowrap;  text-overflow: ellipsis; max-width: 180px; }
+
+  .footer-bottom .divider { margin: 0 16px; max-width: calc(100% - 32px) !important; }
+  .footer-bottom p { font-size: 0.9rem !important; padding: 0 10px !important; }
+}
+
+/* Pequeñas adaptaciones para pantallas muy pequeñas */
+@media (max-width: 420px) {
+  .social-icon-link { width: 36px !important; height: 36px !important; }
+  .social-icons a.instagram { width: 40px !important; height: 40px !important; }
+}
+
 </style>

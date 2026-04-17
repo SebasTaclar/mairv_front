@@ -130,27 +130,5 @@ defineOptions({
   margin: 0;
 }
 
-/* ocultar reglas antiguas de redes (no usadas) */
 
-
-/* Responsive */
-@media (max-width: 992px) {
-  .contact-grid { grid-template-columns: 1fr 1fr; }
-  .contact-item:not(:last-child) { border-right: 1px solid rgba(15,23,42,0.06); }
-}
-
-@media (max-width: 768px) {
-  .contact-grid { grid-template-columns: 1fr; }
-  .contact-item { padding: 1rem; }
-  .contact-item:not(:last-child) { border-right: none; border-bottom: 1px solid rgba(15,23,42,0.06); }
-  .icon-wrap { width: 52px; height: 52px; }
-}
-
-@media (max-width: 480px) {
-  .contact-item { padding: 0.85rem; }
-  .icon-wrap { width: 48px; height: 48px; }
-  .contact-title { font-size: 1rem; }
-}
 </style>
-
-
