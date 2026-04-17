@@ -286,8 +286,8 @@ const showEventDetail = (event: Event) => {
 <style scoped>
 /* Variables de tema MAIRV */
 :root {
-  --primary-cyan: #22d3ee;
-  --dark-cyan: #0891b2;
+  --primary-cyan: var(--brand-blue);
+  --dark-cyan: var(--brand-blue-dark);
   --black: #000000;
   --white: #ffffff;
 }
@@ -333,7 +333,7 @@ const showEventDetail = (event: Event) => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 50% 0%, rgba(34, 211, 238, 0.15) 0%, transparent 60%);
+  background: radial-gradient(circle at 50% 0%, rgba(var(--brand-blue-rgb), 0.15) 0%, transparent 60%);
   pointer-events: none;
 }
 
@@ -377,7 +377,7 @@ const showEventDetail = (event: Event) => {
   margin-bottom: 2rem;
   padding-left: 1rem;
   border-left: 4px solid var(--primary-cyan);
-  text-shadow: 0 2px 10px rgba(34, 211, 238, 0.3);
+  text-shadow: 0 2px 10px rgba(var(--brand-blue-rgb), 0.3);
 }
 
 /* Carrusel de eventos */
@@ -395,7 +395,7 @@ const showEventDetail = (event: Event) => {
   overflow: hidden;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(34, 211, 238, 0.2);
+  border: 1px solid rgba(var(--brand-blue-rgb), 0.2);
   backdrop-filter: blur(10px);
   display: flex;
   gap: 1rem;

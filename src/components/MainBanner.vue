@@ -13,14 +13,11 @@
       </div>
     </div>
 
-    <!-- Botón Conocer Más Estratégico -->
-    <div class="explore-button-container">
-      <button class="btn-explore" @click="exploreProduct(slides[currentSlide])">
-        Conocer más
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="m9 18 6-6-6-6"/>
-        </svg>
-      </button>
+    <!-- Hero content centrado (título + CTAs) -->
+    <div class="hero-content">
+      <h3 class="banner-topline">MAI RESTAURANDO VIDAS</h3>
+      <h1 class="hero-title hero-title--handwritten">UN LUGAR DONDE LA VERDAD CAMBIARÁ TU REALIDAD</h1>
+      <!-- <p class="hero-subtitle">Acompáñanos en comunidad, en línea y en persona.</p> -->
     </div>
 
     <!-- Navegación -->
@@ -29,18 +26,18 @@
         <button
           v-for="(_, index) in slides"
           :key="index"
-          @click="goToSlide(index)"
+          @click="goToSlideWrapped(index)"
           :class="['nav-dot', { 'active': currentSlide === index }]"
         >
         </button>
       </div>
       <div class="nav-arrows">
-        <button @click="previousSlide" class="nav-arrow prev">
+        <button @click="previousSlideWrapped" class="nav-arrow prev">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="m15 18-6-6 6-6"/>
           </svg>
         </button>
-        <button @click="nextSlide" class="nav-arrow next">
+        <button @click="nextSlideWrapped" class="nav-arrow next">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="m9 18 6-6-6-6"/>
           </svg>
@@ -57,6 +54,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import router from '@/router'
 
 // Tipos
 interface ProductSlide {
@@ -76,44 +74,12 @@ const isPlaying = ref(true)
 // Datos de categorías SOYDANI
 const slides = ref<ProductSlide[]>([
   {
-    id: 'black-week',
-    image: 'https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=1920&h=1080&fit=crop&q=80',
-    category: 'Black Week',
-    title: '⚡ BLACK WEEK - Hasta 50% OFF',
-    description: '¡Ofertas increíbles! Descuentos masivos en tecnología, hogar y más. ¡No te lo pierdas!',
-    features: ['Hasta 50% OFF', 'ENVÍO GRATIS', 'Compra Local', 'Stock Limitado']
-  },
-  {
-    id: 'tecnologia',
-    image: 'https://images.unsplash.com/photo-1601524909162-ae8725290836?w=1920&h=1080&fit=crop&q=80',
-    category: 'Tecnología',
-    title: '📱 Tecnología de Última Generación',
-    description: 'Los mejores smartphones, laptops y gadgets. Garantía oficial y precios increíbles.',
-    features: ['Últimos Modelos', 'Garantía Oficial', 'Envío Gratis', 'Mejor Precio']
-  },
-  {
-    id: 'navidad',
-    image: 'https://images.unsplash.com/photo-1543589077-47d81606c1bf?w=1920&h=1080&fit=crop&q=80',
-    category: 'Navidad',
-    title: '🎄 Especial Navideño',
-    description: 'Decora tu hogar esta Navidad. Luces, árboles, adornos y todo para celebrar en grande.',
-    features: ['Decoración Premium', 'Luces LED', 'Ofertas Navideñas', 'Envío Rápido']
-  },
-  {
-    id: 'hogar',
-    image: 'https://images.unsplash.com/photo-1615529182904-14819c35db37?w=1920&h=1080&fit=crop&q=80',
-    category: 'Hogar',
-    title: '🏠 Renueva Tu Hogar',
-    description: 'Artículos de hogar con estilo. Decoración moderna, organización y confort para cada espacio.',
-    features: ['Diseños Modernos', 'Calidad Premium', 'Variedad', 'Mejores Precios']
-  },
-  {
-    id: 'ofertas',
-    image: 'https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?w=1920&h=1080&fit=crop&q=80',
-    category: 'Ofertas',
-    title: '🔥 OFERTAS IMPERDIBLES',
-    description: '¡Aprovecha ahora! Productos seleccionados con descuentos brutales. Solo por tiempo limitado.',
-    features: ['Descuentos Brutales', 'Entrega Inmediata', '100% Garantizado', 'Compra YA']
+    id: 'banner_external',
+    image: 'https://csalazar.org/wp-content/uploads/2021/08/0206d-asistir-iglesia.jpg',
+    category: 'Principal',
+    title: 'Bienvenido a nuestra tienda',
+    description: '',
+    features: []
   }
 ])
 
@@ -140,11 +106,34 @@ const goToSlide = (index: number) => {
   resetAutoPlay()
 }
 
+// Broadcast estado del carrusel para sincronizar con footer u otros componentes
+const broadcastBannerState = () => {
+  try {
+    window.dispatchEvent(new CustomEvent('banner:update', {
+      detail: { current: currentSlide.value, length: slides.value.length }
+    }))
+  } catch (e) {
+    // ignore in non-browser env
+  }
+}
+
+// Llamar broadcast al cambiar slides manualmente
+const _wrapChange = (fn: () => void) => {
+  fn()
+  broadcastBannerState()
+}
+
+// envolver funciones de navegación con broadcast
+const nextSlideWrapped = () => _wrapChange(nextSlide)
+const previousSlideWrapped = () => _wrapChange(previousSlide)
+const goToSlideWrapped = (index: number) => _wrapChange(() => goToSlide(index))
+
 // Auto-play
 const startAutoPlay = () => {
   if (!isPlaying.value) return
   autoPlayInterval.value = setInterval(() => {
     nextSlide()
+    broadcastBannerState()
   }, 2000) // Cambia cada 2 segundos
 }
 
@@ -162,6 +151,16 @@ const resetAutoPlay = () => {
   }, 1000) // Pausa 1 segundo antes de reanudar
 }
 
+// Escuchar comandos desde el footer (ej. cambiar slide)
+const onFooterGoTo = (ev: Event) => {
+  const detail = (ev as CustomEvent).detail
+  const index = typeof detail === 'number' ? detail : detail?.index
+  if (typeof index === 'number') {
+    goToSlide(index)
+    broadcastBannerState()
+  }
+}
+
 // Funciones de producto
 const exploreProduct = (slide: ProductSlide) => {
   // Scroll hacia la sección ProductShowcase
@@ -173,6 +172,23 @@ const exploreProduct = (slide: ProductSlide) => {
     });
   }
   console.log('Navegando hacia ProductShowcase desde:', slide.title)
+}
+
+const visit = () => {
+  const contactEl = document.querySelector('.contact-section')
+  if (contactEl && (contactEl as HTMLElement).scrollIntoView) {
+    (contactEl as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'start' })
+    return
+  }
+  if (router) router.push('/contact').catch(() => {})
+}
+
+const viewLive = () => {
+  try {
+    window.open('/live', '_blank')
+  } catch (e) {
+    console.log('Abrir en vivo', e)
+  }
 }
 
 // Métodos públicos para control externo
@@ -189,10 +205,15 @@ const resumeCarousel = () => {
 // Lifecycle
 onMounted(() => {
   startAutoPlay()
+  // Enviar estado inicial
+  broadcastBannerState()
+  // Listener para controlar el carrusel desde el footer
+  window.addEventListener('footer:goTo', onFooterGoTo as EventListener)
 })
 
 onUnmounted(() => {
   stopAutoPlay()
+  window.removeEventListener('footer:goTo', onFooterGoTo as EventListener)
 })
 
 // Exposer métodos para uso externo
@@ -206,6 +227,10 @@ defineExpose({
     slides.value.push(slide)
   }
 })
+
+// También publicar cambios cuando se cambie manualmente
+// (invocado desde funciones que ya llaman resetAutoPlay)
+// Llamamos broadcastBannerState dentro de next/prev/goToSlide mediante los puntos arriba.
 </script>
 
 <style scoped>
@@ -213,8 +238,10 @@ defineExpose({
 .hero-carousel {
   position: relative;
   width: 100%;
-  height: 85vh;
-  min-height: 650px;
+  /* extend under the fixed header so the image reaches the very top */
+  margin-top: -75px; /* header height */
+  height: calc(85vh + 75px);
+  min-height: calc(650px + 75px);
   overflow: hidden;
   border-radius: 0;
   box-shadow: 0 20px 60px rgba(220, 38, 38, 0.15), 0 0 100px rgba(0, 0, 0, 0.2);
@@ -250,8 +277,8 @@ defineExpose({
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
-  opacity: 0.7;
+  object-position: center top;
+  opacity: 0.5; /* imagen ligeramente traslúcida */
 }
 
 /* Overlay con acento rojo SOYDANI */
@@ -399,6 +426,87 @@ defineExpose({
   z-index: 10;
 }
 
+/* === HERO CONTENT CENTRADO === */
+.hero-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  text-align: center;
+  color: #fff;
+  padding: 0 20px;
+  width: 100%;
+}
+
+.hero-title {
+  font-size: clamp(2.2rem, 6vw, 4.2rem);
+  line-height: 1.05;
+  font-weight: 800;
+  margin: 0 0 1rem 0;
+  text-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  color: #ffffff;
+}
+
+/* Banner specific styles to match provided design */
+.banner-topline {
+  font-size: 1.95rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.952);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 0.6rem;
+  opacity: 0.95;
+}
+
+.hero-title--handwritten {
+  font-size: clamp(3rem, 8vw, 6rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  text-shadow: 0 6px 30px rgba(0,0,0,0.7);
+  margin: 0;
+}
+
+.hero-subtitle {
+  font-size: 1.05rem;
+  margin-bottom: 1.4rem;
+  color: rgba(255,255,255,0.9);
+}
+
+.hero-ctas {
+  display: inline-flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-visit,
+.btn-live {
+  padding: 0.95rem 1.6rem;
+  border-radius: 10px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  background: rgba(31, 30, 30, 0.692);
+}
+
+.btn-visit {
+  background: #1f6feb;
+  color: white;
+  box-shadow: 0 10px 30px rgba(31,111,235,0.25);
+}
+
+.btn-live {
+  background: rgba(255,255,255,0.08);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.14);
+}
+
+/* ocultar el antiguo botón lateral para una versión tipo hero */
+.explore-button-container { display: none; }
+
 .progress-bar {
   height: 100%;
   background: linear-gradient(90deg, #60a5fa, #3b82f6);
@@ -460,6 +568,50 @@ defineExpose({
   }  .carousel-navigation {
     bottom: 1rem;
   }
+@media (max-width: 768px) {
+  .hero-carousel {
+    margin-top: 0 !important;
+    height: 72vh !important;
+    min-height: 520px !important;
+  }
+  .carousel-slide img {
+    object-position: center center !important;
+  }
+  .hero-content {
+    top: 48% !important;
+    transform: translate(-50%, -48%) !important;
+    padding: 0 14px !important;
+    max-width: 92%;
+  }
+  .hero-title--handwritten {
+    font-size: clamp(2rem, 6.5vw, 3.2rem) !important;
+    line-height: 1.02 !important;
+  }
+  .carousel-navigation { bottom: 0.9rem !important; }
+  .nav-dots { gap: 0.6rem !important; }
+}
+
+@media (max-width: 480px) {
+  .hero-carousel {
+    margin-top: 0 !important;
+    height: 70vh !important;
+    min-height: 620px !important;
+  }
+  .hero-content {
+    top: 46% !important;
+    transform: translate(-50%, -46%) !important;
+    padding: 0 12px !important;
+  }
+  .hero-title--handwritten {
+    font-size: clamp(1.6rem, 8.5vw, 2.6rem) !important;
+    line-height: 1.02 !important;
+  }
+  .carousel-slide img { object-position: center center !important; }
+  .carousel-navigation { bottom: 0.6rem !important; }
+  .nav-arrows { display: none !important; }
+}
+
+
 
   .nav-dots {
     gap: 0.8rem;
@@ -626,7 +778,7 @@ defineExpose({
   font-size: clamp(2.5rem, 5vw, 4rem);
   font-weight: 800;
   color: var(--brand-primary-contrast);
-  margin: 0 0 1rem 0;
+  margin: 0 0 5rem 0;
   line-height: 1.1;
   letter-spacing: -0.02em;
 }
@@ -1594,25 +1746,39 @@ defineExpose({
   max-width: 600px;
 }
 
-.btn-demo {
-  background: rgba(96, 165, 250, 0.1);
-  color: #60a5fa;
-  border: 1px solid rgba(96, 165, 250, 0.3);
-  padding: 0.6rem 1rem;
-  font-size: 0.85rem;
-  font-weight: 500;
-  border-radius: 8px;
+.btn-visit,
+.btn-live {
+  padding: 0.95rem 1.6rem;
+  border-radius: 10px;
+  font-weight: 700;
+  border: none;
   cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
+  transition: transform 0.22s var(--transition-fast, 0.2s), box-shadow 0.22s var(--transition-fast, 0.2s), background-color 0.22s var(--transition-fast, 0.2s), border-color 0.22s var(--transition-fast, 0.2s);
 }
 
-.btn-demo:hover {
-  background: rgba(96, 165, 250, 0.2);
-  border-color: #60a5fa;
-  transform: translateY(-1px);
+.btn-visit {
+  background: var(--brand-blue, #22265D);
+  color: white;
+  box-shadow: 0 10px 30px rgba(34,38,93,0.18);
+}
+
+.btn-visit:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 45px rgba(34,38,93,0.28);
+  filter: brightness(1.02);
+}
+
+.btn-live {
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+}
+
+.btn-live:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 14px 36px rgba(0,0,0,0.45);
+  border-color: rgba(255,255,255,0.18);
 }
 
 /* Estadísticas */

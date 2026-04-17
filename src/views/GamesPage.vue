@@ -173,20 +173,20 @@ const closeGame = () => {
 }
 
 .game-card {
- background: linear-gradient(135deg, rgba(34, 211, 238, 0.1) 0%, rgba(8, 145, 178, 0.05) 100%);
- border: 2px solid rgba(34, 211, 238, 0.3);
- border-radius: 20px;
- overflow: hidden;
- cursor: pointer;
- transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
- animation: slideUp 0.6s ease;
+    background: linear-gradient(135deg, rgba(var(--brand-blue-rgb), 0.08) 0%, rgba(var(--brand-blue-rgb), 0.03) 100%);
+    border: 2px solid rgba(var(--brand-blue-rgb), 0.25);
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: slideUp 0.6s ease;
 }
 
 .game-card:hover {
- transform: translateY(-10px);
- border-color: rgba(34, 211, 238, 0.6);
- background: linear-gradient(135deg, rgba(34, 211, 238, 0.15) 0%, rgba(8, 145, 178, 0.1) 100%);
- box-shadow: 0 15px 40px rgba(34, 211, 238, 0.2);
+    transform: translateY(-10px);
+    border-color: rgba(var(--brand-blue-rgb), 0.6);
+    background: linear-gradient(135deg, rgba(var(--brand-blue-rgb), 0.12) 0%, rgba(var(--brand-blue-rgb), 0.06) 100%);
+    box-shadow: 0 15px 40px rgba(var(--brand-blue-rgb), 0.18);
 }
 
 .game-card-inner {
@@ -224,29 +224,29 @@ const closeGame = () => {
 }
 
 .stat {
- background: rgba(34, 211, 238, 0.1);
- padding: 5px 10px;
- border-radius: 6px;
- border: 1px solid rgba(34, 211, 238, 0.2);
+    background: rgba(var(--brand-blue-rgb), 0.08);
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(var(--brand-blue-rgb), 0.18);
 }
 
 .play-btn {
- background: linear-gradient(135deg, #22d3ee 0%, #0891b2 100%);
- color: #ffffff;
- border: none;
- border-radius: 10px;
- padding: 12px 24px;
- font-size: 16px;
- font-weight: 700;
- cursor: pointer;
- transition: all 0.3s ease;
- text-transform: uppercase;
- letter-spacing: 0.5px;
+    background: var(--primary-gradient);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .play-btn:hover {
- transform: scale(1.05);
- box-shadow: 0 6px 20px rgba(34, 211, 238, 0.4);
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px var(--primary-color-alpha-40);
 }
 
 /* Modal Styles */
@@ -267,40 +267,40 @@ const closeGame = () => {
 }
 
 .modal-content {
- background: linear-gradient(135deg, #1a1a2e 0%, #000000 100%);
- border: 2px solid rgba(34, 211, 238, 0.4);
- border-radius: 20px;
- max-width: 700px;
- width: 100%;
- max-height: 80vh;
- overflow-y: auto;
- position: relative;
- padding: 40px;
- animation: slideUp 0.3s ease;
+    background: linear-gradient(135deg, #1a1a2e 0%, #000000 100%);
+    border: 2px solid rgba(var(--brand-blue-rgb), 0.4);
+    border-radius: 20px;
+    max-width: 700px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    padding: 40px;
+    animation: slideUp 0.3s ease;
 }
 
 .close-btn {
- position: absolute;
- top: 20px;
- right: 20px;
- width: 40px;
- height: 40px;
- background: rgba(34, 211, 238, 0.2);
- border: 1px solid rgba(34, 211, 238, 0.4);
- border-radius: 50%;
- font-size: 24px;
- color: #22d3ee;
- cursor: pointer;
- transition: all 0.3s ease;
- display: flex;
- align-items: center;
- justify-content: center;
- padding: 0;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: rgba(var(--brand-blue-rgb), 0.2);
+    border: 1px solid rgba(var(--brand-blue-rgb), 0.4);
+    border-radius: 50%;
+    font-size: 24px;
+    color: var(--brand-blue);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
 }
 
 .close-btn:hover {
- background: rgba(34, 211, 238, 0.3);
- transform: rotate(90deg);
+    background: rgba(var(--brand-blue-rgb), 0.3);
+    transform: rotate(90deg);
 }
 
 .game-modal-header {
@@ -322,10 +322,10 @@ const closeGame = () => {
 }
 
 .game-placeholder {
- background: rgba(34, 211, 238, 0.05);
- border: 1px solid rgba(34, 211, 238, 0.3);
- border-radius: 15px;
- padding: 30px;
+    background: rgba(var(--brand-blue-rgb), 0.05);
+    border: 1px solid rgba(var(--brand-blue-rgb), 0.3);
+    border-radius: 15px;
+    padding: 30px;
 }
 
 .game-placeholder p {
@@ -342,10 +342,10 @@ const closeGame = () => {
 }
 
 .placeholder-message {
- text-align: center;
- font-size: 32px;
- color: rgba(34, 211, 238, 0.6);
- font-weight: 600;
+    text-align: center;
+    font-size: 32px;
+    color: rgba(var(--brand-blue-rgb), 0.6);
+    font-weight: 600;
 }
 
 @keyframes fadeInDown {

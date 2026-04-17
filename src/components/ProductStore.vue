@@ -577,13 +577,14 @@
 }
 </style>
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useCart } from '@/composables/useCart'
 import { useProducts, type Product as ProductType } from '@/composables/useProducts'
 
 // Router
 const router = useRouter()
+const route = useRoute()
 
 // Usar el composable del carrito
 const {
@@ -712,6 +713,26 @@ onMounted(async () => {
   await loadProducts()
   console.log('🏪 [ProductStore] Productos del backend cargados:', availableProducts.value.length)
   console.log('🏪 [ProductStore] Total productos (backend + merchandising):', products.value.length)
+
+  // Si la ruta incluye query `q`, inicializar el término de búsqueda
+  const q = (route.query.q as string) || ''
+  if (q) {
+    searchTerm.value = q
+  }
+
+  // Registrar listener global para búsquedas desde el header
+  const globalSearchHandler = (e: Event) => {
+    const payload = (e as CustomEvent).detail
+    if (payload && payload.term !== undefined) {
+      searchTerm.value = String(payload.term)
+    }
+  }
+  window.addEventListener('global-search', globalSearchHandler)
+
+  // Limpiar listener cuando el componente se desmonta
+  onUnmounted(() => {
+    window.removeEventListener('global-search', globalSearchHandler)
+  })
 })
 
 // Estado local
