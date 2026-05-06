@@ -1,0 +1,101 @@
+/* ========================================
+   MAI Restaurando Vidas - Brand Foundation
+   ======================================== */
+
+/* ====== PALETA DE COLORES ====== */
+
+:root {
+  /* Colores principales del manual de marca MAI */
+  --mai-gray-light: #EBEBEB;     /* RGB(235,235,235) - Gris claro */
+  --mai-gold: #FFC107;           /* RGB(255,193,7) - Dorado (destacados/titulares) */
+  --mai-blue: #22265D;           /* RGB(34,38,93) - Azul marino (fondos/textos) */
+  --mai-gray-dark: #333333;      /* RGB(51,51,51) - Gris oscuro */
+}
+
+/* ====== TIPOGRAFÍA ====== */
+
+/* Outfit es la font principal en toda la app (definida en main.css) */
+
+/* Headings: Playfair Display (opcional, si quieres usar serif en títulos) */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* ====== LINEAMIENTOS DE DISEÑO ====== */
+
+/* 1. Uso de color: Colores principales en fondos, textos y elementos gráficos */
+/* Dorado (#FFC107) y Naranja (#F27220) reservados para destacados y titulares especiales */
+
+/* Texto con colores principales */
+.text-primary {
+  color: var(--mai-blue);
+}
+
+.text-accent {
+  color: var(--mai-gold);
+  font-weight: 600;
+}
+
+/* Fondos */
+.bg-primary {
+  background-color: var(--mai-blue);
+  color: var(--white);
+}
+
+.bg-light {
+  background-color: var(--mai-gray-light);
+  color: var(--mai-gray-dark);
+}
+
+.bg-dark {
+  background-color: var(--mai-gray-dark);
+  color: var(--white);
+}
+
+/* 2. Jerarquía visual clara: título > subtítulo > información secundaria */
+h1 {
+  font-size: 2.5rem;
+  color: var(--mai-blue);
+}
+
+h2 {
+  font-size: 2rem;
+  color: var(--mai-blue);
+}
+
+h3 {
+  font-size: 1.5rem;
+  color: var(--mai-blue);
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: var(--mai-gray-dark);
+  font-weight: 500;
+}
+
+.text-secondary {
+  font-size: 0.95rem;
+  color: var(--mai-gray-dark);
+  opacity: 0.85;
+}
+
+/* 3. Elementos gráficos: texturas, gradientes respetando armonía */
+.gradient-primary {
+  background: linear-gradient(135deg, var(--mai-blue) 0%, #1b214f 100%);
+}
+
+.gradient-accent {
+  background: linear-gradient(135deg, var(--mai-gold) 0%, #ffc107 100%);
+}
+
+/* Borde decorativo */
+.border-accent {
+  border-color: var(--mai-gold);
+}
+
+.border-primary {
+  border-color: var(--mai-blue);
+}

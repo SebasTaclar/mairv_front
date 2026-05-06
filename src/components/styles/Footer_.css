@@ -1,0 +1,373 @@
+
+/* Footer cósmico con fondo ajustado a la paleta de marca */
+.footer-cosmic {
+  background: linear-gradient(135deg, #22265D 0%, #1b214f 100%);
+  color: var(--text-primary);
+  padding: 40px 0 20px 0;
+  position: relative;
+  box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.35) inset;
+}
+
+.footer-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 12px 20px;
+}
+
+.footer-left {
+  flex: 1;
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.address-block,
+.schedules-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  color: #FFC107;
+  font-weight: 800;
+  letter-spacing: 1px;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+}
+
+.address-text,
+.schedules div {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+}
+
+.meta-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.info-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  color: #FFC107;
+}
+
+.info-icon path {
+  fill: currentColor;
+}
+
+.address-text {
+  line-height: 1.4;
+}
+
+.footer-center {
+  display: none;
+}
+
+.footer-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.social-username {
+  color: #FFC107;
+  font-weight: 800;
+  margin-bottom: 8px;
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.social-username--mobile {
+  display: none;
+}
+
+.social-icons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.social-icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  transition: all .3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.social-icon-link:hover {
+  transform: translateY(-6px) scale(1.1);
+  background: linear-gradient(135deg, #FFC107 0%, #FFB800 100%);
+  color: #22265D;
+  box-shadow: 0 15px 40px rgba(255, 193, 7, 0.25);
+}
+
+.social-icon {
+  width: 28px;
+  height: 28px;
+  display: inline-block;
+  color: currentColor;
+}
+
+.social-icon img,
+.social-icon-img {
+  width: 24px;
+  height: 24px;
+  display: block;
+  filter: brightness(0) invert(1);
+}
+
+/* WhatsApp: keep green CTA */
+.social-icons a.whatsapp {
+  background: #25D366;
+  border-color: #25D366;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+}
+
+.social-icons a.whatsapp .social-icon {
+  color: #ffffff;
+}
+
+.social-icons a.whatsapp:hover {
+  background: #20b858;
+  box-shadow: 0 12px 36px rgba(37, 211, 102, 0.3);
+  transform: translateY(-6px) scale(1.1);
+}
+
+/* Instagram: gradient circular y icono blanco */
+.social-icons a.instagram {
+  background: linear-gradient(45deg, #F58529 0%, #DD2A7B 40%, #8134AF 70%, #515BD4 100%);
+  border-color: transparent;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+}
+
+.social-icons a.instagram .social-icon {
+  color: #ffffff !important;
+}
+
+.social-icons a.instagram:hover {
+  box-shadow: 0 12px 36px rgba(221, 42, 123, 0.3);
+  transform: translateY(-6px) scale(1.1);
+}
+
+.footer-bottom {
+  margin-top: 24px;
+  padding-top: 16px;
+}
+
+.footer-bottom .divider {
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+  max-width: 1200px;
+  margin: 0 auto 16px auto;
+  border-radius: 2px;
+}
+
+.footer-bottom p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.93rem;
+  text-align: center;
+}
+
+@media (max-width:768px) {
+  .footer-main {
+    flex-direction: column;
+    gap: 14px;
+    align-items: center;
+    padding: 14px 20px;
+  }
+
+  .footer-left {
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer-right {
+    width: 100%;
+    align-items: center;
+  }
+
+  .social-username {
+    margin-bottom: 4px;
+  }
+}
+
+/* Remove unwanted dark border / blur when hovering or focusing the footer */
+.footer-cosmic,
+.footer-cosmic * {
+  box-shadow: none !important;
+  outline: none !important;
+  border: none !important;
+  filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.footer-cosmic:hover,
+.footer-cosmic:focus {
+  box-shadow: none !important;
+  outline: none !important;
+  border: none !important;
+  filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Extra overrides: eliminar pseudo-elementos y cualquier gradiente/imagen residual */
+.footer-cosmic::before,
+.footer-cosmic::after,
+.footer-cosmic *::before,
+.footer-cosmic *::after {
+  display: none !important;
+  content: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  background: none !important;
+}
+
+/* Asegurar que el contenedor principal no tenga borde ni sombra */
+.footer-main,
+.footer-main * {
+  box-shadow: none !important;
+  border: none !important;
+  background: none !important;
+}
+
+/* Mobile-specific fixes (placed after broad overrides to ensure precedence) */
+@media (max-width: 768px) {
+  .footer-main {
+    padding: 12px 16px !important;
+  }
+
+  /* Apilar los bloques de la izquierda y centrar su contenido */
+
+  /* Dirección y horarios en una sola fila en móvil (después del @) */
+  .footer-left {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 12px !important;
+    align-items: center !important;
+    text-align: left !important;
+    justify-content: center !important;
+    width: 100% !important;
+  }
+
+  .footer-left .meta-row {
+    justify-content: flex-start !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  .address-block,
+  .schedules-block {
+    flex: 1 1 45% !important;
+    max-width: 45% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    text-align: left !important;
+  }
+
+  .label {
+    font-size: 1rem !important;
+  }
+
+  .address-text,
+  .schedules div {
+    font-size: 0.92rem !important;
+  }
+
+  /* Mostrar la copia móvil del username y ocultar la original dentro de footer-right */
+  .social-username {
+    display: none !important;
+  }
+
+  .social-username--mobile {
+    display: block !important;
+    color: #DCF4FF;
+    font-weight: 700;
+    margin-bottom: 6px;
+    font-size: 18px;
+    text-align: center;
+  }
+
+  /* Social icons: tamaño y restauración de fondo/sombra (contrarresta los overrides globales) */
+  .social-icons {
+    gap: 10px !important;
+  }
+
+  .social-icon-link {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 10px !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12) !important;
+    transform: none !important;
+  }
+
+  .social-icons a.instagram {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50% !important;
+  }
+
+  .social-icon-img {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  .social-username {
+    font-size: 16px !important;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 180px;
+  }
+
+  .footer-bottom .divider {
+    margin: 0 16px;
+    max-width: calc(100% - 32px) !important;
+  }
+
+  .footer-bottom p {
+    font-size: 0.9rem !important;
+    padding: 0 10px !important;
+  }
+}
+
+/* Pequeñas adaptaciones para pantallas muy pequeñas */
+@media (max-width: 420px) {
+  .social-icon-link {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  .social-icons a.instagram {
+    width: 40px !important;
+    height: 40px !important;
+  }
+}
+
+

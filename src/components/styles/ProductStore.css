@@ -1,0 +1,353 @@
+
+.product-store {
+  padding: 3rem 0;
+  background: linear-gradient(135deg, #dad1d1 0%, #f3f0f0 100%);
+  position: relative;
+}
+
+.product-store {
+  padding: 3rem 0;
+  background: linear-gradient(135deg, #dad1d1 0%, #f3f0f0 100%);
+  position: relative;
+}
+
+/* Estilos del modal oscuro */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgb(0, 0, 0);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: #000000;
+  width: 95%;
+  max-width: 1100px;
+  max-height: 85vh;
+  position: relative;
+  overflow: hidden;
+  padding: 2rem;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-body {
+  display: flex;
+  padding: 0;
+  height: 100%;
+  color: white;
+}
+
+.modal-main-content {
+  display: flex;
+  width: 100%;
+}
+
+.modal-image {
+  flex: 1.2;
+  background: linear-gradient(145deg, #1e1e1e 0%, #252525 100%);
+  border-right: 1px solid #2f2f2f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-image img {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+}
+
+.modal-details {
+  flex: 1;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.modal-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.modal-category {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  margin: 0.5rem 0 1rem;
+}
+
+.modal-description {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+.modal-price {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #0A84FF;
+  margin: 1.5rem 0;
+}
+
+.modal-colors h4 {
+  color: white;
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+  font-weight: normal;
+}
+
+.color-options {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.color-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.color-option:hover {
+  transform: scale(1.05);
+}
+
+.color-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid white;
+  transition: all 0.2s ease;
+}
+
+.color-option.active .color-circle {
+  border: 2px solid #26F7D7;
+}
+
+.color-name {
+  font-size: 0.75rem;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.color-name {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 500;
+  background: transparent;
+}
+
+.status-available {
+  color: #30D158;
+  background: rgba(48, 209, 88, 0.1);
+}
+
+.modal-add-to-cart {
+  margin-top: 2rem;
+  width: 100%;
+  padding: 0.875rem;
+  background: #2C2C2E;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-add-to-cart:hover:not(:disabled) {
+  background: #3A3A3C;
+}
+
+.modal-add-to-cart:disabled {
+  background: #2C2C2E;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Estilos para móvil */
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: 0;
+  }
+
+  /* El contenedor del modal debe controlar el scroll en móvil */
+  .modal-content {
+    width: 100%;
+    height: 100vh;
+    border-radius: 0;
+    padding: 0;
+    background: #000;
+    overflow-y: auto;
+    /* scroll para TODO el modal */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Mostrar como grid (igual que AppleWatchPage) y dejar que el contenido fluya desde la parte superior
+     La imagen formará parte del flujo y se desplazará junto al resto del contenido */
+  .modal-body {
+    display: grid;
+    grid-template-columns: 1fr;
+    padding: 20px;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .modal-close.floating {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    backdrop-filter: blur(6px);
+  }
+
+  .modal-close.floating svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .modal-image {
+    width: calc(100% - 2rem);
+    background: #fff;
+    border-radius: 8px;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1rem auto;
+    /* centrar horizontalmente en móvil */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  }
+
+  .modal-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* Asegurar que el contenido interno también esté centrado */
+  .modal-image .image-gallery,
+  .modal-image img {
+    margin: auto;
+  }
+
+  .modal-info {
+    padding: 0 1rem;
+  }
+
+  .modal-title {
+    font-size: 2rem;
+    line-height: 1.2;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .modal-category {
+    color: #999;
+    font-size: 0.875rem;
+    margin: 0.25rem 0 1rem;
+  }
+
+  .modal-description {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 1.5rem;
+  }
+
+  .modal-price {
+    font-size: 2rem;
+    color: #0A84FF;
+    margin: 1.5rem 0;
+  }
+
+  .color-options {
+    gap: 2rem;
+    justify-content: flex-start;
+    margin: 0.5rem 0 2rem;
+  }
+
+  .color-option {
+    align-items: center;
+  }
+
+  .color-circle {
+    width: 24px;
+    height: 24px;
+    border: 2px solid white;
+  }
+
+  .color-name {
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+    text-transform: uppercase;
+  }
+
+  .modal-status {
+    margin: 1rem 0;
+  }
+
+  .modal-add-to-cart {
+    margin: 1rem 0 2rem;
+    width: 100%;
+    background: #2C2C2E;
+    border-radius: 8px;
+    height: 48px;
+    font-size: 0.9375rem;
+  }
+}
+
+

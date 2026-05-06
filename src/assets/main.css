@@ -1,65 +1,71 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&display=swap');
 @import './styles/global.css';
 @import './styles/modern-ecommerce.css';
+@import './styles/mai-foundation.css';
+
+/* Outfit como font principal en toda la app */
+*,
+*::before,
+*::after,
+html,
+body {
+  font-family: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
 
 :root {
-  /* MAIRV Brand Colors - Primary tokens preserved; add button brand-blue */
-  --primary-red: #22d3ee;        /* Cian principal (legacy) */
-  --secondary-red: #06b6d4;      /* Cian oscuro (legacy) */
-  --tertiary-red: #0891b2;       /* Azul medio (legacy) */
-  --dark-red: #0e7490;           /* Azul oscuro (legacy) */
-  --black: #000000;              /* Negro */
-  --white: #ffffff;              /* Blanco */
+  /* MAI Brand Colors - Paleta Principal */
+  --mai-gray-light: #EBEBEB;     /* Gris claro - RGB(235,235,235) - FONDO */
+  --mai-gold: #FFC107;           /* Dorado - RGB(255,193,7) - Destacados */
+  --mai-blue: #22265D;           /* Azul marino - RGB(34,38,93) - Principal */
+  --mai-gray-dark: #333333;      /* Gris oscuro - RGB(51,51,51) - TEXTO */
 
-  /* New brand blue used for buttons */
-  --brand-blue: #22265D;         /* Requested button blue */
-  --brand-blue-dark: #1b214f;    /* Slightly darker for hover */
-  --brand-blue-light: #2d3278;   /* Accent light tone */
-  --brand-blue-rgb: 34,38,93;    /* RGB for rgba() uses */
-  --brand-blue-dark-rgb: 27,33,79;
-  --brand-yellow: #FFC107;       /* Primary brand yellow */
-  --brand-gray: #EBEBEB;         /* Light neutral from palette */
-  --brand-dark: #333333;         /* Dark neutral from palette */
-  /* Alternative palette tokens (from provided alt palette) */
-  --alt-gray: #CFCFCF;
-  --alt-blue-light: #DCF4FF;
-  --alt-teal: #005F60;
-  --alt-orange: #F27220;
+  /* Typography - Main: Outfit */
+  --font-main: 'Outfit', sans-serif;
+  --font-secondary: 'Playfair Display', serif;
+  --font-family: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Mapear colores MAI a variables globales para que se usen en toda la app */
+  --app-bg-primary: var(--mai-gray-light);
+  --app-text-primary: var(--mai-gray-dark);
+  --app-text-secondary: var(--mai-gray-dark);
+  --app-surface: var(--mai-gray-light);
+  --app-accent: var(--mai-blue);
+  --app-primary: var(--mai-blue);
+  --app-primary-dark: #1b214f;
 
   /* Legacy support for existing components */
-  --primary-color: var(--primary-red);
-  --primary-color-dark: var(--dark-red);
-  --primary-color-light: var(--secondary-red);
-  --accent-color: var(--primary-red);
-  --accent-color-dark: var(--tertiary-red);
+  --primary-red: #22d3ee;
+  --secondary-red: #06b6d4;
+  --tertiary-red: #0891b2;
+  --dark-red: #0e7490;
+  --black: #000000;
+  --white: #ffffff;
+
+  /* Brand tokens mapping */
+  --brand-blue: var(--mai-blue);
+  --brand-yellow: var(--mai-gold);
+  --brand-gray: var(--mai-gray-light);
+  --brand-dark: var(--mai-gray-dark);
+
+  /* Primary color tokens */
+  --primary-color: var(--mai-blue);
+  --primary-color-dark: #1b214f;
+  --primary-color-light: var(--mai-gold);
+  --accent-color: var(--mai-gold);
+  --accent-color-dark: var(--mai-blue);
   --accent-color-light: var(--white);
 
-  /* Brand Color with Alpha (buttons now use brand-blue for primary alpha tokens) */
+  /* Color with Alpha */
   --primary-color-alpha-30: rgba(34, 38, 93, 0.3);
   --primary-color-alpha-40: rgba(34, 38, 93, 0.4);
   --primary-color-alpha-60: rgba(34, 38, 93, 0.6);
   --primary-color-alpha-80: rgba(34, 38, 93, 0.8);
 
-  /* Secondary Color with Alpha (legacy cyan kept) */
-  --secondary-color-alpha-30: rgba(6, 182, 212, 0.3);
-  --secondary-color-alpha-40: rgba(6, 182, 212, 0.4);
-  --secondary-color-alpha-60: rgba(6, 182, 212, 0.6);
-  --secondary-color-alpha-80: rgba(6, 182, 212, 0.8);
-
-  /* Gradients - set primary gradient to use brand-blue for buttons */
-  --primary-gradient: linear-gradient(135deg, var(--brand-blue) 0%, var(--brand-blue-dark) 100%);
-  --primary-gradient-hover: linear-gradient(135deg, var(--brand-blue-dark) 0%, var(--brand-blue) 100%);
-  --secondary-gradient: linear-gradient(135deg, var(--secondary-red) 0%, var(--primary-red) 100%);
-  --secondary-gradient-hover: linear-gradient(135deg, var(--primary-red) 0%, var(--secondary-red) 100%);
-
-  /* keep accent gradient aliasing so .btn-primary (if using accent) matches primary */
-  --accent-gradient: var(--primary-gradient);
-  --accent-gradient-hover: var(--primary-gradient-hover);
-  --accent-color-alpha-30: var(--primary-color-alpha-30);
-  --accent-color-alpha-40: var(--primary-color-alpha-40);
-
-  /* Typography */
-  --font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Gradients */
+  --primary-gradient: linear-gradient(135deg, var(--mai-blue) 0%, #1b214f 100%);
+  --accent-gradient: linear-gradient(135deg, var(--mai-gold) 0%, var(--mai-gold) 100%);
 }
 
 /* Dark Theme Variables (Default) */

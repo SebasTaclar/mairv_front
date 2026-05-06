@@ -1,4 +1,4 @@
-ï»¿<template>
+<template>
   <div class="impostor-container">
     <!-- Header -->
     <header class="impostor-header">
@@ -75,13 +75,13 @@
     <div v-if="showConfirmClearNames" class="popup-overlay">
       <div class="popup-dialog">
         <h2>Ojo!</h2>
-        <p class="popup-message">Vas a borrar los nombres de los jugadores, estÃ¡s seguro?</p>
+        <p class="popup-message">Vas a borrar los nombres de los jugadores, estás seguro?</p>
         <div class="button-group">
           <button @click="cancelClearNames" class="btn-next">
             Cancelar
           </button>
           <button @click="confirmClearNames" class="btn-back">
-            SÃ­, Borrar Nombres
+            Sí, Borrar Nombres
           </button>
         </div>
       </div>
@@ -163,7 +163,7 @@
             <p>Categoria (opcional):</p>
 
             <div class="biblical-section">
-              <h3 class="section-title">ğŸ“– BÃ­blica</h3>
+              <h3 class="section-title">?? Bíblica</h3>
               <div class="category-buttons">
                 <button v-for="cat in categoryList.slice(0, 5)" :key="cat"
                   @click="selectedCategory = selectedCategory === cat ? null : cat"
@@ -174,7 +174,7 @@
             </div>
 
             <div class="other-section">
-              <h3 class="section-title">ğŸŒ Otras</h3>
+              <h3 class="section-title">?? Otras</h3>
               <div class="category-buttons">
                 <button v-for="cat in categoryList.slice(5)" :key="cat"
                   @click="selectedCategory = selectedCategory === cat ? null : cat"
@@ -224,7 +224,7 @@
         </div>
       </div>
 
-      <p class="card-hint">MantÃ©n presionado para voltear la tarjeta</p>
+      <p class="card-hint">Mantén presionado para voltear la tarjeta</p>
 
       <div class="button-group">
         <button @click="nextCardPreview" class="btn-next">
@@ -280,7 +280,7 @@
         </div>
       </div>
 
-      <p class="card-hint">MantÃ©n presionado para voltear la tarjeta</p>
+      <p class="card-hint">Mantén presionado para voltear la tarjeta</p>
 
       <div class="button-group">
         <button @click="previousPlayer" class="btn-back" :disabled="currentOrderIndex === 0">
@@ -296,14 +296,14 @@
     <div v-if="currentStep === 'confirmEnd'" class="setup-screen">
       <div class="game-end-card">
         <h2>Confirmar Terminar</h2>
-        <p class="end-message">EstÃ¡s seguro que deseas terminar el juego?</p>
+        <p class="end-message">Estás seguro que deseas terminar el juego?</p>
 
         <div class="button-group">
           <button @click="currentStep = 'gameplay'" class="btn-back">
             Continuar Jugando
           </button>
           <button @click="goToGameEnd" class="btn-next">
-            SÃ­, Terminar Juego
+            Sí, Terminar Juego
           </button>
         </div>
       </div>
@@ -331,6 +331,7 @@
 </template>
 
 <script setup lang="ts">
+import './styles/ImpostorPage.css'
 import { ref, computed, watch, onMounted } from 'vue'
 import wordDictionary from '../data/impostor-words.json'
 
@@ -586,7 +587,7 @@ const goToStartGame = () => {
 
 const nextCardPreview = () => {
   if (previewOrderIndex.value === playerOrder.value.length - 1) {
-    // Todos los jugadores vieron - seleccionar quiÃ©n comienza
+    // Todos los jugadores vieron - seleccionar quién comienza
     selectNewStart()
     currentStep.value = 'startGame'
   } else {
@@ -611,7 +612,7 @@ const initializeGameplay = () => {
 
 const nextPlayer = () => {
   if (currentOrderIndex.value === playerOrder.value.length - 1) {
-    // Ãšltimo jugador - confirmar terminar
+    // Último jugador - confirmar terminar
     currentStep.value = 'confirmEnd'
   } else {
     // Siguiente jugador en el orden
@@ -680,6 +681,5 @@ watch(() => previewOrderIndex.value, saveGameState)
 watch(() => startingPlayerIndex.value, saveGameState)
 </script>
 
-<style scoped>
-@import '../styles/impostor.css';
-</style>
+
+

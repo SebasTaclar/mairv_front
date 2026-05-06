@@ -39,96 +39,11 @@
 </template>
 
 <script setup lang="ts">
+import './styles/ContactSection.css'
 defineOptions({
   name: 'ContactSection'
 })
 </script>
 
-<style scoped>
-/* === ANIMACIONES === */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes glow {
-  0%, 100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-}
-
-/* Nuevo estilo: sección de contacto estilo tarjeta horizontal */
-.contact-section {
-  padding: 2.25rem 0;
-  background: var(--brand-gray);
-  border-top: 1px solid rgba(15, 23, 42, 0.06);
-  color: #0f172a;
-}
-
-.contact-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1.25rem;
-}
-
-.contact-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0;
-  align-items: center;
-}
 
 
-.contact-item {
-  padding: 1.6rem 2rem;
-  text-align: center;
-}
-
-.contact-item:not(:last-child) {
-  border-right: 1px solid rgba(15,23,42,0.06);
-}
-
-.icon-wrap {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto 0.75rem auto;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--white);
-  color: #0f172a;
-}
-
-.contact-title {
-  font-size: 1.05rem;
-  font-weight: 700;
-  margin: 0.35rem 0 0.4rem 0;
-}
-
-.contact-text {
-  font-size: 0.95rem;
-  color: #475569;
-  margin: 0;
-}
-
-
-</style>

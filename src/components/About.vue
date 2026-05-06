@@ -5,12 +5,12 @@
 </template>
 
 <script setup lang="ts">
+import './styles/About.css'
 
 defineOptions({ name: 'AboutSection' });
 
 
 </script>
 
-<style scoped>
 
-</style>
+
