@@ -1,3 +1,32 @@
+export interface EventAttachment {
+  id: string
+  title: string
+  url: string
+}
+
+export interface CalendarEvent {
+  id: string
+  name: string
+  date: string // YYYY-MM-DD
+  startTime?: string // HH:mm
+  endTime?: string // HH:mm
+  duration?: number // en minutos
+  createdBy: string
+  directors?: string // nombres separados por comas
+  description?: string
+  attachments?: EventAttachment[]
+  location?: string
+  category?: 'evento' | 'reunion' | 'actividad' | 'otro'
+  capacity?: number
+  registeredCount?: number
+}
+
+export interface EventsResponse {
+  recent: CalendarEvent[] // últimos 2
+  upcoming: CalendarEvent[] // próximos 2
+  all: CalendarEvent[]
+}
+
 export interface Event {
   id: string
   title: string

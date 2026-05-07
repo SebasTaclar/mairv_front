@@ -14,17 +14,38 @@
 
       <!-- Navegación principal (centrada) -->
       <div class="nav-menu desktop-nav">
-        <RouterLink to="/" class="nav-link" :class="{ active: isCurrentRoute('/') }" @click="closeMobileMenu">Inicio</RouterLink>
+        <RouterLink to="/" class="nav-link" :class="{ active: isCurrentRoute('/') }" @click="closeMobileMenu">Inicio
+        </RouterLink>
         <div class="nav-item dropdown" @mouseenter="isNosotrosOpen = true" @mouseleave="isNosotrosOpen = false">
           <a class="nav-link dropdown-toggle" href="#" @click.prevent="toggleNosotros">Nosotros</a>
           <div class="dropdown-menu" :class="{ open: isNosotrosOpen }">
-            <RouterLink :to="{ path: '/about', hash: '#pst' }" class="dropdown-item" @click="closeMobileMenu">Pst</RouterLink>
-            <RouterLink :to="{ path: '/about', hash: '#historia' }" class="dropdown-item" @click="closeMobileMenu">Mistoria</RouterLink>
-            <RouterLink :to="{ path: '/about', hash: '#mision' }" class="dropdown-item" @click="closeMobileMenu">Misión / Visión</RouterLink>
+            <RouterLink :to="{ path: '/about', hash: '#pst' }" class="dropdown-item" @click="closeMobileMenu">Pst
+            </RouterLink>
+            <RouterLink :to="{ path: '/about', hash: '#historia' }" class="dropdown-item" @click="closeMobileMenu">
+              Mistoria</RouterLink>
+            <RouterLink :to="{ path: '/about', hash: '#mision' }" class="dropdown-item" @click="closeMobileMenu">Misión
+              / Visión</RouterLink>
           </div>
         </div>
-        <RouterLink to="/events" class="nav-link" :class="{ active: isCurrentRoute('/events') }" @click="closeMobileMenu">Ministerios</RouterLink>
-              <a href="#contact" class="nav-link" :class="{ active: isContactVisible }" @click.prevent="scrollToContact">Conectar</a>
+
+        <!-- Calendario Dropdown (unificada) -->
+        <div class="nav-item dropdown calendar-dropdown" ref="calendarDropdownRef" @mouseenter="openCalendarOnHover"
+          @mouseleave="onCalendarMouseLeave">
+          <button class="nav-link dropdown-toggle" @click="isCalendarOpen = !isCalendarOpen">Calendario
+            <span class="dropdown-chevron" :class="{ open: isCalendarOpen }">▼</span>
+          </button>
+          <div class="dropdown-menu" :class="{ open: isCalendarOpen }">
+            <RouterLink to="/events" class="dropdown-item" @click="isCalendarOpen = false; closeMobileMenu()">Eventos
+            </RouterLink>
+            <RouterLink to="/calendar" class="dropdown-item" @click="isCalendarOpen = false; closeMobileMenu()">
+              Calendario Completo</RouterLink>
+          </div>
+        </div>
+
+        <RouterLink to="/events" class="nav-link" :class="{ active: isCurrentRoute('/events') }"
+          @click="closeMobileMenu">Ministerios</RouterLink>
+        <a href="#contact" class="nav-link" :class="{ active: isContactVisible }"
+          @click.prevent="scrollToContact">Conectar</a>
       </div>
 
       <!-- Controles de usuario -->
@@ -36,7 +57,8 @@
                 d="M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16zm8.707 17.293-4.387-4.387a9 9 0 1 0-1.414 1.414l4.387 4.387a1 1 0 0 0 1.414-1.414z" />
             </svg>
 
-            <input class="header-search-input" type="search" v-model="searchTerm" placeholder="Buscar..." aria-label="Buscar" />
+            <input class="header-search-input" type="search" v-model="searchTerm" placeholder="Buscar..."
+              aria-label="Buscar" />
           </div>
         </form>
 
@@ -65,21 +87,40 @@
                   d="M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16zm8.707 17.293-4.387-4.387a9 9 0 1 0-1.414 1.414l4.387 4.387a1 1 0 0 0 1.414-1.414z" />
               </svg>
 
-              <input class="header-search-input mobile" type="search" v-model="searchTerm" placeholder="Buscar..." aria-label="Buscar" />
+              <input class="header-search-input mobile" type="search" v-model="searchTerm" placeholder="Buscar..."
+                aria-label="Buscar" />
             </div>
           </form>
           <div class="mobile-nav-links">
-            <RouterLink to="/" class="mobile-link" :class="{ active: isCurrentRoute('/') }" @click="closeMobileMenu">Inicio</RouterLink>
+            <RouterLink to="/" class="mobile-link" :class="{ active: isCurrentRoute('/') }" @click="closeMobileMenu">
+              Inicio</RouterLink>
             <button class="mobile-link mobile-nosotros-toggle" @click="isNosotrosOpen = !isNosotrosOpen">
               Nosotros <span class="mobile-nosotros-chevron" :class="{ open: isNosotrosOpen }">▾</span>
             </button>
             <div v-if="isNosotrosOpen" class="mobile-nosotros-items">
-              <RouterLink :to="{ path: '/about', hash: '#pst' }" class="mobile-link mobile-sub" @click="closeMobileMenu">Pst</RouterLink>
-              <RouterLink :to="{ path: '/about', hash: '#historia' }" class="mobile-link mobile-sub" @click="closeMobileMenu">Mistoria</RouterLink>
-              <RouterLink :to="{ path: '/about', hash: '#mision' }" class="mobile-link mobile-sub" @click="closeMobileMenu">Misión / Visión</RouterLink>
+              <RouterLink :to="{ path: '/about', hash: '#pst' }" class="mobile-link mobile-sub"
+                @click="closeMobileMenu">Pst</RouterLink>
+              <RouterLink :to="{ path: '/about', hash: '#historia' }" class="mobile-link mobile-sub"
+                @click="closeMobileMenu">Mistoria</RouterLink>
+              <RouterLink :to="{ path: '/about', hash: '#mision' }" class="mobile-link mobile-sub"
+                @click="closeMobileMenu">Misión / Visión</RouterLink>
             </div>
-            <RouterLink to="/events" class="mobile-link" :class="{ active: isCurrentRoute('/events') }" @click="closeMobileMenu">Ministerios</RouterLink>
-                  <a href="#contact" class="mobile-link" :class="{ active: isContactVisible }" @click.prevent="scrollToContact">Conectar</a>
+
+            <button class="mobile-link mobile-calendar-toggle" @click="isCalendarOpen = !isCalendarOpen">
+              Calendario<span class="mobile-calendar-chevron" :class="{ open: isCalendarOpen }">▾</span>
+            </button>
+            <div v-if="isCalendarOpen" class="mobile-calendar-items">
+              <a href="#recientes" class="mobile-link mobile-sub" @click.prevent="scrollToRecientes">Eventos
+                Recientes</a>
+              <a href="#proximos" class="mobile-link mobile-sub" @click.prevent="scrollToProximos">Eventos Próximos</a>
+              <RouterLink to="/calendar" class="mobile-link mobile-sub" @click="closeMobileMenu">Calendario Completo
+              </RouterLink>
+            </div>
+
+            <RouterLink to="/events" class="mobile-link" :class="{ active: isCurrentRoute('/events') }"
+              @click="closeMobileMenu">Ministerios</RouterLink>
+            <a href="#contact" class="mobile-link" :class="{ active: isContactVisible }"
+              @click.prevent="scrollToContact">Conectar</a>
 
           </div>
 
@@ -117,6 +158,28 @@ const username = ref('');
 const isMobileMenuOpen = ref(false);
 const isAtTop = ref(true);
 const isNosotrosOpen = ref(false);
+const isCalendarOpen = ref(false);
+
+// Ref to calendar dropdown element for outside-click detection
+const calendarDropdownRef = ref<HTMLElement | null>(null);
+
+const openCalendarOnHover = () => {
+  isCalendarOpen.value = true;
+};
+
+// Intentionally no-op so hover doesn't auto-close; closing is handled by outside click or explicit toggle
+const onCalendarMouseLeave = () => {
+  /* keep open until explicit close */
+};
+
+const handleGlobalClick = (e: MouseEvent) => {
+  if (!isCalendarOpen.value) return;
+  const target = e.target as Node | null;
+  const el = calendarDropdownRef.value as HTMLElement | null;
+  if (el && target && !el.contains(target)) {
+    isCalendarOpen.value = false;
+  }
+};
 
 // Router hooks
 const currentRoute = useRoute();
@@ -137,6 +200,7 @@ const toggleMobileMenu = () => {
 const closeMobileMenu = () => {
   isMobileMenuOpen.value = false;
   isNosotrosOpen.value = false;
+  isCalendarOpen.value = false;
 };
 
 const toggleNosotros = (e?: Event) => {
@@ -183,6 +247,38 @@ const scrollToContact = async () => {
     await router.push('/');
     // wait a bit for DOM to render
     setTimeout(() => { observeContact(); scrollNow(); }, 120);
+  } else {
+    scrollNow();
+  }
+};
+
+const scrollToRecientes = async () => {
+  closeMobileMenu();
+  const scrollNow = () => {
+    const el = document.querySelector('.recent-events-section') as HTMLElement | null;
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+  if (currentRoute.path !== '/') {
+    await router.push('/');
+    setTimeout(() => scrollNow(), 120);
+  } else {
+    scrollNow();
+  }
+};
+
+const scrollToProximos = async () => {
+  closeMobileMenu();
+  const scrollNow = () => {
+    const el = document.querySelector('.recent-events-section') as HTMLElement | null;
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+  if (currentRoute.path !== '/') {
+    await router.push('/');
+    setTimeout(() => scrollNow(), 120);
   } else {
     scrollNow();
   }
@@ -243,7 +339,7 @@ function performInPageSearch(term: string) {
   if (found) {
     try {
       found.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    } catch (e) {}
+    } catch (e) { }
     const prevBg = found.style.backgroundColor
     const prevOutline = found.style.outline
     found.style.transition = 'background-color 0.35s ease, outline 0.35s ease'
@@ -287,15 +383,18 @@ onMounted(() => {
   handleScroll();
   window.addEventListener('scroll', handleScroll, { passive: true });
   // expose for cleanup in onUnmounted
-  ;(window as any).__app_handleHeaderScroll = handleScroll;
+  ; (window as any).__app_handleHeaderScroll = handleScroll;
   // observe contact section visibility
   observeContact();
+  // close dropdown when clicking outside
+  window.addEventListener('click', handleGlobalClick);
 });
 
 onUnmounted(() => {
   const fn = (window as any).__app_handleHeaderScroll;
   if (fn) window.removeEventListener('scroll', fn);
   if (contactObserver) { contactObserver.disconnect(); contactObserver = null; }
+  window.removeEventListener('click', handleGlobalClick);
 });
 
 const route = useRoute();
@@ -306,7 +405,7 @@ watch(route, () => {
 
 <style scoped>
 .navbar {
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.9) 100%);
+  background: linear-gradient(180deg, #22265D 0%, #0b2545 100%);
   margin: 0;
   width: 100%;
   display: flex;
@@ -351,14 +450,14 @@ watch(route, () => {
   border-radius: 50%;
   object-fit: cover;
   display: block;
-  border: 2px solid rgba(255,255,255,0.18);
-  box-shadow: 0 6px 20px rgba(255,255,255,0.06), 0 0 20px rgba(255,255,255,0.04);
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.06), 0 0 20px rgba(255, 255, 255, 0.04);
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .site-logo:hover {
   transform: scale(1.06);
-  box-shadow: 0 10px 30px rgba(255,255,255,0.12), 0 0 30px rgba(255,255,255,0.06);
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.12), 0 0 30px rgba(255, 255, 255, 0.06);
 }
 
 .logo-circle {
@@ -548,7 +647,7 @@ watch(route, () => {
 .live-btn {
   background: rgba(207, 207, 207, 0.527);
   color: #fff;
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   padding: 8px 14px;
   border-radius: 10px;
   font-weight: 800;
@@ -843,9 +942,9 @@ watch(route, () => {
     gap: 10px;
   }
 
-  .site-logo{
+  .site-logo {
     width: 44px;
-    height: 44px ;
+    height: 44px;
   }
 
   .brand-title {
@@ -931,52 +1030,166 @@ watch(route, () => {
 }
 
 .header-search-input:focus {
-  background: rgba(255,255,255,0.06);
-  border-color: rgba(255,255,255,0.18);
-  box-shadow: 0 0 0 6px rgba(34,211,238,0.06);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 0 0 6px rgba(34, 211, 238, 0.06);
 }
 
-.mobile-search { display: none; margin-bottom: 10px; }
-.mobile-search .search-input-wrapper.mobile { position: relative; width: 100%; }
-.mobile-search .header-search-input.mobile { padding: 10px 14px 10px 36px; border-radius: 10px; background: rgba(255,255,255,0.04); color: var(--white); border: 1px solid rgba(255,255,255,0.06); }
+.mobile-search {
+  display: none;
+  margin-bottom: 10px;
+}
+
+.mobile-search .search-input-wrapper.mobile {
+  position: relative;
+  width: 100%;
+}
+
+.mobile-search .header-search-input.mobile {
+  padding: 10px 14px 10px 36px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
 
 @media (max-width: 768px) {
-  .header-search { display: none; }
-  .header-search .search-input-wrapper.header { width: 140px; }
-  .header-search-input { font-size: 13px; padding: 7px 10px 7px 32px; }
-  .mobile-search { display: block; }
+  .header-search {
+    display: none;
+  }
+
+  .header-search .search-input-wrapper.header {
+    width: 140px;
+  }
+
+  .header-search-input {
+    font-size: 13px;
+    padding: 7px 10px 7px 32px;
+  }
+
+  .mobile-search {
+    display: block;
+  }
 }
 
 /* Dropdown 'Nosotros' styles */
-.nav-item.dropdown { position: relative; }
-.dropdown-toggle { cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+.nav-item.dropdown {
+  position: relative;
+}
+
+.dropdown-toggle {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .dropdown-menu {
   position: absolute;
   top: calc(100% + 10px);
   left: 50%;
   transform: translateX(-50%);
-  min-width: 180px;
-  background: rgba(8,8,8,0.95);
+  min-width: 200px;
   border-radius: 8px;
   padding: 6px 0;
   display: none;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+  box-shadow: 0 8px 30px rgba(2, 6, 23, 0.45);
   z-index: 1002;
 }
+
 .nav-item.dropdown:hover .dropdown-menu,
-.dropdown-menu.open { display: block; }
+.dropdown-menu.open {
+  display: block;
+}
+
 .dropdown-item {
   display: block;
-  padding: 8px 14px;
-  color: var(--white);
+  padding: 10px 16px;
+  color: #ffffff;
   text-decoration: none;
   font-weight: 700;
 }
-.dropdown-item:hover { background: rgba(255,255,255,0.03); }
+
+.dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Dark gradient for dropdown (ensures contrast on light pages) */
+.dropdown-menu {
+  background: linear-gradient(180deg, #0b2545 0%, #22265D 100%);
+}
+
+/* When navbar is transparent (over light backgrounds) keep links light for consistency */
+.navbar.transparent .nav-link,
+.navbar.transparent .dropdown-toggle {
+  color: #ffffff !important;
+}
+
+.navbar.transparent .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: #ffffff !important;
+}
 
 /* Mobile 'Nosotros' submenu */
-.mobile-nosotros-items .mobile-sub { padding-left: 18px; }
-.mobile-nosotros-toggle { display: flex; justify-content: space-between; align-items: center; }
-.mobile-nosotros-chevron { transition: transform 0.2s ease; }
-.mobile-nosotros-chevron.open { transform: rotate(180deg); }
+.mobile-nosotros-items .mobile-sub {
+  padding-left: 18px;
+}
+
+.mobile-nosotros-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mobile-nosotros-chevron {
+  transition: transform 0.2s ease;
+}
+
+.mobile-nosotros-chevron.open {
+  transform: rotate(180deg);
+}
+
+/* Calendar button tweaks */
+.calendar-dropdown .nav-link {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  /* force transparent to avoid white pill */
+  color: inherit !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
+}
+
+.calendar-dropdown .nav-link:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.dropdown-chevron {
+  display: inline-block !important;
+  margin-left: 6px !important;
+  transition: transform 0.18s ease !important, opacity 0.18s ease !important;
+  opacity: 0 !important;
+  /* hidden by default */
+  transform: translateY(0) !important;
+}
+
+.calendar-dropdown:hover .dropdown-chevron {
+  opacity: 1 !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Show chevron also when dropdown is open */
+.calendar-dropdown .dropdown-menu.open+.dropdown-chevron,
+.calendar-dropdown .dropdown-menu.open~.dropdown-chevron,
+.calendar-dropdown .dropdown-menu.open .dropdown-chevron {
+  opacity: 1 !important;
+  transform: translateY(-2px) !important;
+}
+
+.calendar-dropdown .nav-link:hover {
+  background: transparent !important;
+}
 </style>

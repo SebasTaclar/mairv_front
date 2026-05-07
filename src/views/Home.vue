@@ -14,7 +14,10 @@
       <StoriesSection />
     </section>
 
-    <!-- ContactSection removed per request -->
+    <!-- Eventos Recientes y Próximos -->
+    <section class="section">
+      <RecentEventsSection />
+    </section>
 
     <section class="section">
       <EventCard />
@@ -47,6 +50,7 @@ import { ref, defineAsyncComponent } from 'vue'
 import MainBanner from '@/components/MainBanner.vue';
 import HelpSection from '@/components/HelpSection.vue';
 import StoriesSection from '@/components/StoriesSection.vue';
+import RecentEventsSection from '@/components/RecentEventsSection.vue';
 // import EventCard from '@/components/EventCard.vue';
 // import MessageCard from '@/components/MessageCard.vue';
 
@@ -76,6 +80,3 @@ defineExpose({
 });
 
 </script>
-
-
-
