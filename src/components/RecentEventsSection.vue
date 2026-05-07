@@ -111,8 +111,13 @@ const openEventModal = (event: CalendarEvent) => {
  showModal.value = true
 }
 
+const parseLocalDate = (dateStr: string): Date => {
+ const [year, month, day] = dateStr.split('-').map(Number)
+ return new Date(year, month - 1, day)
+}
+
 const formatDate = (dateStr: string): string => {
- const date = new Date(dateStr)
+ const date = parseLocalDate(dateStr)
  const options: Intl.DateTimeFormatOptions = {
   day: '2-digit',
   month: 'short',

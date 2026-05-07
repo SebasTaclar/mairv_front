@@ -35,8 +35,7 @@
             <span class="dropdown-chevron" :class="{ open: isCalendarOpen }">▼</span>
           </button>
           <div class="dropdown-menu" :class="{ open: isCalendarOpen }">
-            <RouterLink to="/events" class="dropdown-item" @click="isCalendarOpen = false; closeMobileMenu()">Eventos
-            </RouterLink>
+            <a href="#recientes" class="dropdown-item" @click.prevent="scrollToRecientes">Eventos</a>
             <RouterLink to="/calendar" class="dropdown-item" @click="isCalendarOpen = false; closeMobileMenu()">
               Calendario Completo</RouterLink>
           </div>
