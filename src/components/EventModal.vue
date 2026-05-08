@@ -104,7 +104,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import type { CalendarEvent } from '@/types/EventType'
 import './styles/EventModal.css'
 
@@ -112,13 +111,13 @@ const props = defineProps<{
  event: CalendarEvent
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
  close: []
 }>()
 
 const handleBackdropClick = (e: MouseEvent) => {
  if ((e.target as HTMLElement).classList.contains('event-modal-overlay')) {
-  // Cierra el modal
+     emit('close')
  }
 }
 

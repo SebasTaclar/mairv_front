@@ -1,5 +1,5 @@
 <template>
-  <section class="hero-carousel">
+  <section class="hero-carousel" ref="heroSectionRef">
     <!-- Carrusel de Imágenes -->
     <div class="carousel-container">
       <div v-for="(slide, index) in slides" :key="index" class="carousel-slide"
@@ -15,6 +15,14 @@
       <h1 class="hero-title hero-title--handwritten">UN LUGAR DONDE LA VERDAD CAMBIARÁ TU REALIDAD</h1>
       <!-- <p class="hero-subtitle">Acompáñanos en comunidad, en línea y en persona.</p> -->
     </div>
+
+    <!-- Flecha para ir a la siguiente sección -->
+    <button class="scroll-next-btn" type="button" aria-label="Ir a la siguiente sección" @click="scrollToNextSection">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6"
+        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m6 9 6 6 6-6" />
+      </svg>
+    </button>
 
     <!-- Navegación -->
     <div class="carousel-navigation">
@@ -63,6 +71,7 @@ interface ProductSlide {
 const currentSlide = ref(0)
 const autoPlayInterval = ref<ReturnType<typeof setInterval> | null>(null)
 const isPlaying = ref(true)
+const heroSectionRef = ref<HTMLElement | null>(null)
 
 // Datos de categorías SOYDANI
 const slides = ref<ProductSlide[]>([
@@ -181,6 +190,26 @@ const viewLive = () => {
     window.open('/live', '_blank')
   } catch (e) {
     console.log('Abrir en vivo', e)
+  }
+}
+
+const scrollToNextSection = () => {
+  const heroEl = heroSectionRef.value
+  if (!heroEl) return
+
+  let next = heroEl.nextElementSibling as HTMLElement | null
+  while (next && next.tagName === 'SCRIPT') {
+    next = next.nextElementSibling as HTMLElement | null
+  }
+
+  if (next && typeof next.scrollIntoView === 'function') {
+    next.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    return
+  }
+
+  const fallback = document.querySelector('.help-section, .stories-section, .recent-events-section, .contact-section') as HTMLElement | null
+  if (fallback && typeof fallback.scrollIntoView === 'function') {
+    fallback.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 }
 

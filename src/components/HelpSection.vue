@@ -3,111 +3,43 @@
     <div class="container">
       <h2 id="help-heading" class="help-title">Cómo podemos ayudarte</h2>
 
-      <div class="help-grid">
-        <!-- Card 1 -->
-        <a href="#" @click.prevent="openModal('video', 'https://www.youtube.com/embed/7Q929bAo5fo?si=IFrvBX0uVC1rxkh_')"
-          class="story-card-link">
-          <article class="story-card" aria-labelledby="help-1-title">
-            <div class="story-media">
-              <div class="video-wrap">
-                <iframe src="https://www.youtube.com/embed/7Q929bAo5fo?si=IFrvBX0uVC1rxkh_" title="Oración"
-                  frameborder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowfullscreen></iframe>
+      <div class="help-carousel" ref="carouselRef">
+        <button class="carousel-arrow carousel-arrow--left" type="button" aria-label="Anterior"
+          @click="moveCarousel(-1)">
+          <span aria-hidden="true">‹</span>
+        </button>
+
+        <div class="help-grid" ref="gridRef" @scroll.passive="handleCarouselScroll">
+          <a v-for="(card, index) in cards" :key="card.title" href="#" class="story-card-link"
+            @click.prevent="openModal(card.modalType, card.modalSrc, card.modalAlt)">
+            <article class="story-card" :aria-labelledby="`help-${index + 1}-title`">
+              <div class="story-media">
+                <div v-if="card.mediaType === 'video'" class="video-wrap">
+                  <iframe :src="card.mediaSrc" :title="card.title" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+                </div>
+                <img v-else :src="card.mediaSrc" :alt="card.alt" loading="lazy" />
+                <div class="story-overlay"></div>
               </div>
-              <div class="story-overlay"></div>
-            </div>
-            <div class="story-body">
-              <h3 id="help-1-title" class="story-title">Oración</h3>
-              <div class="story-cta">Ver más →</div>
-            </div>
-          </article>
-        </a>
+              <div class="story-body">
+                <h3 :id="`help-${index + 1}-title`" class="story-title">{{ card.title }}</h3>
+                <div class="story-cta">Ver más →</div>
+              </div>
+            </article>
+          </a>
+        </div>
 
-        <!-- Card 2 -->
-        <a href="#"
-          @click.prevent="openModal('image', 'https://www.biblia-es.org/wp-content/uploads/2024/04/Salmos-28-7-480x270.jpg?v=240327', 'Devocionales')"
-          class="story-card-link">
-          <article class="story-card" aria-labelledby="help-2-title">
-            <div class="story-media">
-              <img src="https://www.biblia-es.org/wp-content/uploads/2024/04/Salmos-28-7-480x270.jpg?v=240327"
-                alt="Devocionales" loading="lazy" />
-              <div class="story-overlay"></div>
-            </div>
-            <div class="story-body">
-              <h3 id="help-2-title" class="story-title">Devocionales</h3>
-              <div class="story-cta">Ver más →</div>
-            </div>
-          </article>
-        </a>
+        <button class="carousel-arrow carousel-arrow--right" type="button" aria-label="Siguiente"
+          @click="moveCarousel(1)">
+          <span aria-hidden="true">›</span>
+        </button>
+      </div>
 
-        <!-- Card 3 -->
-        <a href="#"
-          @click.prevent="openModal('image', 'https://res.cloudinary.com/dvu7fperb/image/upload/v1778073286/familiaycomunidad_zp0w4b.jpg', 'Familia y comunidad')"
-          class="story-card-link">
-          <article class="story-card" aria-labelledby="help-3-title">
-            <div class="story-media">
-              <img src="https://res.cloudinary.com/dvu7fperb/image/upload/v1778073286/familiaycomunidad_zp0w4b.jpg"
-                alt="Familia y comunidad" loading="lazy" />
-              <div class="story-overlay"></div>
-            </div>
-            <div class="story-body">
-              <h3 id="help-3-title" class="story-title">Se parte de Nuestra familia</h3>
-              <div class="story-cta">Ver más →</div>
-            </div>
-          </article>
-        </a>
-
-        <!-- Card 4 -->
-        <a href="#"
-          @click.prevent="openModal('image', 'https://res.cloudinary.com/dvu7fperb/image/upload/v1778073286/inforgeneral_opdleu.jpg', 'Mensaje del Día')"
-          class="story-card-link">
-          <article class="story-card" aria-labelledby="help-4-title">
-            <div class="story-media">
-              <img src="https://res.cloudinary.com/dvu7fperb/image/upload/v1778073286/inforgeneral_opdleu.jpg"
-                alt="Mensaje del Día" loading="lazy" />
-              <div class="story-overlay"></div>
-            </div>
-            <div class="story-body">
-              <h3 id="help-4-title" class="story-title">Mensaje del Día</h3>
-              <div class="story-cta">Ver más →</div>
-            </div>
-          </article>
-        </a>
-
-        <!-- Card 5 -->
-        <a href="#"
-          @click.prevent="openModal('image', 'https://res.cloudinary.com/dvu7fperb/image/upload/v1778073286/anunciosyactividades_micasr.jpg', 'Anuncios y Actividades')"
-          class="story-card-link">
-          <article class="story-card" aria-labelledby="help-5-title">
-            <div class="story-media">
-              <img src="https://res.cloudinary.com/dvu7fperb/image/upload/v1778073286/anunciosyactividades_micasr.jpg"
-                alt="Anuncios y Actividades" loading="lazy" />
-              <div class="story-overlay"></div>
-            </div>
-            <div class="story-body">
-              <h3 id="help-5-title" class="story-title">Anuncios y Actividades</h3>
-              <div class="story-cta">Ver más →</div>
-            </div>
-          </article>
-        </a>
-
-        <!-- Card 6 -->
-        <a href="#"
-          @click.prevent="openModal('image', 'https://res.cloudinary.com/dvu7fperb/image/upload/v1778073286/vidaencomunidad_gfr7ci.jpg', 'Vida en Comunidad')"
-          class="story-card-link">
-          <article class="story-card" aria-labelledby="help-6-title">
-            <div class="story-media">
-              <img src="https://res.cloudinary.com/dvu7fperb/image/upload/v1778073286/vidaencomunidad_gfr7ci.jpg"
-                alt="Vida en Comunidad" loading="lazy" />
-              <div class="story-overlay"></div>
-            </div>
-            <div class="story-body">
-              <h3 id="help-6-title" class="story-title">Vida en Comunidad</h3>
-              <div class="story-cta">Ver más →</div>
-            </div>
-          </article>
-        </a>
+      <div class="carousel-dots" aria-label="Paginación del carrusel">
+        <button v-for="(_, index) in cards" :key="`dot-${index}`" type="button" class="carousel-dot"
+          :class="{ active: activeSlide === index }" :aria-label="`Ir a la card ${index + 1}`"
+          @click="scrollToSlide(index, true)"></button>
       </div>
     </div>
   </section>
@@ -138,14 +70,149 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import './styles/HelpSection.css'
+
+type HelpCard = {
+  title: string
+  mediaType: 'image' | 'video'
+  mediaSrc: string
+  alt: string
+  modalType: 'image' | 'video'
+  modalSrc: string
+  modalAlt: string
+}
+
+const cards: HelpCard[] = [
+  {
+    title: 'Oración',
+    mediaType: 'video',
+    mediaSrc: 'https://www.youtube.com/embed/7Q929bAo5fo?si=IFrvBX0uVC1rxkh_',
+    alt: 'Oración',
+    modalType: 'video',
+    modalSrc: 'https://www.youtube.com/embed/7Q929bAo5fo?si=IFrvBX0uVC1rxkh_',
+    modalAlt: 'Oración'
+  },
+  {
+    title: 'Devocionales',
+    mediaType: 'image',
+    mediaSrc: 'https://www.biblia-es.org/wp-content/uploads/2024/04/Salmos-28-7-480x270.jpg?v=240327',
+    alt: 'Devocionales',
+    modalType: 'image',
+    modalSrc: 'https://www.biblia-es.org/wp-content/uploads/2024/04/Salmos-28-7-480x270.jpg?v=240327',
+    modalAlt: 'Devocionales'
+  },
+  {
+    title: 'Se parte de Nuestra familia',
+    mediaType: 'image',
+    mediaSrc: 'https://res.cloudinary.com/dvu7fperb/image/upload/v1778073286/familiaycomunidad_zp0w4b.jpg',
+    alt: 'Familia y comunidad',
+    modalType: 'image',
+    modalSrc: 'https://res.cloudinary.com/dvu7fperb/image/upload/v1778073286/familiaycomunidad_zp0w4b.jpg',
+    modalAlt: 'Familia y comunidad'
+  },
+  {
+    title: 'Mensaje del Día',
+    mediaType: 'image',
+    mediaSrc: 'https://res.cloudinary.com/dvu7fperb/image/upload/v1778073286/inforgeneral_opdleu.jpg',
+    alt: 'Mensaje del Día',
+    modalType: 'image',
+    modalSrc: 'https://res.cloudinary.com/dvu7fperb/image/upload/v1778073286/inforgeneral_opdleu.jpg',
+    modalAlt: 'Mensaje del Día'
+  },
+  {
+    title: 'Anuncios y Actividades',
+    mediaType: 'image',
+    mediaSrc: 'https://res.cloudinary.com/dvu7fperb/image/upload/v1778073286/anunciosyactividades_micasr.jpg',
+    alt: 'Anuncios y Actividades',
+    modalType: 'image',
+    modalSrc: 'https://res.cloudinary.com/dvu7fperb/image/upload/v1778073286/anunciosyactividades_micasr.jpg',
+    modalAlt: 'Anuncios y Actividades'
+  },
+  {
+    title: 'Vida en Comunidad',
+    mediaType: 'image',
+    mediaSrc: 'https://res.cloudinary.com/dvu7fperb/image/upload/v1778073286/vidaencomunidad_gfr7ci.jpg',
+    alt: 'Vida en Comunidad',
+    modalType: 'image',
+    modalSrc: 'https://res.cloudinary.com/dvu7fperb/image/upload/v1778073286/vidaencomunidad_gfr7ci.jpg',
+    modalAlt: 'Vida en Comunidad'
+  }
+]
 
 const showModal = ref(false)
 const modalType = ref<'image' | 'video' | null>(null)
 const modalSrc = ref('')
 const modalAlt = ref('')
 const previousScroll = ref(0)
+const activeSlide = ref(0)
+const carouselRef = ref<HTMLElement | null>(null)
+const gridRef = ref<HTMLElement | null>(null)
+let autoplayTimer: number | null = null
+let scrollRaf = 0
+
+const mobileQuery = typeof window !== 'undefined' ? window.matchMedia('(max-width: 768px)') : null
+
+function isMobileCarousel() {
+  return mobileQuery?.matches ?? false
+}
+
+function stopAutoplay() {
+  if (autoplayTimer !== null) {
+    window.clearInterval(autoplayTimer)
+    autoplayTimer = null
+  }
+}
+
+function startAutoplay() {
+  stopAutoplay()
+  if (!isMobileCarousel() || cards.length < 2) return
+  autoplayTimer = window.setInterval(() => {
+    const nextIndex = (activeSlide.value + 1) % cards.length
+    scrollToSlide(nextIndex, true)
+  }, 4200)
+}
+
+function scrollToSlide(index: number, smooth: boolean) {
+  const grid = gridRef.value
+  if (!grid) return
+  const normalizedIndex = (index + cards.length) % cards.length
+  const width = grid.clientWidth
+  grid.scrollTo({ left: width * normalizedIndex, behavior: smooth ? 'smooth' : 'auto' })
+  activeSlide.value = normalizedIndex
+}
+
+function syncActiveSlide() {
+  const grid = gridRef.value
+  if (!grid || !isMobileCarousel()) return
+  const width = grid.clientWidth || 1
+  const nextIndex = Math.max(0, Math.min(cards.length - 1, Math.round(grid.scrollLeft / width)))
+  activeSlide.value = nextIndex
+}
+
+function handleCarouselScroll() {
+  if (!isMobileCarousel()) return
+  if (scrollRaf) cancelAnimationFrame(scrollRaf)
+  scrollRaf = requestAnimationFrame(() => {
+    syncActiveSlide()
+  })
+}
+
+function moveCarousel(direction: number) {
+  const nextIndex = activeSlide.value + direction
+  scrollToSlide(nextIndex, true)
+  startAutoplay()
+}
+
+function handleResize() {
+  if (!isMobileCarousel()) {
+    stopAutoplay()
+    activeSlide.value = 0
+    return
+  }
+  startAutoplay()
+  nextTick(() => scrollToSlide(activeSlide.value, false))
+}
 
 const modalSrcWithAutoplay = computed(() => {
   if (modalType.value === 'video' && modalSrc.value) {
@@ -198,4 +265,24 @@ function handleKeyDown(e: KeyboardEvent) {
 if (typeof document !== 'undefined') {
   document.addEventListener('keydown', handleKeyDown)
 }
+
+onMounted(() => {
+  if (mobileQuery) {
+    mobileQuery.addEventListener('change', handleResize)
+  }
+  handleResize()
+  nextTick(() => syncActiveSlide())
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeyDown)
+  stopAutoplay()
+  if (mobileQuery) {
+    mobileQuery.removeEventListener('change', handleResize)
+  }
+  if (scrollRaf) {
+    cancelAnimationFrame(scrollRaf)
+    scrollRaf = 0
+  }
+})
 </script>

@@ -194,12 +194,42 @@
   }
 
   .event-card {
-    grid-template-columns: 60px 1fr;
-    gap: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    align-items: stretch;
+    padding: 0.3rem;
+  }
+
+  .event-content {
+    gap: 0.3rem;
+  }
+
+  .date-badge {
+    font-size: 0.65rem;
+    padding: 0.4rem 0.6rem;
   }
 
   .event-badge {
-    display: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.15rem;
+    margin-left: auto;
+    white-space: normal;
+    line-height: 1.1;
+    min-width: 92px;
+    align-self: flex-start;
+  }
+
+  .event-date {
+    flex: none;
+    align-self: flex-start;
+  }
+
+  .event-content {
+    flex: none;
+    min-width: 0;
   }
 
   .events-list {

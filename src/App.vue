@@ -21,19 +21,15 @@
           <div class="dropdown-menu" :class="{ open: isNosotrosOpen }">
             <RouterLink :to="{ path: '/about', hash: '#pst' }" class="dropdown-item" @click="closeMobileMenu">Pst
             </RouterLink>
-            <RouterLink :to="{ path: '/about', hash: '#historia' }" class="dropdown-item" @click="closeMobileMenu">
-              Mistoria</RouterLink>
+            <a href="#stories" class="dropdown-item" @click.prevent="scrollToStories">Historia</a>
             <RouterLink :to="{ path: '/about', hash: '#mision' }" class="dropdown-item" @click="closeMobileMenu">Misión
               / Visión</RouterLink>
           </div>
         </div>
 
         <!-- Calendario Dropdown (unificada) -->
-        <div class="nav-item dropdown calendar-dropdown" ref="calendarDropdownRef" @mouseenter="openCalendarOnHover"
-          @mouseleave="onCalendarMouseLeave">
-          <button class="nav-link dropdown-toggle" @click="isCalendarOpen = !isCalendarOpen">Calendario
-            <span class="dropdown-chevron" :class="{ open: isCalendarOpen }">▼</span>
-          </button>
+        <div class="nav-item dropdown" @mouseenter="isCalendarOpen = true" @mouseleave="isCalendarOpen = false">
+          <a class="nav-link dropdown-toggle" href="#" @click.prevent="toggleCalendar">Calendario</a>
           <div class="dropdown-menu" :class="{ open: isCalendarOpen }">
             <a href="#recientes" class="dropdown-item" @click.prevent="scrollToRecientes">Eventos</a>
             <RouterLink to="/calendar" class="dropdown-item" @click="isCalendarOpen = false; closeMobileMenu()">
@@ -41,8 +37,7 @@
           </div>
         </div>
 
-        <RouterLink to="/events" class="nav-link" :class="{ active: isCurrentRoute('/events') }"
-          @click="closeMobileMenu">Ministerios</RouterLink>
+        <a href="#help" class="nav-link" @click.prevent="scrollToHelp">Ministerios</a>
         <a href="#contact" class="nav-link" :class="{ active: isContactVisible }"
           @click.prevent="scrollToContact">Conectar</a>
       </div>
@@ -65,7 +60,8 @@
         <RouterLink v-if="isLoggedIn && isAdmin" class="btn admin-btn" to="/admin/products">⚙️ Panel Admin</RouterLink>
         <RouterLink v-if="isLoggedIn" @click="logout" class="btn logout-btn" to="/">Cerrar sesión</RouterLink>
         <div v-if="isLoggedIn" class="user-greeting">
-          <span>{{ username }}</span>
+          <span class="user-name-line">{{ usernameFirstLine }}</span>
+          <span v-if="usernameSecondLine" class="user-name-line user-name-surname">{{ usernameSecondLine }}</span>
         </div>
       </div>
 
@@ -99,8 +95,7 @@
             <div v-if="isNosotrosOpen" class="mobile-nosotros-items">
               <RouterLink :to="{ path: '/about', hash: '#pst' }" class="mobile-link mobile-sub"
                 @click="closeMobileMenu">Pst</RouterLink>
-              <RouterLink :to="{ path: '/about', hash: '#historia' }" class="mobile-link mobile-sub"
-                @click="closeMobileMenu">Mistoria</RouterLink>
+              <a href="#stories" class="mobile-link mobile-sub" @click.prevent="scrollToStories">Historia</a>
               <RouterLink :to="{ path: '/about', hash: '#mision' }" class="mobile-link mobile-sub"
                 @click="closeMobileMenu">Misión / Visión</RouterLink>
             </div>
@@ -116,8 +111,7 @@
               </RouterLink>
             </div>
 
-            <RouterLink to="/events" class="mobile-link" :class="{ active: isCurrentRoute('/events') }"
-              @click="closeMobileMenu">Ministerios</RouterLink>
+            <a href="#help" class="mobile-link" @click.prevent="scrollToHelp">Ministerios</a>
             <a href="#contact" class="mobile-link" :class="{ active: isContactVisible }"
               @click.prevent="scrollToContact">Conectar</a>
 
@@ -128,7 +122,8 @@
               Acceder
             </RouterLink>
             <div v-if="isLoggedIn" class="mobile-user-greeting">
-              <span>Hola, {{ username }}</span>
+              <span class="mobile-greeting-text">Hola,</span>
+              <span class="user-name-line">{{ username }}</span>
             </div>
             <RouterLink v-if="isLoggedIn && isAdmin" class="mobile-btn admin-btn" to="/admin/products"
               @click="closeMobileMenu">
@@ -159,32 +154,29 @@ const isAtTop = ref(true);
 const isNosotrosOpen = ref(false);
 const isCalendarOpen = ref(false);
 
-// Ref to calendar dropdown element for outside-click detection
-const calendarDropdownRef = ref<HTMLElement | null>(null);
-
-const openCalendarOnHover = () => {
-  isCalendarOpen.value = true;
-};
-
-// Intentionally no-op so hover doesn't auto-close; closing is handled by outside click or explicit toggle
-const onCalendarMouseLeave = () => {
-  /* keep open until explicit close */
-};
-
-const handleGlobalClick = (e: MouseEvent) => {
-  if (!isCalendarOpen.value) return;
-  const target = e.target as Node | null;
-  const el = calendarDropdownRef.value as HTMLElement | null;
-  if (el && target && !el.contains(target)) {
-    isCalendarOpen.value = false;
-  }
-};
-
 // Router hooks
 const currentRoute = useRoute();
 
 // Verificar si el usuario es administrador
 const isAdmin = computed(() => authService.isAdmin());
+
+const usernameParts = computed(() => {
+  const fullName = username.value.trim();
+  if (!fullName) return { firstLine: '', secondLine: '' };
+
+  const parts = fullName.split(/\s+/);
+  if (parts.length === 1) {
+    return { firstLine: parts[0], secondLine: '' };
+  }
+
+  return {
+    firstLine: parts[0],
+    secondLine: parts.slice(1).join(' ')
+  };
+});
+
+const usernameFirstLine = computed(() => usernameParts.value.firstLine);
+const usernameSecondLine = computed(() => usernameParts.value.secondLine);
 
 // Función para verificar la ruta actual
 const isCurrentRoute = (path: string): boolean => {
@@ -207,6 +199,11 @@ const toggleNosotros = (e?: Event) => {
   isNosotrosOpen.value = !isNosotrosOpen.value;
 };
 
+const toggleCalendar = (e?: Event) => {
+  if (e && e.preventDefault) e.preventDefault();
+  isCalendarOpen.value = !isCalendarOpen.value;
+};
+
 // Función para hacer scroll a la sección de productos
 /* const scrollToProductStore = () => {
   const productStoreSection = document.querySelector('.product-store');
@@ -223,7 +220,7 @@ const isContactVisible = ref(false);
 let contactObserver: IntersectionObserver | null = null;
 
 const observeContact = () => {
-  const el = document.querySelector('.contact-section') as HTMLElement | null;
+  const el = document.querySelector('.recent-events-section') as HTMLElement | null;
   if (!el) return;
   if (contactObserver) contactObserver.disconnect();
   contactObserver = new IntersectionObserver((entries) => {
@@ -235,11 +232,11 @@ const observeContact = () => {
 const scrollToContact = async () => {
   closeMobileMenu();
   const scrollNow = () => {
-    const el = document.querySelector('.contact-section') as HTMLElement | null;
+    const el = document.querySelector('.recent-events-section') as HTMLElement | null;
     if (el) {
       (el as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else {
-      console.warn('Contact section not found');
+      console.warn('Events section not found');
     }
   };
   if (currentRoute.path !== '/') {
@@ -271,6 +268,38 @@ const scrollToProximos = async () => {
   closeMobileMenu();
   const scrollNow = () => {
     const el = document.querySelector('.recent-events-section') as HTMLElement | null;
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+  if (currentRoute.path !== '/') {
+    await router.push('/');
+    setTimeout(() => scrollNow(), 120);
+  } else {
+    scrollNow();
+  }
+};
+
+const scrollToHelp = async () => {
+  closeMobileMenu();
+  const scrollNow = () => {
+    const el = document.querySelector('.help-section') as HTMLElement | null;
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+  if (currentRoute.path !== '/') {
+    await router.push('/');
+    setTimeout(() => scrollNow(), 120);
+  } else {
+    scrollNow();
+  }
+};
+
+const scrollToStories = async () => {
+  closeMobileMenu();
+  const scrollNow = () => {
+    const el = document.querySelector('.stories-section') as HTMLElement | null;
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -385,15 +414,12 @@ onMounted(() => {
   ; (window as any).__app_handleHeaderScroll = handleScroll;
   // observe contact section visibility
   observeContact();
-  // close dropdown when clicking outside
-  window.addEventListener('click', handleGlobalClick);
 });
 
 onUnmounted(() => {
   const fn = (window as any).__app_handleHeaderScroll;
   if (fn) window.removeEventListener('scroll', fn);
   if (contactObserver) { contactObserver.disconnect(); contactObserver = null; }
-  window.removeEventListener('click', handleGlobalClick);
 });
 
 const route = useRoute();
@@ -415,11 +441,12 @@ watch(route, () => {
   left: 0;
   z-index: 1000;
   height: 75px;
-  padding: 0 clamp(20px, 5vw, 60px);
+  padding: 0 clamp(20px, 5vw, 40px);
   box-shadow: 0 2px 24px rgba(34, 211, 238, 0.15), 0 1px 3px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(34, 211, 238, 0.2);
   transition: background 0.28s ease, box-shadow 0.28s ease, border-bottom 0.28s ease, backdrop-filter 0.28s ease, padding 0.28s ease;
+  gap: 15px;
 }
 
 .navbar.transparent {
@@ -588,14 +615,15 @@ watch(route, () => {
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 15px;
 }
 
 .nav-menu.desktop-nav {
   position: absolute;
-  left: 50%;
+  left: 35%;
   top: 50%;
   transform: translate(-50%, -50%);
+  flex-shrink: 0;
 }
 
 .nav-link {
@@ -603,7 +631,7 @@ watch(route, () => {
   text-decoration: none;
   font-weight: 600;
   font-size: 17px;
-  padding: 10px 18px;
+  padding: 10px 8px;
   border-radius: 12px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -667,21 +695,27 @@ watch(route, () => {
 .nav-controls {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 10px;
+  margin-left: auto;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .btn {
-  padding: 10px 20px;
+  padding: 10px 16px;
   border-radius: 8px;
   text-decoration: none;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   transition: all 0.3s ease;
   border: none;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .access-btn {
@@ -740,13 +774,31 @@ watch(route, () => {
 .user-greeting {
   color: var(--white);
   font-weight: 700;
-  font-size: 14px;
-  padding: 10px 16px;
+  font-size: 13px;
+  padding: 8px 10px;
   background: rgba(34, 211, 238, 0.15);
   border-radius: 12px;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(34, 211, 238, 0.3);
   letter-spacing: 0.3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.05;
+  min-width: auto;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.user-name-line {
+  display: block;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.user-name-surname {
+  font-weight: 800;
 }
 
 /* Menu hamburguesa */
@@ -891,13 +943,34 @@ watch(route, () => {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  line-height: 1.2;
+}
+
+.mobile-greeting-text {
+  font-size: 0.92rem;
+  opacity: 0.9;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   .navbar {
     height: 70px;
-    padding: 0 20px;
+    padding: 0 15px;
+    gap: 10px;
+  }
+
+  /* En móviles, evitar que el navbar sea transparente al inicio */
+  .navbar.transparent{
+    background: linear-gradient(180deg, #22265D 0%, #0b2545 100%) !important;
+    box-shadow: 0 2px 24px rgba(34, 211, 238, 0.15), 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+    border-bottom: 1px solid rgba(34, 211, 238, 0.2) !important;
+    backdrop-filter: blur(20px) !important;
   }
 
   .desktop-nav {
@@ -934,11 +1007,25 @@ watch(route, () => {
 
 @media (max-width: 480px) {
   .navbar {
-    padding: 0 15px;
+    padding: 0 12px;
+    gap: 8px;
   }
 
   .brand-container {
-    gap: 10px;
+    gap: 8px;
+  }
+
+  .site-logo {
+    width: 50px;
+    height: 50px;
+  }
+
+  /* En móviles pequeños, mantener fondo del navbar aunque tenga la clase 'transparent' */
+  .navbar.transparent{
+    background: linear-gradient(180deg, #22265D 0%, #0b2545 100%) !important;
+    box-shadow: 0 2px 24px rgba(34, 211, 238, 0.15), 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+    border-bottom: 1px solid rgba(34, 211, 238, 0.2) !important;
+    backdrop-filter: blur(20px) !important;
   }
 
   .site-logo {
@@ -996,13 +1083,15 @@ watch(route, () => {
 
 /* Header y mobile search */
 .header-search {
-  display: inline-block;
-  margin-right: 8px;
+  display: inline-flex;
+  align-items: center;
+  margin-right: 0;
+  flex-shrink: 0;
 }
 
 .header-search .search-input-wrapper.header {
   position: relative;
-  width: 220px;
+  width: 200px;
 }
 
 .header-search-icon {
@@ -1022,6 +1111,8 @@ watch(route, () => {
   background: rgba(255, 255, 255, 0.39);
   color: var(--white);
   font-size: 14px;
+  border: none;
+  outline: none;
 }
 
 .header-search-input::placeholder {
@@ -1076,6 +1167,18 @@ watch(route, () => {
   position: relative;
 }
 
+/* Crear zona invisible para mantener hover */
+.nav-item.dropdown::after {
+  content: '';
+  position: absolute;
+  top: calc(100% + 2px);
+  left: -10px;
+  right: -10px;
+  height: 15px;
+  pointer-events: auto;
+  z-index: 1001;
+}
+
 .dropdown-toggle {
   cursor: pointer;
   display: inline-flex;
@@ -1085,15 +1188,16 @@ watch(route, () => {
 
 .dropdown-menu {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 12px);
   left: 50%;
   transform: translateX(-50%);
   min-width: 200px;
   border-radius: 8px;
-  padding: 6px 0;
+  padding: 8px 0;
   display: none;
   box-shadow: 0 8px 30px rgba(2, 6, 23, 0.45);
   z-index: 1002;
+  pointer-events: auto;
 }
 
 .nav-item.dropdown:hover .dropdown-menu,
@@ -1130,8 +1234,15 @@ watch(route, () => {
 }
 
 /* Mobile 'Nosotros' submenu */
+.mobile-nosotros-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .mobile-nosotros-items .mobile-sub {
   padding-left: 18px;
+  width: 100%;
 }
 
 .mobile-nosotros-toggle {
@@ -1148,47 +1259,30 @@ watch(route, () => {
   transform: rotate(180deg);
 }
 
-/* Calendar button tweaks */
-.calendar-dropdown .nav-link {
-  border: none !important;
-  box-shadow: none !important;
-  background: transparent !important;
-  /* force transparent to avoid white pill */
-  color: inherit !important;
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
-  padding: 8px 12px !important;
-  border-radius: 6px !important;
+/* Mobile 'Calendario' submenu */
+.mobile-calendar-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.calendar-dropdown .nav-link:focus {
-  outline: none !important;
-  box-shadow: none !important;
+.mobile-calendar-items .mobile-sub {
+  padding-left: 18px;
+  width: 100%;
 }
 
-.dropdown-chevron {
-  display: inline-block !important;
-  margin-left: 6px !important;
-  transition: transform 0.18s ease !important, opacity 0.18s ease !important;
-  opacity: 0 !important;
-  /* hidden by default */
-  transform: translateY(0) !important;
+.mobile-calendar-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.calendar-dropdown:hover .dropdown-chevron {
-  opacity: 1 !important;
-  transform: translateY(-2px) !important;
+.mobile-calendar-chevron {
+  transition: transform 0.2s ease;
 }
 
-/* Show chevron also when dropdown is open */
-.calendar-dropdown .dropdown-menu.open+.dropdown-chevron,
-.calendar-dropdown .dropdown-menu.open~.dropdown-chevron,
-.calendar-dropdown .dropdown-menu.open .dropdown-chevron {
-  opacity: 1 !important;
-  transform: translateY(-2px) !important;
+.mobile-calendar-chevron.open {
+  transform: rotate(180deg);
 }
 
-.calendar-dropdown .nav-link:hover {
-  background: transparent !important;
-}
 </style>
