@@ -205,6 +205,50 @@
   animation: fadeInScale 0.9s ease-out;
 }
 
+/* Flecha para bajar a la siguiente sección */
+.scroll-next-btn {
+  position: absolute;
+  left: 50%;
+  bottom: 10.1rem;
+  transform: translateX(-50%);
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(8, 19, 38, 0.46);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 21;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.32);
+  animation: arrowFloat 1.6s ease-in-out infinite;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.scroll-next-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.55);
+  transform: translateX(-50%) scale(1.06);
+}
+
+.scroll-next-btn:active {
+  transform: translateX(-50%) scale(0.98);
+}
+
+@keyframes arrowFloat {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  50% {
+    transform: translateX(-50%) translateY(8px);
+  }
+}
+
 @keyframes fadeInScale {
   from {
     opacity: 0;
@@ -339,6 +383,12 @@
     gap: 1.5rem;
   }
 
+  .scroll-next-btn {
+    bottom: 4.8rem;
+    width: 48px;
+    height: 48px;
+  }
+
   .nav-arrows {
     display: none;
     /* Ocultar flechas en móvil */
@@ -365,6 +415,12 @@
 
   .carousel-navigation {
     bottom: 1rem;
+  }
+
+  .scroll-next-btn {
+    bottom: 11.1rem;
+    width: 44px;
+    height: 44px;
   }
 
   @media (max-width: 768px) {
@@ -403,7 +459,7 @@
     .hero-carousel {
       margin-top: 0 !important;
       height: 70vh !important;
-      min-height: 620px !important;
+      min-height: 720px !important;
     }
 
     .hero-content {
