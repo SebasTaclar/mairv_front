@@ -35,11 +35,11 @@ export interface Event {
   endDate: Date | string
   location?: string
   category?: string
-  images?: string[]
+  attachments?: EventAttachment[]
   status: 'scheduled' | 'ongoing' | 'completed' | 'cancelled'
   maxAttendees?: number
   currentAttendees?: number
-  organizer?: string
+  organizers?: string[]
   tags?: string[]
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -52,10 +52,10 @@ export interface CreateEventRequest {
   endDate: string | Date
   location?: string
   category?: string
-  images?: string[]
+  attachments?: EventAttachment[]
   status?: 'scheduled' | 'ongoing' | 'completed' | 'cancelled'
   maxAttendees?: number
-  organizer?: string
+  organizers?: string[]
   tags?: string[]
 }
 

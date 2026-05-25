@@ -45,16 +45,13 @@
     <div class="search-bar">
       <div class="search-input-wrapper">
         <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-          <path fill="currentColor" d="M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16zm8.707 17.293-4.387-4.387a9 9 0 1 0-1.414 1.414l4.387 4.387a1 1 0 0 0 1.414-1.414z"/>
+          <path fill="currentColor"
+            d="M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16zm8.707 17.293-4.387-4.387a9 9 0 1 0-1.414 1.414l4.387 4.387a1 1 0 0 0 1.414-1.414z" />
         </svg>
-        <input
-          type="search"
-          v-model="searchQuery"
-          placeholder="Buscar eventos por título o ubicación..."
-          aria-label="Buscar eventos"
-          class="search-input"
-        />
-        <button v-if="searchQuery" class="search-clear" @click.prevent="searchQuery = ''" aria-label="Limpiar búsqueda">X</button>
+        <input type="search" v-model="searchQuery" placeholder="Buscar eventos por título o ubicación..."
+          aria-label="Buscar eventos" class="search-input" />
+        <button v-if="searchQuery" class="search-clear" @click.prevent="searchQuery = ''"
+          aria-label="Limpiar búsqueda">X</button>
       </div>
       <select v-model="filterStatus" class="filter-select">
         <option value="">Todos los estados</option>
@@ -150,45 +147,26 @@
             <!-- Título -->
             <div class="form-group">
               <label>Título del Evento *</label>
-              <input
-                v-model="eventForm.title"
-                type="text"
-                class="form-input"
-                required
-                placeholder="Ej: Torneo de Fut Todos vs Noobis"
-              />
+              <input v-model="eventForm.title" type="text" class="form-input" required
+                placeholder="Ej: Torneo de Fut Todos vs Noobis" />
             </div>
 
             <!-- Descripción -->
             <div class="form-group">
               <label>Descripción</label>
-              <textarea
-                v-model="eventForm.description"
-                class="form-input"
-                rows="3"
-                placeholder="Describe el evento en detalle..."
-              ></textarea>
+              <textarea v-model="eventForm.description" class="form-input" rows="3"
+                placeholder="Describe el evento en detalle..."></textarea>
             </div>
 
             <!-- Fila: Fecha inicio y fin -->
             <div class="form-row">
               <div class="form-group">
                 <label>Fecha de Inicio *</label>
-                <input
-                  v-model="eventForm.startDate"
-                  type="datetime-local"
-                  class="form-input"
-                  required
-                />
+                <input v-model="eventForm.startDate" type="datetime-local" class="form-input" required />
               </div>
               <div class="form-group">
                 <label>Fecha de Fin *</label>
-                <input
-                  v-model="eventForm.endDate"
-                  type="datetime-local"
-                  class="form-input"
-                  required
-                />
+                <input v-model="eventForm.endDate" type="datetime-local" class="form-input" required />
               </div>
             </div>
 
@@ -196,12 +174,8 @@
             <div class="form-row">
               <div class="form-group">
                 <label>Ubicación</label>
-                <input
-                  v-model="eventForm.location"
-                  type="text"
-                  class="form-input"
-                  placeholder="Ej: Estadio Central, Bogotá"
-                />
+                <input v-model="eventForm.location" type="text" class="form-input"
+                  placeholder="Ej: Estadio Central, Bogotá" />
               </div>
               <div class="form-group">
                 <label>Categoría *</label>
@@ -229,99 +203,47 @@
               </div>
               <div class="form-group">
                 <label>Máximo de Asistentes</label>
-                <input
-                  v-model.number="eventForm.maxAttendees"
-                  type="number"
-                  class="form-input"
-                  min="0"
-                  placeholder="Dejar vacío para ilimitado"
-                />
+                <input v-model.number="eventForm.maxAttendees" type="number" class="form-input" min="0"
+                  placeholder="Dejar vacío para ilimitado" />
               </div>
             </div>
 
             <!-- Organizador -->
             <div class="form-group">
-              <label>Organizador</label>
-              <input
-                v-model="eventForm.organizer"
-                type="text"
-                class="form-input"
-                placeholder="Nombre del organizador"
-              />
+              <label>Organizadores</label>
+              <p class="field-help">Puedes agregar varios responsables y se enviarán como una lista al backend.</p>
+              <div v-for="(organizer, index) in eventForm.organizers" :key="`organizer-${index}`" class="dynamic-row">
+                <input v-model="eventForm.organizers[index]" type="text" class="form-input"
+                  :placeholder="`Organizador ${index + 1}`" />
+                <button v-if="eventForm.organizers.length > 1" type="button" class="btn btn-sm btn-danger"
+                  @click="removeOrganizer(index)">
+                  ✕
+                </button>
+              </div>
+              <button type="button" class="btn btn-secondary" @click="addOrganizer">
+                + Agregar organizador
+              </button>
             </div>
 
-            <!-- Imágenes -->
+            <!-- Adjuntos -->
             <div class="form-group">
-              <label>Imágenes</label>
-              <div class="image-tabs">
-                <button
-                  type="button"
-                  class="tab-btn"
-                  :class="{ active: imageUploadMethod === 'url' }"
-                  @click="imageUploadMethod = 'url'"
-                >
-                  URL
-                </button>
-                <button
-                  type="button"
-                  class="tab-btn"
-                  :class="{ active: imageUploadMethod === 'file' }"
-                  @click="imageUploadMethod = 'file'"
-                >
-                  Subir Archivo
+              <label>Adjuntos por enlace</label>
+              <p class="field-help">Solo enlaces. Sirve para imágenes, PDF, Excel, Drive o cualquier recurso accesible
+                por URL.</p>
+              <div v-for="(attachment, index) in eventForm.attachments" :key="attachment.id" class="attachment-row">
+                <input v-model="attachment.title" type="text" class="form-input attachment-title"
+                  placeholder="Título del adjunto" />
+                <input v-model="attachment.url" type="url" class="form-input attachment-url"
+                  placeholder="https://..." />
+                <button type="button" class="btn btn-sm btn-danger" @click="removeAttachment(index)">
+                  ✕
                 </button>
               </div>
-
-              <!-- URL -->
-              <div v-if="imageUploadMethod === 'url'" class="image-input-section">
-                <input
-                  v-model="imageUrlInput"
-                  type="url"
-                  class="form-input"
-                  placeholder="https://ejemplo.com/imagen.jpg"
-                />
-                <button type="button" class="btn btn-secondary" @click="addImageFromUrl">
-                  Agregar URL
-                </button>
-              </div>
-
-              <!-- Archivo -->
-              <div v-if="imageUploadMethod === 'file'" class="image-input-section">
-                <input
-                  ref="imageFileInput"
-                  type="file"
-                  class="file-input"
-                  accept="image/*"
-                  multiple
-                  @change="handleImageFileSelect"
-                />
-                <div class="file-upload-area" @click="imageFileInput?.click()">
-                  <div v-if="eventForm.images.length === 0" class="upload-placeholder">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                      <circle cx="9" cy="9" r="2"/>
-                      <path d="M21 15l-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
-                    </svg>
-                    <p>Haz clic para seleccionar imágenes</p>
-                  </div>
-                  <div v-if="eventForm.images.length > 0" class="images-preview-grid">
-                    <div v-for="(image, index) in eventForm.images" :key="index" class="image-preview-item">
-                      <img :src="image" :alt="`Preview ${index}`" />
-                      <button
-                        type="button"
-                        class="remove-image"
-                        @click.stop="removeImage(index)"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Imágenes agregadas -->
-              <div v-if="eventForm.images.length > 0" class="images-info">
-                <span class="images-badge">{{ eventForm.images.length }} imagen(es)</span>
+              <button type="button" class="btn btn-secondary" @click="addAttachment">
+                + Agregar adjunto
+              </button>
+              <div v-if="eventForm.attachments.length > 0" class="images-info">
+                <span class="images-badge">{{ eventForm.attachments.length }} adjunto(s)</span>
               </div>
             </div>
 
@@ -343,8 +265,7 @@
 import './styles/EventsTab.css'
 import { ref, computed } from 'vue'
 import { useEvents } from '@/composables/useEvents'
-import type { Event, CreateEventRequest } from '@/types/EventType'
-import { EVENT_CATEGORIES, EVENT_STATUSES } from '@/types/EventType'
+import type { Event, CreateEventRequest, EventAttachment } from '@/types/EventType'
 
 const {
   events,
@@ -360,12 +281,20 @@ const showEventForm = ref(false)
 const editingEvent = ref<Event | null>(null)
 const searchQuery = ref('')
 const filterStatus = ref('')
-const imageUploadMethod = ref('url')
-const imageUrlInput = ref('')
-const imageFileInput = ref<HTMLInputElement | null>(null)
+
+type EventFormData = CreateEventRequest & {
+  organizers: string[]
+  attachments: EventAttachment[]
+}
+
+const createAttachment = (): EventAttachment => ({
+  id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+  title: '',
+  url: '',
+})
 
 // Formulario
-const eventForm = ref<CreateEventRequest & { images: string[] }>({
+const createEmptyEventForm = (): EventFormData => ({
   title: '',
   description: '',
   startDate: '',
@@ -374,10 +303,12 @@ const eventForm = ref<CreateEventRequest & { images: string[] }>({
   category: '',
   status: 'scheduled',
   maxAttendees: undefined,
-  organizer: '',
-  images: [],
+  organizers: [''],
+  attachments: [],
   tags: []
 })
+
+const eventForm = ref<EventFormData>(createEmptyEventForm())
 
 // Validación
 const isEventFormValid = computed(() => {
@@ -402,7 +333,8 @@ const filteredEvents = computed(() => {
     result = result.filter(e =>
       e.title.toLowerCase().includes(q) ||
       e.description?.toLowerCase().includes(q) ||
-      e.location?.toLowerCase().includes(q)
+      e.location?.toLowerCase().includes(q) ||
+      e.organizers?.some(organizer => organizer.toLowerCase().includes(q))
     )
   }
 
@@ -473,27 +405,19 @@ const openEventForm = (event?: Event) => {
       endDate: formatDateTimeInput(event.endDate),
       location: event.location || '',
       category: event.category || '',
-      status: event.status as any,
+      status: event.status,
       maxAttendees: event.maxAttendees,
-      organizer: event.organizer || '',
-      images: event.images || [],
+      organizers: event.organizers && event.organizers.length > 0 ? [...event.organizers] : [''],
+      attachments: event.attachments ? event.attachments.map((attachment, index) => ({
+        id: attachment.id || `${Date.now()}-${index}`,
+        title: attachment.title || `Adjunto ${index + 1}`,
+        url: attachment.url,
+      })) : [],
       tags: event.tags || []
     }
   } else {
     editingEvent.value = null
-    eventForm.value = {
-      title: '',
-      description: '',
-      startDate: '',
-      endDate: '',
-      location: '',
-      category: '',
-      status: 'scheduled',
-      maxAttendees: undefined,
-      organizer: '',
-      images: [],
-      tags: []
-    }
+    eventForm.value = createEmptyEventForm()
   }
   showEventForm.value = true
 }
@@ -501,36 +425,32 @@ const openEventForm = (event?: Event) => {
 const closeEventForm = () => {
   showEventForm.value = false
   editingEvent.value = null
-  eventForm.value = {
-    title: '',
-    description: '',
-    startDate: '',
-    endDate: '',
-    location: '',
-    category: '',
-    status: 'scheduled',
-    maxAttendees: undefined,
-    organizer: '',
-    images: [],
-    tags: []
-  }
-  imageUrlInput.value = ''
-  if (imageFileInput.value) {
-    imageFileInput.value.value = ''
-  }
+  eventForm.value = createEmptyEventForm()
 }
 
 const saveEvent = () => {
   if (!isEventFormValid.value) return
+
+  const payload: CreateEventRequest = {
+    ...eventForm.value,
+    organizers: eventForm.value.organizers.map(organizer => organizer.trim()).filter(Boolean),
+    attachments: eventForm.value.attachments
+      .map((attachment) => ({
+        ...attachment,
+        title: attachment.title.trim(),
+        url: attachment.url.trim(),
+      }))
+      .filter((attachment) => attachment.url.length > 0),
+  }
 
   try {
     if (editingEvent.value) {
       if (!confirm(`¿Estás seguro de actualizar el evento "${editingEvent.value.title}"?`)) {
         return
       }
-      updateEvent(editingEvent.value.id, eventForm.value)
+      updateEvent(editingEvent.value.id, payload)
     } else {
-      addEvent(eventForm.value)
+      addEvent(payload)
     }
     closeEventForm()
   } catch (e) {
@@ -553,64 +473,25 @@ const confirmDelete = (id: string) => {
   }
 }
 
-const addImageFromUrl = () => {
-  if (!imageUrlInput.value.trim()) {
-    alert('Por favor ingresa una URL de imagen válida')
+const addOrganizer = () => {
+  eventForm.value.organizers.push('')
+}
+
+const removeOrganizer = (index: number) => {
+  if (eventForm.value.organizers.length <= 1) {
+    eventForm.value.organizers = ['']
     return
   }
 
-  // Validar que sea una URL válida
-  try {
-    new URL(imageUrlInput.value)
-    eventForm.value.images.push(imageUrlInput.value)
-    imageUrlInput.value = ''
-  } catch {
-    alert('Por favor ingresa una URL válida')
-  }
+  eventForm.value.organizers.splice(index, 1)
 }
 
-const handleImageFileSelect = (event: any) => {
-  const target = event.target as HTMLInputElement
-  const files = target.files
-  if (files) {
-    handleImageFiles(files)
-  }
+const addAttachment = () => {
+  eventForm.value.attachments.push(createAttachment())
 }
 
-const handleImageFiles = (files: FileList) => {
-  const promises: Promise<string>[] = []
-
-  for (let i = 0; i < Math.min(files.length, 5); i++) {
-    const file = files[i]
-
-    if (file.size > 5 * 1024 * 1024) {
-      alert(`${file.name} es demasiado grande. Máximo 5MB.`)
-      continue
-    }
-
-    if (!file.type.startsWith('image/')) {
-      alert(`${file.name} no es una imagen válida.`)
-      continue
-    }
-
-    const promise = new Promise<string>((resolve) => {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        resolve(e.target?.result as string)
-      }
-      reader.readAsDataURL(file)
-    })
-
-    promises.push(promise)
-  }
-
-  Promise.all(promises).then((images) => {
-    eventForm.value.images.push(...images)
-  })
-}
-
-const removeImage = (index: number) => {
-  eventForm.value.images.splice(index, 1)
+const removeAttachment = (index: number) => {
+  eventForm.value.attachments.splice(index, 1)
 }
 
 const formatDateTimeInput = (date: Date | string): string => {
@@ -618,6 +499,3 @@ const formatDateTimeInput = (date: Date | string): string => {
   return d.toISOString().slice(0, 16)
 }
 </script>
-
-
-

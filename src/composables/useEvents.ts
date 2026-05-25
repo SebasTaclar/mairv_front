@@ -1,8 +1,107 @@
 import { ref, computed } from 'vue'
-import type { Event, CreateEventRequest, UpdateEventRequest } from '@/types/EventType'
+import type { Event, CreateEventRequest } from '@/types/EventType'
 
 // Storage key
 const EVENTS_KEY = 'admin_events'
+
+type StoredEvent = Omit<
+  Partial<Event>,
+  'id' | 'attachments' | 'organizers' | 'startDate' | 'endDate' | 'createdAt' | 'updatedAt'
+> & {
+  id?: unknown
+  attachments?: unknown[]
+  images?: unknown[]
+  organizers?: unknown[]
+  organizer?: unknown
+  startDate?: string | Date
+  endDate?: string | Date
+  createdAt?: string | Date
+  updatedAt?: string | Date
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> => {
+  return typeof value === 'object' && value !== null
+}
+
+const normalizeAttachments = (event: StoredEvent) => {
+  if (Array.isArray(event.attachments)) {
+    return event.attachments
+      .filter(
+        (attachment): attachment is { id?: unknown; title?: unknown; url: string } =>
+          isRecord(attachment) &&
+          typeof attachment.url === 'string' &&
+          attachment.url.trim().length > 0,
+      )
+      .map((attachment, index: number) => ({
+        id:
+          typeof attachment.id === 'string' && attachment.id.trim().length > 0
+            ? attachment.id
+            : `${Date.now()}-${index}`,
+        title:
+          typeof attachment.title === 'string' && attachment.title.trim().length > 0
+            ? attachment.title
+            : `Adjunto ${index + 1}`,
+        url: attachment.url.trim(),
+      }))
+  }
+
+  if (Array.isArray(event.images)) {
+    return event.images
+      .filter((url): url is string => typeof url === 'string' && url.trim().length > 0)
+      .map((url: string, index: number) => ({
+        id: `${Date.now()}-${index}`,
+        title: `Adjunto ${index + 1}`,
+        url: url.trim(),
+      }))
+  }
+
+  return []
+}
+
+const normalizeOrganizers = (event: StoredEvent) => {
+  if (Array.isArray(event.organizers)) {
+    return event.organizers
+      .filter(
+        (organizer): organizer is string =>
+          typeof organizer === 'string' && organizer.trim().length > 0,
+      )
+      .map((organizer) => organizer.trim())
+  }
+
+  if (typeof event.organizer === 'string' && event.organizer.trim()) {
+    return [event.organizer.trim()]
+  }
+
+  return []
+}
+
+const normalizeEvent = (event: StoredEvent): Event => {
+  const id =
+    typeof event.id === 'string' && event.id.trim().length > 0 ? event.id : Date.now().toString()
+
+  return {
+    id,
+    title: typeof event.title === 'string' ? event.title : '',
+    description: typeof event.description === 'string' ? event.description : '',
+    startDate: new Date(event.startDate || Date.now()),
+    endDate: new Date(event.endDate || Date.now()),
+    location: typeof event.location === 'string' ? event.location : '',
+    category: typeof event.category === 'string' ? event.category : 'Otro',
+    attachments: normalizeAttachments(event),
+    status:
+      event.status === 'ongoing' || event.status === 'completed' || event.status === 'cancelled'
+        ? event.status
+        : 'scheduled',
+    maxAttendees: typeof event.maxAttendees === 'number' ? event.maxAttendees : undefined,
+    currentAttendees: typeof event.currentAttendees === 'number' ? event.currentAttendees : 0,
+    organizers: normalizeOrganizers(event),
+    tags: Array.isArray(event.tags)
+      ? event.tags.filter((tag): tag is string => typeof tag === 'string')
+      : [],
+    createdAt: new Date(event.createdAt || Date.now()),
+    updatedAt: new Date(event.updatedAt || Date.now()),
+  }
+}
 
 export function useEvents() {
   const events = ref<Event[]>([])
@@ -15,13 +114,7 @@ export function useEvents() {
       isLoading.value = true
       const stored = localStorage.getItem(EVENTS_KEY)
       if (stored) {
-        events.value = JSON.parse(stored).map((e: any) => ({
-          ...e,
-          startDate: new Date(e.startDate),
-          endDate: new Date(e.endDate),
-          createdAt: new Date(e.createdAt || Date.now()),
-          updatedAt: new Date(e.updatedAt || Date.now()),
-        }))
+        events.value = JSON.parse(stored).map(normalizeEvent)
       } else {
         events.value = []
       }
@@ -56,11 +149,11 @@ export function useEvents() {
         endDate: eventData.endDate,
         location: eventData.location || '',
         category: eventData.category || 'Otro',
-        images: eventData.images || [],
+        attachments: eventData.attachments || [],
         status: eventData.status || 'scheduled',
         maxAttendees: eventData.maxAttendees,
         currentAttendees: 0,
-        organizer: eventData.organizer || '',
+        organizers: eventData.organizers || [],
         tags: eventData.tags || [],
         createdAt: new Date(),
         updatedAt: new Date(),
