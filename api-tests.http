@@ -4,6 +4,80 @@
 
 @token = YOUR_JWT_TOKEN_HERE
 
+###
+# EVENTS ENDPOINTS (CRUD) - Public GET, protected POST/PUT/DELETE
+###
+
+### Nota:
+# - Usa el login arriba para obtener un token y pega su valor en la variable @token.
+# - Campos requeridos para crear evento: title, startDate (ISO 8601). Otros campos son opcionales.
+
+### Ejemplo de evento (JSON) - copia/pega en el body de POST/PUT
+{
+  "title": "Torneo de Futbol",
+  "description": "Evento principal del mes",
+  "startDate": "2026-06-10T18:00:00.000Z",
+  "endDate": "2026-06-10T20:00:00.000Z",
+  "location": "Cancha Central",
+  "category": "Torneo",
+  "status": "scheduled",
+  "maxAttendees": 100,
+  "organizers": ["Juan Pérez", "María Gómez"],
+  "attachments": [
+    {
+      "id": "att-1",
+      "title": "Afiche",
+      "url": "https://example.com/afiche.jpg"
+    }
+  ],
+  "tags": ["futbol", "torneo"]
+}
+
+### 50. Obtener lista de eventos (Público)
+GET {{baseUrl}}/api/v1/events
+
+### 51. Obtener lista de eventos con filtros
+GET {{baseUrl}}/api/v1/events?category=Torneo&status=scheduled
+
+### 52. Obtener evento por ID (Público)
+GET {{baseUrl}}/api/v1/events/1
+
+### 53. Crear evento - Requiere Authorization: Bearer {{token}}
+POST {{baseUrl}}/api/v1/events
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Torneo de Futbol",
+  "description": "Evento principal del mes",
+  "startDate": "2026-06-10T18:00:00.000Z",
+  "endDate": "2026-06-10T20:00:00.000Z",
+  "location": "Cancha Central",
+  "category": "Torneo",
+  "status": "scheduled",
+  "maxAttendees": 100,
+  "organizers": ["Juan Pérez", "María Gómez"],
+  "attachments": [
+    { "id": "att-1", "title": "Afiche", "url": "https://example.com/afiche.jpg" }
+  ],
+  "tags": ["futbol", "torneo"]
+}
+
+### 54. Actualizar evento - Requiere token
+PUT {{baseUrl}}/api/v1/events/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Torneo de Futbol - Actualizado",
+  "location": "Cancha Alterna",
+  "maxAttendees": 120
+}
+
+### 55. Eliminar evento - Requiere token
+DELETE {{baseUrl}}/api/v1/events/1
+Authorization: Bearer {{token}}
+
 ### Login para obtener token
 # POST {{baseUrl}}/api/v1/auth/login
 # Content-Type: application/json
@@ -12,9 +86,6 @@
 #   "email": "admin@example.com",
 #   "password": "your-password"
 # }
-
-### Nota: Reemplaza el token abajo con el token obtenido del login
-@token = your-jwt-token-here
 
 ###
 # CATEGORIES ENDPOINTS (Require JWT Authentication)

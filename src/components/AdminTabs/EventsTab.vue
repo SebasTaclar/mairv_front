@@ -428,7 +428,7 @@ const closeEventForm = () => {
   eventForm.value = createEmptyEventForm()
 }
 
-const saveEvent = () => {
+const saveEvent = async () => {
   if (!isEventFormValid.value) return
 
   const payload: CreateEventRequest = {
@@ -448,9 +448,9 @@ const saveEvent = () => {
       if (!confirm(`¿Estás seguro de actualizar el evento "${editingEvent.value.title}"?`)) {
         return
       }
-      updateEvent(editingEvent.value.id, payload)
+      await updateEvent(editingEvent.value.id, payload)
     } else {
-      addEvent(payload)
+      await addEvent(payload)
     }
     closeEventForm()
   } catch (e) {
@@ -459,13 +459,13 @@ const saveEvent = () => {
   }
 }
 
-const confirmDelete = (id: string) => {
+const confirmDelete = async (id: string) => {
   const event = events.value.find(e => e.id === id)
   if (!event) return
 
   if (confirm(`¿Estás seguro de eliminar el evento "${event.title}"?`)) {
     try {
-      deleteEvent(id)
+      await deleteEvent(id)
     } catch (e) {
       alert('Error al eliminar el evento')
       console.error(e)

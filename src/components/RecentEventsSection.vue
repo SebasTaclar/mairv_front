@@ -85,26 +85,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useCalendarEvents } from '@/composables/useCalendarEvents'
 import type { CalendarEvent, EventsResponse } from '@/types/EventType'
 import EventModal from './EventModal.vue'
 import './styles/RecentEventsSection.css'
 
-const { getRecentAndUpcoming, getEventById } = useCalendarEvents()
+const { getRecentAndUpcoming } = useCalendarEvents()
 
-const recentAndUpcoming = ref<EventsResponse>({
- recent: [],
- upcoming: [],
- all: []
-})
+const recentAndUpcoming = computed<EventsResponse>(() => getRecentAndUpcoming())
 
 const showModal = ref(false)
 const selectedEvent = ref<CalendarEvent | null>(null)
-
-onMounted(() => {
- recentAndUpcoming.value = getRecentAndUpcoming()
-})
 
 const openEventModal = (event: CalendarEvent) => {
  selectedEvent.value = event

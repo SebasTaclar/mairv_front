@@ -1,6 +1,6 @@
 // Configuración base para la API
 export const API_CONFIG = {
-  baseURL: import.meta.env.DEV
+  baseURL: false
     ? 'http://localhost:7071/api/v1'
     : 'https://mairv-back-bxa2a8b4ena3bsh6.centralus-01.azurewebsites.net/api/v1',
   timeout: 10000,
@@ -65,15 +65,30 @@ export class ApiClient {
 
     try {
       const response = await fetch(url, config)
-      const data = await response.json()
+      const responseText = await response.text()
+      let data: unknown = null
+
+      if (responseText) {
+        try {
+          data = JSON.parse(responseText)
+        } catch {
+          data = responseText
+        }
+      }
 
       // Verificar si el token ha expirado (status 401 o mensaje específico)
+      const responseMessage =
+        typeof data === 'object' && data !== null && 'message' in data
+          ? String((data as { message?: string }).message || '')
+          : ''
+      const responseMessageLower = responseMessage.toLowerCase()
+
       if (
         (response.status === 401 || response.status === 403) &&
-        (data.message?.toLowerCase().includes('token has expired') ||
-          data.message?.toLowerCase().includes('token expired') ||
-          data.message?.toLowerCase().includes('jwt expired') ||
-          data.message?.toLowerCase().includes('unauthorized'))
+        (responseMessageLower.includes('token has expired') ||
+          responseMessageLower.includes('token expired') ||
+          responseMessageLower.includes('jwt expired') ||
+          responseMessageLower.includes('unauthorized'))
       ) {
         console.error('🔑 [apiConfig] Token expirado o inválido, cerrando sesión...')
         // Limpiar token y datos de usuario
@@ -92,10 +107,10 @@ export class ApiClient {
       }
 
       if (!response.ok) {
-        throw new Error(data.message || `HTTP Error: ${response.status}`)
+        throw new Error(responseMessage || `HTTP Error: ${response.status}`)
       }
 
-      return data
+      return data as ApiResponse<T>
     } catch (error) {
       console.error('API Request Error:', error)
       throw error

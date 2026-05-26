@@ -1,10 +1,10 @@
 <template>
   <header>
-    <nav :class="['navbar', { 'transparent': isAtTop }]">
+    <nav :class="['navbar', { 'transparent': isAtTop && currentRoute.path === '/' }]">
       <!-- Logo y marca -->
-      <RouterLink class="link-navbar home" to="/" @click="closeMobileMenu">
+      <RouterLink class="link-navbar home" to="/" @click.prevent="scrollToMainBanner">
         <div class="brand-container">
-          <img src="/images/logo.jpg" alt="MAIRV" class="site-logo" />
+          <img src="/images/logo.png" alt="MAIRV" class="site-logo" />
           <!-- <div class="brand-info">
             <div class="brand-title"><span class="highlight">MAIRV</span></div>
             <div class="brand-tagline">MAI restaurando vidas</div>
@@ -14,47 +14,53 @@
 
       <!-- Navegación principal (centrada) -->
       <div class="nav-menu desktop-nav">
-        <RouterLink to="/" class="nav-link" :class="{ active: isCurrentRoute('/') }" @click="closeMobileMenu">Inicio
+        <RouterLink to="/" class="nav-link" :class="{ active: activeSection === 'home' }" @click.prevent="scrollToMainBanner">INICIO
         </RouterLink>
-        <div class="nav-item dropdown" @mouseenter="isNosotrosOpen = true" @mouseleave="isNosotrosOpen = false">
-          <a class="nav-link dropdown-toggle" href="#" @click.prevent="toggleNosotros">Nosotros</a>
-          <div class="dropdown-menu" :class="{ open: isNosotrosOpen }">
-            <RouterLink :to="{ path: '/about', hash: '#pst' }" class="dropdown-item" @click="closeMobileMenu">Pst
+        <div class="nav-item dropdown nosotros-nav-item" @mouseenter="isNosotrosOpen = true" @mouseleave="isNosotrosOpen = false">
+          <a class="nav-link dropdown-toggle" :class="{ active: activeSection === 'stories' }" href="#" @click.prevent="toggleNosotros">NOSOTROS</a>
+          <div class="dropdown-menu nosotros-dropdown" :class="{ open: isNosotrosOpen }">
+            <RouterLink
+              to="/mision-vision"
+              class="dropdown-item nosotros-item"
+              :class="{ active: currentRoute.path === '/mision-vision' && !currentRoute.hash }
+              "
+              @click="closeMobileMenu"
+            >
+              NUESTRA VISIÓN
             </RouterLink>
-            <a href="#stories" class="dropdown-item" @click.prevent="scrollToStories">Historia</a>
-            <RouterLink :to="{ path: '/about', hash: '#mision' }" class="dropdown-item" @click="closeMobileMenu">Misión
-              / Visión</RouterLink>
+
+            <RouterLink to="/pastores" class="dropdown-item nosotros-item" @click="closeMobileMenu">
+              PASTORES
+            </RouterLink>
+
+            <a href="#stories" class="dropdown-item nosotros-item" @click.prevent="scrollToStories">HISTORIA</a>
+
+            <RouterLink to="/ministerios" class="dropdown-item nosotros-item" :class="{ active: isCurrentRoute('/ministerios') }" @click="closeMobileMenu">
+              MINISTERIOS
+            </RouterLink>
+
+            <RouterLink to="/nuestro-adn" class="dropdown-item nosotros-item" :class="{ active: isCurrentRoute('/nuestro-adn') }" @click="closeMobileMenu">
+              NUESTRO ADN
+            </RouterLink>
           </div>
         </div>
 
-        <!-- Calendario Dropdown (unificada) -->
-        <div class="nav-item dropdown" @mouseenter="isCalendarOpen = true" @mouseleave="isCalendarOpen = false">
-          <a class="nav-link dropdown-toggle" href="#" @click.prevent="toggleCalendar">Calendario</a>
-          <div class="dropdown-menu" :class="{ open: isCalendarOpen }">
-            <a href="#recientes" class="dropdown-item" @click.prevent="scrollToRecientes">Eventos</a>
-            <RouterLink to="/calendar" class="dropdown-item" @click="isCalendarOpen = false; closeMobileMenu()">
-              Calendario Completo</RouterLink>
-          </div>
-        </div>
-
-        <a href="#help" class="nav-link" @click.prevent="scrollToHelp">Ministerios</a>
-        <a href="#contact" class="nav-link" :class="{ active: isContactVisible }"
-          @click.prevent="scrollToContact">Conectar</a>
+        <RouterLink to="/ministerios" class="nav-link" :class="{ active: isCurrentRoute('/ministerios') }" @click="closeMobileMenu">MINISTERIOS</RouterLink>
+        <RouterLink to="/calendar" class="nav-link" :class="{ active: currentRoute.path === '/calendar' }" @click="closeMobileMenu">CONÉCTATE</RouterLink>
       </div>
 
       <!-- Controles de usuario -->
       <div class="nav-controls desktop-nav">
-        <form class="header-search" @submit.prevent="handleSearch" role="search">
-          <div class="search-input-wrapper header">
-            <svg class="header-search-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-              <path fill="currentColor"
-                d="M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16zm8.707 17.293-4.387-4.387a9 9 0 1 0-1.414 1.414l4.387 4.387a1 1 0 0 0 1.414-1.414z" />
-            </svg>
+        <!-- Botón de donar a la izquierda del buscador -->
+        <RouterLink to="/donate" class="btn-donar" aria-label="Donar">DONAR</RouterLink>
 
-            <input class="header-search-input" type="search" v-model="searchTerm" placeholder="Buscar..."
-              aria-label="Buscar" />
-          </div>
-        </form>
+        <!-- Botón de búsqueda: solo icono que abre modal -->
+        <button class="header-search-button" type="button" aria-label="Abrir búsqueda" @click="openSearchModal">
+          <svg class="search-icon-inline" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="6" />
+            <path d="M21 21l-4.35-4.35" />
+          </svg>
+        </button>
 
         <RouterLink v-if="!isLoggedIn" class="btn access-btn" to="/login">Acceder</RouterLink>
         <RouterLink v-if="isLoggedIn && isAdmin" class="btn admin-btn" to="/admin/products">⚙️ Panel Admin</RouterLink>
@@ -75,45 +81,28 @@
       <!-- Menu mobile desplegable -->
       <div class="mobile-menu" :class="{ 'active': isMobileMenuOpen }">
         <div class="mobile-menu-content">
-          <form class="mobile-search" @submit.prevent="handleSearch" role="search">
-            <div class="search-input-wrapper mobile">
-              <svg class="header-search-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-                <path fill="currentColor"
-                  d="M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16zm8.707 17.293-4.387-4.387a9 9 0 1 0-1.414 1.414l4.387 4.387a1 1 0 0 0 1.414-1.414z" />
-              </svg>
-
-              <input class="header-search-input mobile" type="search" v-model="searchTerm" placeholder="Buscar..."
-                aria-label="Buscar" />
-            </div>
-          </form>
+          <!-- Mobile: icono que abre modal de búsqueda -->
+          <button class="mobile-search-button" type="button" aria-label="Abrir búsqueda" @click="openSearchModal">
+            <svg class="search-icon-inline" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="6" />
+              <path d="M21 21l-4.35-4.35" />
+            </svg>
+          </button>
           <div class="mobile-nav-links">
-            <RouterLink to="/" class="mobile-link" :class="{ active: isCurrentRoute('/') }" @click="closeMobileMenu">
+            <RouterLink to="/" class="mobile-link" :class="{ active: activeSection === 'home' }" @click="closeMobileMenu">
               Inicio</RouterLink>
             <button class="mobile-link mobile-nosotros-toggle" @click="isNosotrosOpen = !isNosotrosOpen">
               Nosotros <span class="mobile-nosotros-chevron" :class="{ open: isNosotrosOpen }">▾</span>
             </button>
             <div v-if="isNosotrosOpen" class="mobile-nosotros-items">
-              <RouterLink :to="{ path: '/about', hash: '#pst' }" class="mobile-link mobile-sub"
-                @click="closeMobileMenu">Pst</RouterLink>
+              <RouterLink to="/pastores" class="mobile-link mobile-sub" @click="closeMobileMenu">Pst</RouterLink>
               <a href="#stories" class="mobile-link mobile-sub" @click.prevent="scrollToStories">Historia</a>
-              <RouterLink :to="{ path: '/about', hash: '#mision' }" class="mobile-link mobile-sub"
-                @click="closeMobileMenu">Misión / Visión</RouterLink>
+              <RouterLink to="/mision-vision" class="mobile-link mobile-sub" @click="closeMobileMenu">Misión / Visión</RouterLink>
             </div>
 
-            <button class="mobile-link mobile-calendar-toggle" @click="isCalendarOpen = !isCalendarOpen">
-              Calendario<span class="mobile-calendar-chevron" :class="{ open: isCalendarOpen }">▾</span>
-            </button>
-            <div v-if="isCalendarOpen" class="mobile-calendar-items">
-              <a href="#recientes" class="mobile-link mobile-sub" @click.prevent="scrollToRecientes">Eventos
-                Recientes</a>
-              <a href="#proximos" class="mobile-link mobile-sub" @click.prevent="scrollToProximos">Eventos Próximos</a>
-              <RouterLink to="/calendar" class="mobile-link mobile-sub" @click="closeMobileMenu">Calendario Completo
-              </RouterLink>
-            </div>
 
-            <a href="#help" class="mobile-link" @click.prevent="scrollToHelp">Ministerios</a>
-            <a href="#contact" class="mobile-link" :class="{ active: isContactVisible }"
-              @click.prevent="scrollToContact">Conectar</a>
+            <RouterLink to="/ministerios" class="mobile-link" :class="{ active: isCurrentRoute('/ministerios') }" @click="closeMobileMenu">Ministerios</RouterLink>
+            <RouterLink to="/calendar" class="mobile-link" :class="{ active: currentRoute.path === '/calendar' }" @click="closeMobileMenu">CONÉCTATE</RouterLink>
 
           </div>
 
@@ -138,13 +127,30 @@
     </nav>
   </header>
 
+  <!-- Modal de búsqueda global -->
+  <div v-if="isSearchModalOpen" class="search-modal-overlay" @click.self="closeSearchModal">
+    <div class="search-modal" role="dialog" aria-modal="true" aria-label="Buscar">
+      <button class="search-modal-close" aria-label="Cerrar búsqueda" @click="closeSearchModal">✕</button>
+      <form class="search-modal-form" @submit.prevent="submitFromModal">
+        <label for="modal-search-input" class="visually-hidden">Buscar</label>
+        <input id="modal-search-input" ref="searchInputRef" type="search" v-model="searchTerm" placeholder="Buscar..." aria-label="Buscar" class="search-modal-input" />
+        <button type="submit" class="search-modal-go" aria-label="Buscar">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 21l-4.35-4.35" />
+            <circle cx="11" cy="11" r="6" />
+          </svg>
+        </button>
+      </form>
+    </div>
+  </div>
+
   <RouterView />
 </template>
 
 <script setup lang="ts">
 import { RouterLink, RouterView, useRoute } from 'vue-router';
 import { authService } from '@/services/api';
-import { onMounted, ref, watch, computed, onUnmounted } from 'vue';
+import { onMounted, ref, watch, computed, onUnmounted, nextTick } from 'vue';
 import router from './router';
 
 const isLoggedIn = ref(false);
@@ -152,7 +158,6 @@ const username = ref('');
 const isMobileMenuOpen = ref(false);
 const isAtTop = ref(true);
 const isNosotrosOpen = ref(false);
-const isCalendarOpen = ref(false);
 
 // Router hooks
 const currentRoute = useRoute();
@@ -191,17 +196,11 @@ const toggleMobileMenu = () => {
 const closeMobileMenu = () => {
   isMobileMenuOpen.value = false;
   isNosotrosOpen.value = false;
-  isCalendarOpen.value = false;
 };
 
 const toggleNosotros = (e?: Event) => {
   if (e && e.preventDefault) e.preventDefault();
   isNosotrosOpen.value = !isNosotrosOpen.value;
-};
-
-const toggleCalendar = (e?: Event) => {
-  if (e && e.preventDefault) e.preventDefault();
-  isCalendarOpen.value = !isCalendarOpen.value;
 };
 
 // Función para hacer scroll a la sección de productos
@@ -217,83 +216,68 @@ const toggleCalendar = (e?: Event) => {
 
 // Función y observador para la sección de contacto
 const isContactVisible = ref(false);
+const activeSection = ref<'home' | 'stories' | 'help' | 'contact'>('home');
 let contactObserver: IntersectionObserver | null = null;
 
+const trackedSections = [
+  { key: 'stories', selector: '.stories-section' },
+  { key: 'help', selector: '.help-section' },
+  { key: 'contact', selector: '.contact-section' }
+] as const;
+
+const updateActiveSection = () => {
+  if (route.path !== '/') {
+    activeSection.value = 'home';
+    return;
+  }
+
+  if (window.scrollY <= 20) {
+    activeSection.value = 'home';
+    return;
+  }
+
+  const probePoint = window.innerHeight * 0.3;
+  let nextActive: typeof activeSection.value = 'home';
+
+  for (const section of trackedSections) {
+    const el = document.querySelector(section.selector) as HTMLElement | null;
+    if (!el) continue;
+
+    const rect = el.getBoundingClientRect();
+    if (rect.top <= probePoint) {
+      nextActive = section.key;
+    }
+  }
+
+  activeSection.value = nextActive;
+};
+
 const observeContact = () => {
-  const el = document.querySelector('.recent-events-section') as HTMLElement | null;
-  if (!el) return;
-  if (contactObserver) contactObserver.disconnect();
-  contactObserver = new IntersectionObserver((entries) => {
-    isContactVisible.value = entries.some(e => e.isIntersecting);
-  }, { threshold: 0.3 });
-  contactObserver.observe(el);
-};
+  if (typeof window === 'undefined' || typeof IntersectionObserver === 'undefined') return;
 
-const scrollToContact = async () => {
-  closeMobileMenu();
-  const scrollNow = () => {
-    const el = document.querySelector('.recent-events-section') as HTMLElement | null;
-    if (el) {
-      (el as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      console.warn('Events section not found');
-    }
-  };
-  if (currentRoute.path !== '/') {
-    await router.push('/');
-    // wait a bit for DOM to render
-    setTimeout(() => { observeContact(); scrollNow(); }, 120);
-  } else {
-    scrollNow();
+  if (contactObserver) {
+    contactObserver.disconnect();
+    contactObserver = null;
   }
-};
 
-const scrollToRecientes = async () => {
-  closeMobileMenu();
-  const scrollNow = () => {
-    const el = document.querySelector('.recent-events-section') as HTMLElement | null;
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-  if (currentRoute.path !== '/') {
-    await router.push('/');
-    setTimeout(() => scrollNow(), 120);
-  } else {
-    scrollNow();
-  }
-};
+  const contactSection = document.querySelector('.contact-section') as HTMLElement | null;
+  if (!contactSection) return;
 
-const scrollToProximos = async () => {
-  closeMobileMenu();
-  const scrollNow = () => {
-    const el = document.querySelector('.recent-events-section') as HTMLElement | null;
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-  if (currentRoute.path !== '/') {
-    await router.push('/');
-    setTimeout(() => scrollNow(), 120);
-  } else {
-    scrollNow();
-  }
-};
+  contactObserver = new IntersectionObserver(
+    (entries) => {
+      const entry = entries[0];
+      isContactVisible.value = Boolean(entry?.isIntersecting);
+      if (entry?.isIntersecting) {
+        activeSection.value = 'contact';
+      }
+    },
+    {
+      threshold: 0.35,
+      rootMargin: '0px 0px -10% 0px',
+    },
+  );
 
-const scrollToHelp = async () => {
-  closeMobileMenu();
-  const scrollNow = () => {
-    const el = document.querySelector('.help-section') as HTMLElement | null;
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-  if (currentRoute.path !== '/') {
-    await router.push('/');
-    setTimeout(() => scrollNow(), 120);
-  } else {
-    scrollNow();
-  }
+  contactObserver.observe(contactSection);
 };
 
 const scrollToStories = async () => {
@@ -302,8 +286,27 @@ const scrollToStories = async () => {
     const el = document.querySelector('.stories-section') as HTMLElement | null;
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      activeSection.value = 'stories';
     }
   };
+  if (currentRoute.path !== '/') {
+    await router.push('/');
+    setTimeout(() => scrollNow(), 120);
+  } else {
+    scrollNow();
+  }
+};
+
+const scrollToMainBanner = async () => {
+  closeMobileMenu();
+  const scrollNow = () => {
+    const el = document.querySelector('.hero-carousel') as HTMLElement | null;
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    activeSection.value = 'home';
+  };
+
   if (currentRoute.path !== '/') {
     await router.push('/');
     setTimeout(() => scrollNow(), 120);
@@ -336,6 +339,23 @@ const handleMobileLogout = () => {
 };
 
 const searchTerm = ref('');
+const isSearchModalOpen = ref(false);
+const searchInputRef = ref<HTMLInputElement | null>(null);
+
+const openSearchModal = () => {
+  isSearchModalOpen.value = true;
+};
+
+const closeSearchModal = () => {
+  isSearchModalOpen.value = false;
+};
+
+const submitFromModal = async (e?: Event) => {
+  if (e) e.preventDefault();
+  // Reuse la función existente
+  await handleSearch();
+  closeSearchModal();
+};
 
 /**
  * Buscar en la página actual: encuentra el primer elemento con texto coincidente,
@@ -367,15 +387,19 @@ function performInPageSearch(term: string) {
   if (found) {
     try {
       found.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    } catch (e) { }
+    } catch {
+      // Ignorar fallos de scroll en elementos no visibles
+    }
     const prevBg = found.style.backgroundColor
     const prevOutline = found.style.outline
     found.style.transition = 'background-color 0.35s ease, outline 0.35s ease'
     found.style.backgroundColor = 'rgba(250,204,21,0.22)'
     found.style.outline = '3px solid rgba(250,204,21,0.22)'
     setTimeout(() => {
-      found && (found.style.backgroundColor = prevBg || '')
-      found && (found.style.outline = prevOutline || '')
+      if (found) {
+        found.style.backgroundColor = prevBg || ''
+        found.style.outline = prevOutline || ''
+      }
     }, 3000)
   }
 }
@@ -407,20 +431,52 @@ onMounted(() => {
   // header transparency on scroll
   const handleScroll = () => {
     isAtTop.value = window.scrollY <= 10;
+    updateActiveSection();
   };
   handleScroll();
   window.addEventListener('scroll', handleScroll, { passive: true });
   // expose for cleanup in onUnmounted
-  ; (window as any).__app_handleHeaderScroll = handleScroll;
+  window.__app_handleHeaderScroll = handleScroll;
   // observe contact section visibility
   observeContact();
+
+  // focus input cuando se abre el modal y manejar Escape
+  watch(isSearchModalOpen, (open) => {
+    if (open) {
+      nextTick(() => {
+        try {
+          searchInputRef.value?.focus();
+        } catch {
+          // Ignorar si el input todavía no está listo
+        }
+      });
+      const onEsc = (ev: KeyboardEvent) => { if (ev.key === 'Escape') closeSearchModal(); };
+      window.addEventListener('keydown', onEsc);
+      window.__search_modal_cleanup = () => window.removeEventListener('keydown', onEsc);
+    } else {
+      const fn = window.__search_modal_cleanup;
+      if (fn) {
+        fn();
+        window.__search_modal_cleanup = null;
+      }
+    }
+  });
 });
 
 onUnmounted(() => {
-  const fn = (window as any).__app_handleHeaderScroll;
+  const fn = window.__app_handleHeaderScroll;
   if (fn) window.removeEventListener('scroll', fn);
   if (contactObserver) { contactObserver.disconnect(); contactObserver = null; }
+  const cleanup = window.__search_modal_cleanup;
+  if (cleanup) cleanup();
 });
+
+declare global {
+  interface Window {
+    __app_handleHeaderScroll?: (() => void) | null
+    __search_modal_cleanup?: (() => void) | null
+  }
+}
 
 const route = useRoute();
 watch(route, () => {
@@ -430,7 +486,7 @@ watch(route, () => {
 
 <style scoped>
 .navbar {
-  background: linear-gradient(180deg, #22265D 0%, #0b2545 100%);
+  background: #EBEBEB;
   margin: 0;
   width: 100%;
   display: flex;
@@ -473,11 +529,8 @@ watch(route, () => {
 .site-logo {
   width: 63px;
   height: 63px;
-  border-radius: 50%;
   object-fit: cover;
   display: block;
-  border: 2px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.06), 0 0 20px rgba(255, 255, 255, 0.04);
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
@@ -588,6 +641,7 @@ watch(route, () => {
 
 .brand-title .highlight {
   background: linear-gradient(135deg, var(--white) 0%, var(--primary-red) 100%);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background: transparent;
@@ -627,9 +681,9 @@ watch(route, () => {
 }
 
 .nav-link {
-  color: rgb(255, 255, 255);
+  color: rgb(41, 47, 73);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 17px;
   padding: 10px 8px;
   border-radius: 12px;
@@ -646,19 +700,24 @@ watch(route, () => {
   transform: translateX(-50%);
   width: 0;
   height: 2px;
-  background: var(--primary-red);
   transition: width 0.3s ease;
 }
 
 .nav-link:hover {
-  color: var(--white);
   background-color: rgba(255, 255, 255, 0.06);
   transform: translateY(-2px);
 }
 
 .nav-link:hover::after {
   width: 70%;
-  background: var(--white);
+}
+
+/* Línea visible para enlace activo: color amarillo */
+.nav-link.active::after,
+.nav-link.active:hover::after,
+.mobile-link.active::after {
+  width: 70%;
+  background: #F5C542; /* amarillo */
 }
 
 
@@ -772,7 +831,7 @@ watch(route, () => {
 }
 
 .user-greeting {
-  color: var(--white);
+  color: #15ceeb;
   font-weight: 700;
   font-size: 13px;
   padding: 8px 10px;
@@ -1125,6 +1184,139 @@ watch(route, () => {
   box-shadow: 0 0 0 6px rgba(34, 211, 238, 0.06);
 }
 
+/* Botón Donar y submit del buscador */
+.btn-donar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 2px solid #D9A313;
+  color: #D9A313;
+  background: transparent;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-right: 10px;
+  text-decoration: none;
+}
+
+.btn-donar:hover {
+  background: rgba(245,197,66,0.06);
+}
+
+.search-submit {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #fff;
+}
+
+.search-submit:hover {
+  background: rgba(255,255,255,0.12);
+}
+
+/* Header search icon button */
+.header-search-button,
+.mobile-search-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #fff;
+  cursor: pointer;
+  margin-right: 8px;
+}
+
+/* Inline search icon used in header/mobile buttons */
+.search-icon-inline {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  color: #242038;
+}
+
+.header-search-button:hover,
+.mobile-search-button:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+/* Modal styles */
+.search-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.search-modal {
+  width: min(760px, 94%);
+  background: linear-gradient(180deg,#0b1220,#071028);
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(2,6,23,0.6);
+  position: relative;
+}
+
+.search-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.8);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.search-modal-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.search-modal-input {
+  flex: 1;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  color: #fff;
+  font-size: 16px;
+}
+
+.search-modal-go {
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg,#2dd4bf,#2563eb);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+}
+
+.visually-hidden { position: absolute !important; height: 1px; width: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px); white-space: nowrap; }
+
 .mobile-search {
   display: none;
   margin-bottom: 10px;
@@ -1167,6 +1359,10 @@ watch(route, () => {
   position: relative;
 }
 
+.nosotros-nav-item {
+  position: static;
+}
+
 /* Crear zona invisible para mantener hover */
 .nav-item.dropdown::after {
   content: '';
@@ -1200,26 +1396,89 @@ watch(route, () => {
   pointer-events: auto;
 }
 
+.nosotros-dropdown {
+  position: fixed;
+  top: 62px;
+  width: min(980px, calc(80vw - 38px));
+  left: 60%;
+  transform: translateX(-50%);
+  display: none;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  align-items: stretch;
+  padding: 10px 12px;
+  border-radius: 0;
+  background: linear-gradient(180deg, #ead7a6 0%, #f2e7bf 100%);
+  box-shadow: 0 12px 32px rgba(9, 15, 39, 0.22);
+}
+
 .nav-item.dropdown:hover .dropdown-menu,
 .dropdown-menu.open {
   display: block;
 }
 
+.nav-item.dropdown:hover .nosotros-dropdown,
+.nosotros-dropdown.open {
+  display: grid;
+}
+
 .dropdown-item {
   display: block;
-  padding: 10px 16px;
+  padding: 10px 10px;
   color: #ffffff;
   text-decoration: none;
   font-weight: 700;
 }
 
+.nosotros-item {
+  background: #efefef;
+  border-radius: 14px;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 8px 1px;
+  color: #22265D;
+  font-size: clamp(0.9rem, 1.15vw, 1.05rem);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  box-shadow: 0 2px 0 rgba(34, 38, 93, 0.08), 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+
+.nosotros-item:active,
+.nosotros-item:focus,
+.nosotros-item:focus-visible,
+.nosotros-item.router-link-active,
+.nosotros-item.router-link-exact-active {
+  background: #22265D;
+  color: #ffffff;
+}
+
+
+
 .dropdown-item:hover {
   background: rgba(255, 255, 255, 0.06);
 }
 
+.nosotros-item:hover {
+  background: #22265D;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(10, 18, 40, 0.12);
+}
+
+
+
 /* Dark gradient for dropdown (ensures contrast on light pages) */
 .dropdown-menu {
   background: linear-gradient(180deg, #0b2545 0%, #22265D 100%);
+}
+
+.nosotros-dropdown {
+  background: linear-gradient(180deg, #ead7a6 0%, #f2e7bf 100%);
 }
 
 /* When navbar is transparent (over light backgrounds) keep links light for consistency */
@@ -1228,10 +1487,40 @@ watch(route, () => {
   color: #ffffff !important;
 }
 
+.navbar.transparent .site-logo {
+  filter: brightness(0) invert(1);
+}
+
+.navbar.transparent .search-icon-inline {
+  color: #ffffff !important;
+}
+
+.navbar.transparent .header-search-button,
+.navbar.transparent .mobile-search-button {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
 .navbar.transparent .nav-link:hover {
   background-color: rgba(255, 255, 255, 0.06);
   color: #ffffff !important;
 }
+
+@media (max-width: 1200px) {
+  .nosotros-dropdown {
+    top: 74px;
+    width: min(900px, calc(100vw - 24px));
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .nosotros-item {
+    min-height: 64px;
+    font-size: clamp(0.82rem, 1.08vw, 0.95rem);
+  }
+}
+
+
 
 /* Mobile 'Nosotros' submenu */
 .mobile-nosotros-items {

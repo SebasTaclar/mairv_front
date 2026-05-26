@@ -166,17 +166,17 @@ const formData = ref<Omit<CalendarEvent, 'id'>>({
  registeredCount: props.event?.registeredCount || undefined
 })
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
  if (!formData.value.name || !formData.value.date || !formData.value.createdBy) {
   alert('Por favor completa los campos obligatorios')
   return
  }
 
  if (isEditMode.value && props.event) {
-  updateEvent(props.event.id, formData.value)
+  await updateEvent(props.event.id, formData.value)
   emit('save', { ...props.event, ...formData.value })
  } else {
-  const newEvent = createEvent(formData.value)
+  const newEvent = await createEvent(formData.value)
   emit('save', newEvent)
  }
 
@@ -202,9 +202,9 @@ const confirmDelete = () => {
  showDeleteConfirm.value = true
 }
 
-const handleDeleteEvent = () => {
+const handleDeleteEvent = async () => {
  if (props.event) {
-  deleteEvent(props.event.id)
+  await deleteEvent(props.event.id)
   emit('close')
  }
 }
