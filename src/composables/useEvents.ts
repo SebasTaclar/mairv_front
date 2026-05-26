@@ -4,11 +4,25 @@ import type { Event, CreateEventRequest } from '@/types/EventType'
 
 const normalizeEvent = (event: Event): Event => ({
   ...event,
+  id: String(event.id),
   startDate: new Date(event.startDate),
   endDate: new Date(event.endDate),
   createdAt: event.createdAt ? new Date(event.createdAt) : undefined,
   updatedAt: event.updatedAt ? new Date(event.updatedAt) : undefined,
 })
+
+const extractEventsList = (payload: unknown): Event[] => {
+  if (Array.isArray(payload)) {
+    return payload as Event[]
+  }
+
+  if (payload && typeof payload === 'object' && 'events' in payload) {
+    const events = (payload as { events?: unknown }).events
+    return Array.isArray(events) ? (events as Event[]) : []
+  }
+
+  return []
+}
 
 const events = ref<Event[]>([])
 const isLoading = ref(false)
@@ -23,9 +37,10 @@ export function useEvents() {
 
     try {
       isLoading.value = true
-      loadPromise = eventService.getEvents()
+      loadPromise = eventService
+        .getEvents()
         .then((response) => {
-          events.value = response.data.map(normalizeEvent)
+          events.value = extractEventsList(response.data).map(normalizeEvent)
           error.value = ''
         })
         .catch((e) => {
@@ -64,7 +79,7 @@ export function useEvents() {
     try {
       const response = await eventService.updateEvent(id, eventData)
       const updatedEvent = normalizeEvent(response.data)
-      const index = events.value.findIndex((event) => event.id === id)
+      const index = events.value.findIndex((event) => String(event.id) === String(id))
       if (index !== -1) {
         events.value[index] = updatedEvent
       }
@@ -79,7 +94,7 @@ export function useEvents() {
   const deleteEvent = async (id: string) => {
     try {
       await eventService.deleteEvent(id)
-      const index = events.value.findIndex((event) => event.id === id)
+      const index = events.value.findIndex((event) => String(event.id) === String(id))
       if (index !== -1) {
         events.value.splice(index, 1)
       }
@@ -93,7 +108,7 @@ export function useEvents() {
 
   // Get event by ID
   const getEventById = (id: string) => {
-    return events.value.find((e) => e.id === id)
+    return events.value.find((e) => String(e.id) === String(id))
   }
 
   // Computed properties

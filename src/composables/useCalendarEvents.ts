@@ -32,7 +32,7 @@ const toCalendarEvent = (event: Event): CalendarEvent => {
   const { year, month, day } = toLocalDateParts(startDate)
 
   return {
-    id: event.id,
+    id: String(event.id),
     name: event.title,
     date: `${year}-${month}-${day}`,
     startTime: toLocalTime(startDate),
@@ -71,13 +71,29 @@ const fromCalendarEvent = (event: Omit<CalendarEvent, 'id'>): CreateEventRequest
     status: 'scheduled',
     maxAttendees: event.capacity,
     organizers: event.directors
-      ? event.directors.split(',').map((item) => item.trim()).filter(Boolean)
+      ? event.directors
+          .split(',')
+          .map((item) => item.trim())
+          .filter(Boolean)
       : [event.createdBy].filter(Boolean),
     tags: [],
   }
 }
 
 export function useCalendarEvents() {
+  const extractEventsList = (payload: unknown): Event[] => {
+    if (Array.isArray(payload)) {
+      return payload as Event[]
+    }
+
+    if (payload && typeof payload === 'object' && 'events' in payload) {
+      const events = (payload as { events?: unknown }).events
+      return Array.isArray(events) ? (events as Event[]) : []
+    }
+
+    return []
+  }
+
   const loadEvents = async () => {
     if (loadPromise) {
       return loadPromise
@@ -88,7 +104,7 @@ export function useCalendarEvents() {
       loadPromise = eventService
         .getEvents()
         .then((response) => {
-          events.value = response.data.map(toCalendarEvent)
+          events.value = extractEventsList(response.data).map(toCalendarEvent)
           return events.value
         })
         .catch((error) => {
@@ -178,7 +194,7 @@ export function useCalendarEvents() {
   }
 
   const updateEvent = async (id: string, updates: Partial<CalendarEvent>): Promise<void> => {
-    const currentEvent = events.value.find((event) => event.id === id)
+    const currentEvent = events.value.find((event) => String(event.id) === String(id))
     if (!currentEvent) {
       throw new Error('Evento no encontrado')
     }
@@ -187,7 +203,7 @@ export function useCalendarEvents() {
     const response = await eventService.updateEvent(id, fromCalendarEvent(mergedEvent))
     const updatedEvent = toCalendarEvent(response.data)
 
-    const index = events.value.findIndex((event) => event.id === id)
+    const index = events.value.findIndex((event) => String(event.id) === String(id))
     if (index !== -1) {
       events.value[index] = updatedEvent
       console.log('✅ Evento actualizado:', updatedEvent)
@@ -196,7 +212,7 @@ export function useCalendarEvents() {
 
   const deleteEvent = async (id: string): Promise<void> => {
     await eventService.deleteEvent(id)
-    const index = events.value.findIndex((event) => event.id === id)
+    const index = events.value.findIndex((event) => String(event.id) === String(id))
     if (index !== -1) {
       events.value.splice(index, 1)
       console.log('✅ Evento eliminado')
@@ -205,7 +221,7 @@ export function useCalendarEvents() {
 
   // Obtener evento por ID
   const getEventById = (id: string): CalendarEvent | undefined => {
-    return events.value.find((e) => e.id === id)
+    return events.value.find((e) => String(e.id) === String(id))
   }
 
   // Buscar eventos
