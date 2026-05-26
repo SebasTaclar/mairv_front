@@ -77,9 +77,62 @@ const getCategoryLabel = (category?: string) => {
  width: min(720px, 95%);
  max-height: 80vh;
  overflow: auto;
- background: #fff;
+ background: linear-gradient(180deg, #071427 0%, #0b1d36 100%);
  border-radius: 10px;
- box-shadow: 0 20px 60px rgba(2, 6, 23, 0.5);
+ box-shadow: 0 20px 60px rgba(2, 6, 23, 0.6);
+ border: 1px solid rgba(255, 255, 255, 0.04);
+ color: #e6eefc;
+}
+
+/* Mobile modal improvements */
+@media (max-width: 600px) {
+  .day-events-card {
+    width: 100%;
+    max-width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .day-events-header {
+    padding: 12px 14px;
+    position: sticky;
+    top: 0;
+    z-index: 6;
+  }
+
+  .day-events-list {
+    padding: 8px 12px;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    flex: 1 1 auto;
+  }
+
+  .day-event-item {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .event-name {
+    font-size: 1rem;
+    color: #0b2545;
+  }
+
+  .event-short {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    color: #444;
+  }
+
+  .close-btn {
+    font-size: 16px;
+    padding: 8px 12px;
+  }
 }
 
 .day-events-header {
@@ -87,23 +140,41 @@ const getCategoryLabel = (category?: string) => {
  align-items: center;
  justify-content: space-between;
  padding: 16px 20px;
- border-bottom: 1px solid #eee;
- background: linear-gradient(90deg, #22265D, #0b2545);
- color: #fff;
+ border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+ background: linear-gradient(90deg, #0b2545, #071427);
+ color: #e6eefc;
  border-top-left-radius: 10px;
  border-top-right-radius: 10px;
 }
 
+.day-events-header h3 {
+ margin: 0;
+ color: #e6eefc;
+ font-size: 1.1rem;
+ font-weight: 800;
+}
+
 .close-btn {
- background: transparent;
- border: none;
- color: #fff;
+ background: rgba(255, 255, 255, 0.03);
+ border: 1px solid rgba(255, 255, 255, 0.04);
+ color: #e6eefc;
  font-size: 18px;
  cursor: pointer;
+ padding: 6px 10px;
+ border-radius: 6px;
+ transition: background 0.2s ease;
+}
+
+.close-btn:hover {
+ background: rgba(255, 255, 255, 0.06);
 }
 
 .day-events-list {
- padding: 12px 16px
+ padding: 12px 16px;
+}
+
+.day-events-list {
+ padding: 12px 16px;
 }
 
 .day-event-item {
@@ -114,17 +185,79 @@ const getCategoryLabel = (category?: string) => {
  border-radius: 8px;
  cursor: pointer;
  transition: background .14s ease, transform .12s ease;
+ background: rgba(255, 255, 255, 0.02);
+ border: 1px solid rgba(255, 255, 255, 0.02);
+ margin-bottom: 8px;
 }
 
 .day-event-item:hover {
- background: #f6f8ff;
- transform: translateY(-2px)
+ background: rgba(255, 255, 255, 0.05);
+ transform: translateY(-2px);
+}
+
+.day-event-item .left {
+ flex: 1;
 }
 
 .event-name {
  font-weight: 800;
  font-size: 1.05rem;
- color: #0b2545
+ color: #e6eefc;
+ margin-bottom: 4px;
+}
+
+.event-meta {
+ font-size: 13px;
+ color: #bcd3ee;
+ margin-bottom: 6px;
+}
+
+.meta-time,
+.meta-loc {
+ font-weight: 700;
+ color: #dfeefe;
+}
+
+.meta-sep {
+ margin: 0 6px;
+ color: #7b94b3;
+}
+
+.event-short {
+ font-size: 13px;
+ color: #c9dbf4;
+ margin: 0;
+ display: -webkit-box;
+ -webkit-line-clamp: 3;
+ -webkit-box-orient: vertical;
+ overflow: hidden;
+}
+
+.day-event-item .right {
+ display: flex;
+ flex-direction: column;
+ align-items: flex-end;
+ gap: 8px;
+ margin-left: 12px;
+}
+
+.badge {
+ padding: 6px 10px;
+ border-radius: 999px;
+ color: #ffffff;
+ font-size: 12px;
+ font-weight: 700;
+}
+
+.attach-count {
+ font-size: 13px;
+ color: #bcd3ee;
+}
+
+.empty {
+ padding: 20px;
+ color: #9fb4d6;
+ text-align: center;
 }
 
 .event-meta {
@@ -135,7 +268,7 @@ const getCategoryLabel = (category?: string) => {
 
 .event-short {
  font-size: 13px;
- color: #444;
+ color: #f7f4f4;
  margin-top: 6px
 }
 
@@ -149,23 +282,71 @@ const getCategoryLabel = (category?: string) => {
 .attach-count {
  margin-top: 8px;
  font-size: 13px;
- color: #444
+ color: #bcd3ee;
 }
 
 .meta-time,
 .meta-loc {
  font-weight: 700;
- color: #333
+ color: #dfeefe;
 }
 
 .meta-sep {
  margin: 0 6px;
- color: #999
+ color: #7b94b3;
 }
 
 .empty {
  padding: 20px;
- color: #666;
- text-align: center
+ color: #9fb4d6;
+ text-align: center;
+}
+
+/* Mobile modal improvements */
+@media (max-width: 600px) {
+  .day-events-card {
+    width: 100%;
+    max-width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .day-events-header {
+    padding: 12px 14px;
+    position: sticky;
+    top: 0;
+    z-index: 6;
+  }
+
+  .day-events-list {
+    padding: 8px 12px;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    flex: 1 1 auto;
+  }
+
+  .day-event-item {
+    padding: 14px;
+  }
+
+  .event-name {
+    font-size: 1rem;
+  }
+
+  .event-short {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .close-btn {
+    font-size: 16px;
+    padding: 8px 12px;
+  }
 }
 </style>

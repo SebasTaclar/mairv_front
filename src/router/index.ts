@@ -35,6 +35,30 @@ const router = createRouter({
     },
 
     {
+      path: '/pastores',
+      name: 'pastors',
+      component: () => import('../views/PastorsView.vue'),
+    },
+
+    {
+      path: '/ministerios',
+      name: 'ministerios',
+      component: () => import('../views/MinisteriosView.vue'),
+    },
+
+    {
+      path: '/mision-vision',
+      name: 'mission-vision',
+      component: () => import('../views/MissionVisionView.vue'),
+    },
+
+    {
+      path: '/nuestro-adn',
+      name: 'nuestro-adn',
+      component: () => import('../views/NuestroAdnView.vue'),
+    },
+
+    {
       path: '/games',
       name: 'games',
       component: () => import('../views/GamesPage.vue'),

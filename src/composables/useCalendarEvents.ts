@@ -1,135 +1,118 @@
-import { ref, computed } from 'vue'
-import type { CalendarEvent, EventsResponse } from '@/types/EventType'
+import { ref } from 'vue'
+import { eventService } from '@/services/api'
+import type { CalendarEvent, EventsResponse, Event, CreateEventRequest } from '@/types/EventType'
 
 const parseLocalDate = (dateStr: string): Date => {
   const [year, month, day] = dateStr.split('-').map(Number)
   return new Date(year, month - 1, day)
 }
 
-// Función para generar eventos de iglesia realista
-function generateChurchEvents(): CalendarEvent[] {
-  const events: CalendarEvent[] = []
-  let eventId = 1
+const events = ref<CalendarEvent[]>([])
+const selectedEvent = ref<CalendarEvent | null>(null)
+const isLoading = ref(false)
+let loadPromise: Promise<CalendarEvent[]> | null = null
 
-  const getSundaysInMonth = (year: number, month: number): Date[] => {
-    const sundays: Date[] = []
-    const firstDay = new Date(year, month, 1)
-    const firstSundayOffset = (7 - firstDay.getDay()) % 7
-    let current = new Date(year, month, 1 + firstSundayOffset)
-
-    while (current.getMonth() === month) {
-      sundays.push(new Date(current))
-      current.setDate(current.getDate() + 7)
-    }
-
-    return sundays
+const toLocalDateParts = (value: Date | string) => {
+  const date = new Date(value)
+  return {
+    year: date.getFullYear(),
+    month: String(date.getMonth() + 1).padStart(2, '0'),
+    day: String(date.getDate()).padStart(2, '0'),
   }
-
-  const seminarThemes = [
-    'Discernimiento Espiritual',
-    'Liderazgo Cristiano',
-    'Santidad y Transformación',
-    'Servicio y Ministerio',
-    'Oración Efectiva',
-    'Testimonio y Evangelismo',
-    'Fe y Confianza en Dios',
-    'Familia Cristiana',
-    'Mayordomía Cristiana',
-    'Dones Espirituales',
-    'Gratitud y Acción de Gracias',
-    'Esperanza en Cristo',
-  ]
-
-  for (let month = 0; month < 12; month++) {
-    const sundays = getSundaysInMonth(2026, month)
-    const seminarSunday = sundays[1] ?? sundays[0]
-    const seminarDate = seminarSunday.toISOString().slice(0, 10)
-
-    sundays.forEach((sundayDate) => {
-      const date = sundayDate.toISOString().slice(0, 10)
-
-      events.push({
-        id: eventId.toString(),
-        name: '⛪ Culto de Adoración (9:00 AM)',
-        date,
-        startTime: '09:00',
-        endTime: '10:30',
-        duration: 90,
-        createdBy: 'Liderazgo de Iglesia',
-        directors: 'Pastor Principal',
-        description: 'Culto dominical - Adoración y predicación de la Palabra de Dios',
-        location: 'Templo Principal',
-        category: 'evento',
-        capacity: 500,
-        registeredCount: 350,
-      })
-      eventId++
-
-      events.push({
-        id: eventId.toString(),
-        name: '⛪ Culto de Adoración (11:00 AM)',
-        date,
-        startTime: '11:00',
-        endTime: '12:30',
-        duration: 90,
-        createdBy: 'Liderazgo de Iglesia',
-        directors: 'Pastor Principal',
-        description: 'Culto dominical - Adoración y predicación de la Palabra de Dios',
-        location: 'Templo Principal',
-        category: 'evento',
-        capacity: 500,
-        registeredCount: 380,
-      })
-      eventId++
-
-      if (date !== seminarDate) {
-        events.push({
-          id: eventId.toString(),
-          name: '📖 Discipulado (6:00 PM)',
-          date,
-          startTime: '18:00',
-          endTime: '19:30',
-          duration: 90,
-          createdBy: 'Liderazgo de Iglesia',
-          directors: 'Coordinador de Discipulado',
-          description: 'Grupos pequeños de discipulado y crecimiento espiritual',
-          location: 'Salones de Estudio',
-          category: 'actividad',
-          capacity: 250,
-          registeredCount: 180,
-        })
-        eventId++
-      }
-    })
-
-    events.push({
-      id: eventId.toString(),
-      name: `🎓 Seminario Mensual - ${seminarThemes[month]}`,
-      date: seminarDate,
-      startTime: '14:00',
-      endTime: '17:00',
-      duration: 180,
-      createdBy: 'Departamento de Formación',
-      directors: 'Coordinador General, Facilitadores',
-      description: `Seminario mensual: "${seminarThemes[month]}" - Enseñanza profunda y participación interactiva`,
-      location: 'Auditorio Principal',
-      category: 'reunion',
-      capacity: 300,
-      registeredCount: 245,
-    })
-    eventId++
-  }
-
-  return events
 }
 
-// Mock data de eventos para el calendario
-const mockCalendarEvents: CalendarEvent[] = generateChurchEvents()
+const toLocalTime = (value: Date | string) => {
+  const date = new Date(value)
+  return date.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false })
+}
+
+const toCalendarEvent = (event: Event): CalendarEvent => {
+  const startDate = new Date(event.startDate)
+  const endDate = new Date(event.endDate)
+  const { year, month, day } = toLocalDateParts(startDate)
+
+  return {
+    id: event.id,
+    name: event.title,
+    date: `${year}-${month}-${day}`,
+    startTime: toLocalTime(startDate),
+    endTime: event.endDate ? toLocalTime(endDate) : undefined,
+    duration: event.endDate
+      ? Math.max(0, Math.round((endDate.getTime() - startDate.getTime()) / 60000))
+      : undefined,
+    createdBy: event.organizers?.[0] || 'Sistema',
+    directors: event.organizers?.join(', '),
+    description: event.description,
+    attachments: event.attachments,
+    location: event.location,
+    category: event.category || 'otro',
+    capacity: event.maxAttendees,
+    registeredCount: event.currentAttendees,
+  }
+}
+
+const fromCalendarEvent = (event: Omit<CalendarEvent, 'id'>): CreateEventRequest => {
+  const startDate = event.startTime
+    ? `${event.date}T${event.startTime}:00`
+    : `${event.date}T00:00:00`
+
+  const calculatedEndDate = event.endTime
+    ? `${event.date}T${event.endTime}:00`
+    : new Date(new Date(startDate).getTime() + (event.duration || 60) * 60000).toISOString()
+
+  return {
+    title: event.name,
+    description: event.description,
+    startDate: new Date(startDate).toISOString(),
+    endDate: event.endTime ? new Date(calculatedEndDate).toISOString() : calculatedEndDate,
+    location: event.location,
+    category: event.category,
+    attachments: event.attachments,
+    status: 'scheduled',
+    maxAttendees: event.capacity,
+    organizers: event.directors
+      ? event.directors.split(',').map((item) => item.trim()).filter(Boolean)
+      : [event.createdBy].filter(Boolean),
+    tags: [],
+  }
+}
 
 export function useCalendarEvents() {
-  const events = ref<CalendarEvent[]>(mockCalendarEvents)
-  const selectedEvent = ref<CalendarEvent | null>(null)
-  const isLoading = ref(false)
+  const loadEvents = async () => {
+    if (loadPromise) {
+      return loadPromise
+    }
+
+    try {
+      isLoading.value = true
+      loadPromise = eventService
+        .getEvents()
+        .then((response) => {
+          events.value = response.data.map(toCalendarEvent)
+          return events.value
+        })
+        .catch((error) => {
+          console.error('Error loading calendar events:', error)
+          events.value = []
+          return events.value
+        })
+        .finally(() => {
+          isLoading.value = false
+          loadPromise = null
+        })
+
+      return loadPromise
+    } catch (error) {
+      console.error('Error loading calendar events:', error)
+      isLoading.value = false
+      events.value = []
+      return events.value
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  void loadEvents()
 
   // Obtener eventos recientes (últimos 2) y próximos (próximos 2)
   const getRecentAndUpcoming = (): EventsResponse => {
@@ -186,28 +169,34 @@ export function useCalendarEvents() {
   }
 
   // Crear evento (simulado)
-  const createEvent = (event: Omit<CalendarEvent, 'id'>): CalendarEvent => {
-    const newEvent: CalendarEvent = {
-      ...event,
-      id: Date.now().toString(),
-    }
+  const createEvent = async (event: Omit<CalendarEvent, 'id'>): Promise<CalendarEvent> => {
+    const response = await eventService.createEvent(fromCalendarEvent(event))
+    const newEvent = toCalendarEvent(response.data)
     events.value.push(newEvent)
     console.log('✅ Evento creado:', newEvent)
     return newEvent
   }
 
-  // Actualizar evento (simulado)
-  const updateEvent = (id: string, updates: Partial<CalendarEvent>): void => {
-    const index = events.value.findIndex((e) => e.id === id)
+  const updateEvent = async (id: string, updates: Partial<CalendarEvent>): Promise<void> => {
+    const currentEvent = events.value.find((event) => event.id === id)
+    if (!currentEvent) {
+      throw new Error('Evento no encontrado')
+    }
+
+    const mergedEvent = { ...currentEvent, ...updates }
+    const response = await eventService.updateEvent(id, fromCalendarEvent(mergedEvent))
+    const updatedEvent = toCalendarEvent(response.data)
+
+    const index = events.value.findIndex((event) => event.id === id)
     if (index !== -1) {
-      events.value[index] = { ...events.value[index], ...updates }
-      console.log('✅ Evento actualizado:', events.value[index])
+      events.value[index] = updatedEvent
+      console.log('✅ Evento actualizado:', updatedEvent)
     }
   }
 
-  // Eliminar evento (simulado)
-  const deleteEvent = (id: string): void => {
-    const index = events.value.findIndex((e) => e.id === id)
+  const deleteEvent = async (id: string): Promise<void> => {
+    await eventService.deleteEvent(id)
+    const index = events.value.findIndex((event) => event.id === id)
     if (index !== -1) {
       events.value.splice(index, 1)
       console.log('✅ Evento eliminado')
@@ -255,6 +244,7 @@ export function useCalendarEvents() {
     events,
     selectedEvent,
     isLoading,
+    loadEvents,
     getRecentAndUpcoming,
     getEventsByMonth,
     getEventsByDate,

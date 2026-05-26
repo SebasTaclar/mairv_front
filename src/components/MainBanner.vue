@@ -9,11 +9,24 @@
       </div>
     </div>
 
-    <!-- Hero content centrado (título + CTAs) -->
+    <!-- Hero content (título + CTAs) alineado a la izquierda -->
     <div class="hero-content">
-      <h3 class="banner-topline">MAI RESTAURANDO VIDAS</h3>
-      <h1 class="hero-title hero-title--handwritten">UN LUGAR DONDE LA VERDAD CAMBIARÁ TU REALIDAD</h1>
-      <!-- <p class="hero-subtitle">Acompáñanos en comunidad, en línea y en persona.</p> -->
+      <h3 class="banner-topline">MAI Restaurando Vidas</h3>
+      <h1 class="hero-title">UN LUGAR DONDE<br/>LA VERDAD CAMBIARÁ</h1>
+      <div class="hero-handwritten">Tu Realidad</div>
+
+      <!-- CTA VISÍTANOS -->
+      <div class="explore-button-container">
+        <button class="visit-btn" type="button" @click="visit">
+          <span class="visit-text">VISÍTANOS</span>
+          <span class="visit-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 1 1 18 0z" />
+              <circle cx="12" cy="10" r="2" />
+            </svg>
+          </span>
+        </button>
+      </div>
     </div>
 
     <!-- Flecha para ir a la siguiente sección -->
@@ -75,6 +88,14 @@ const heroSectionRef = ref<HTMLElement | null>(null)
 
 // Datos de categorías SOYDANI
 const slides = ref<ProductSlide[]>([
+   {
+    id: 'banner_facebook_1',
+    image: 'https://scontent-bog2-2.xx.fbcdn.net/v/t51.82787-15/627267971_18450337594096993_322642957206204506_n.jpg?stp=dst-jpegr_tt6&_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeECqXLO2CNs6VU3476pttB3LPrxMwekU-ks-vEzB6RT6dO80ljPFoUNdURwk417RmU&_nc_ohc=FR3rnOOrxKQQ7kNvwG6zGmN&_nc_oc=AdrsB_Juyko65rBwolP6e5AxNJ0jVKsHr_jIeRckqN8Uopob6oz0pEkdNp7OC8qNqmU&_nc_zt=23&se=-1&_nc_ht=scontent-bog2-2.xx&_nc_gid=AEgaKFQV2uTRiKya0Peq3Q&_nc_ss=7b2a8&oh=00_Af68MMO_BD59il_eJFEW5v9kdKIWJCf46Ci6ewjeUZ7Bdw&oe=6A1AA0F6',
+    category: 'Principal',
+    title: 'Banner adicional',
+    description: '',
+    features: []
+  },
   {
     id: 'banner_external',
     image: 'https://csalazar.org/wp-content/uploads/2021/08/0206d-asistir-iglesia.jpg',
@@ -83,6 +104,7 @@ const slides = ref<ProductSlide[]>([
     description: '',
     features: []
   }
+
 ])
 
 // Computed
@@ -177,11 +199,18 @@ const exploreProduct = (slide: ProductSlide) => {
 }
 
 const visit = () => {
-  const contactEl = document.querySelector('.contact-section')
-  if (contactEl && (contactEl as HTMLElement).scrollIntoView) {
-    (contactEl as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'start' })
+  const footerEl = document.querySelector('.footer-cosmic') as HTMLElement | null
+  if (footerEl && typeof footerEl.scrollIntoView === 'function') {
+    footerEl.scrollIntoView({ behavior: 'smooth', block: 'start' })
     return
   }
+
+  const contactEl = document.querySelector('.contact-section') as HTMLElement | null
+  if (contactEl && typeof contactEl.scrollIntoView === 'function') {
+    contactEl.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    return
+  }
+
   if (router) router.push('/contact').catch(() => { })
 }
 
@@ -207,7 +236,7 @@ const scrollToNextSection = () => {
     return
   }
 
-  const fallback = document.querySelector('.help-section, .stories-section, .recent-events-section, .contact-section') as HTMLElement | null
+  const fallback = document.querySelector('.help-section, .stories-section, .contact-section') as HTMLElement | null
   if (fallback && typeof fallback.scrollIntoView === 'function') {
     fallback.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
@@ -254,6 +283,8 @@ defineExpose({
 // (invocado desde funciones que ya llaman resetAutoPlay)
 // Llamamos broadcastBannerState dentro de next/prev/goToSlide mediante los puntos arriba.
 </script>
+
+
 
 
 

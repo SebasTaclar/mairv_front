@@ -4,6 +4,7 @@ export * from './apiConfig'
 // Exportar servicios
 export * from './authService'
 export * from './categoryService'
+export * from './eventService'
 export * from './productService'
 export * from './playerService'
 export * from './teamService'
@@ -20,3 +21,9 @@ export type {
   CreateCategoryResponse,
   GetCategoriesResponse,
 } from '@/types/CategoryType'
+export type {
+  Event,
+  CreateEventRequest,
+  UpdateEventRequest,
+  EventAttachment,
+} from '@/types/EventType'

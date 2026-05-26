@@ -1,124 +1,43 @@
 import { ref, computed } from 'vue'
+import { eventService } from '@/services/api'
 import type { Event, CreateEventRequest } from '@/types/EventType'
 
-// Storage key
-const EVENTS_KEY = 'admin_events'
+const normalizeEvent = (event: Event): Event => ({
+  ...event,
+  startDate: new Date(event.startDate),
+  endDate: new Date(event.endDate),
+  createdAt: event.createdAt ? new Date(event.createdAt) : undefined,
+  updatedAt: event.updatedAt ? new Date(event.updatedAt) : undefined,
+})
 
-type StoredEvent = Omit<
-  Partial<Event>,
-  'id' | 'attachments' | 'organizers' | 'startDate' | 'endDate' | 'createdAt' | 'updatedAt'
-> & {
-  id?: unknown
-  attachments?: unknown[]
-  images?: unknown[]
-  organizers?: unknown[]
-  organizer?: unknown
-  startDate?: string | Date
-  endDate?: string | Date
-  createdAt?: string | Date
-  updatedAt?: string | Date
-}
-
-const isRecord = (value: unknown): value is Record<string, unknown> => {
-  return typeof value === 'object' && value !== null
-}
-
-const normalizeAttachments = (event: StoredEvent) => {
-  if (Array.isArray(event.attachments)) {
-    return event.attachments
-      .filter(
-        (attachment): attachment is { id?: unknown; title?: unknown; url: string } =>
-          isRecord(attachment) &&
-          typeof attachment.url === 'string' &&
-          attachment.url.trim().length > 0,
-      )
-      .map((attachment, index: number) => ({
-        id:
-          typeof attachment.id === 'string' && attachment.id.trim().length > 0
-            ? attachment.id
-            : `${Date.now()}-${index}`,
-        title:
-          typeof attachment.title === 'string' && attachment.title.trim().length > 0
-            ? attachment.title
-            : `Adjunto ${index + 1}`,
-        url: attachment.url.trim(),
-      }))
-  }
-
-  if (Array.isArray(event.images)) {
-    return event.images
-      .filter((url): url is string => typeof url === 'string' && url.trim().length > 0)
-      .map((url: string, index: number) => ({
-        id: `${Date.now()}-${index}`,
-        title: `Adjunto ${index + 1}`,
-        url: url.trim(),
-      }))
-  }
-
-  return []
-}
-
-const normalizeOrganizers = (event: StoredEvent) => {
-  if (Array.isArray(event.organizers)) {
-    return event.organizers
-      .filter(
-        (organizer): organizer is string =>
-          typeof organizer === 'string' && organizer.trim().length > 0,
-      )
-      .map((organizer) => organizer.trim())
-  }
-
-  if (typeof event.organizer === 'string' && event.organizer.trim()) {
-    return [event.organizer.trim()]
-  }
-
-  return []
-}
-
-const normalizeEvent = (event: StoredEvent): Event => {
-  const id =
-    typeof event.id === 'string' && event.id.trim().length > 0 ? event.id : Date.now().toString()
-
-  return {
-    id,
-    title: typeof event.title === 'string' ? event.title : '',
-    description: typeof event.description === 'string' ? event.description : '',
-    startDate: new Date(event.startDate || Date.now()),
-    endDate: new Date(event.endDate || Date.now()),
-    location: typeof event.location === 'string' ? event.location : '',
-    category: typeof event.category === 'string' ? event.category : 'Otro',
-    attachments: normalizeAttachments(event),
-    status:
-      event.status === 'ongoing' || event.status === 'completed' || event.status === 'cancelled'
-        ? event.status
-        : 'scheduled',
-    maxAttendees: typeof event.maxAttendees === 'number' ? event.maxAttendees : undefined,
-    currentAttendees: typeof event.currentAttendees === 'number' ? event.currentAttendees : 0,
-    organizers: normalizeOrganizers(event),
-    tags: Array.isArray(event.tags)
-      ? event.tags.filter((tag): tag is string => typeof tag === 'string')
-      : [],
-    createdAt: new Date(event.createdAt || Date.now()),
-    updatedAt: new Date(event.updatedAt || Date.now()),
-  }
-}
+const events = ref<Event[]>([])
+const isLoading = ref(false)
+const error = ref('')
+let loadPromise: Promise<void> | null = null
 
 export function useEvents() {
-  const events = ref<Event[]>([])
-  const isLoading = ref(false)
-  const error = ref('')
+  const loadEvents = async () => {
+    if (loadPromise) {
+      return loadPromise
+    }
 
-  // Load events from localStorage
-  const loadEvents = () => {
     try {
       isLoading.value = true
-      const stored = localStorage.getItem(EVENTS_KEY)
-      if (stored) {
-        events.value = JSON.parse(stored).map(normalizeEvent)
-      } else {
-        events.value = []
-      }
-      error.value = ''
+      loadPromise = eventService.getEvents()
+        .then((response) => {
+          events.value = response.data.map(normalizeEvent)
+          error.value = ''
+        })
+        .catch((e) => {
+          error.value = 'Error cargando eventos'
+          console.error('Error loading events:', e)
+        })
+        .finally(() => {
+          isLoading.value = false
+          loadPromise = null
+        })
+
+      return loadPromise
     } catch (e) {
       error.value = 'Error cargando eventos'
       console.error('Error loading events:', e)
@@ -127,39 +46,11 @@ export function useEvents() {
     }
   }
 
-  // Save events to localStorage
-  const saveEvents = () => {
+  const addEvent = async (eventData: CreateEventRequest) => {
     try {
-      localStorage.setItem(EVENTS_KEY, JSON.stringify(events.value))
-      console.log('✅ Eventos guardados en localStorage')
-    } catch (e) {
-      error.value = 'Error guardando eventos'
-      console.error('Error saving events:', e)
-    }
-  }
-
-  // Add event
-  const addEvent = (eventData: CreateEventRequest) => {
-    try {
-      const newEvent: Event = {
-        id: Date.now().toString(),
-        title: eventData.title,
-        description: eventData.description || '',
-        startDate: eventData.startDate,
-        endDate: eventData.endDate,
-        location: eventData.location || '',
-        category: eventData.category || 'Otro',
-        attachments: eventData.attachments || [],
-        status: eventData.status || 'scheduled',
-        maxAttendees: eventData.maxAttendees,
-        currentAttendees: 0,
-        organizers: eventData.organizers || [],
-        tags: eventData.tags || [],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }
+      const response = await eventService.createEvent(eventData)
+      const newEvent = normalizeEvent(response.data)
       events.value.push(newEvent)
-      saveEvents()
       console.log('✅ Evento agregado:', newEvent)
       return newEvent
     } catch (e) {
@@ -169,22 +60,15 @@ export function useEvents() {
     }
   }
 
-  // Update event
-  const updateEvent = (id: string, eventData: Partial<CreateEventRequest>) => {
+  const updateEvent = async (id: string, eventData: Partial<CreateEventRequest>) => {
     try {
-      const index = events.value.findIndex((e) => e.id === id)
-      if (index === -1) {
-        throw new Error('Evento no encontrado')
+      const response = await eventService.updateEvent(id, eventData)
+      const updatedEvent = normalizeEvent(response.data)
+      const index = events.value.findIndex((event) => event.id === id)
+      if (index !== -1) {
+        events.value[index] = updatedEvent
       }
-
-      events.value[index] = {
-        ...events.value[index],
-        ...eventData,
-        id,
-        updatedAt: new Date(),
-      }
-      saveEvents()
-      console.log('✅ Evento actualizado:', events.value[index])
+      console.log('✅ Evento actualizado:', updatedEvent)
     } catch (e) {
       error.value = 'Error actualizando evento'
       console.error('Error updating event:', e)
@@ -192,15 +76,13 @@ export function useEvents() {
     }
   }
 
-  // Delete event
-  const deleteEvent = (id: string) => {
+  const deleteEvent = async (id: string) => {
     try {
-      const index = events.value.findIndex((e) => e.id === id)
-      if (index === -1) {
-        throw new Error('Evento no encontrado')
+      await eventService.deleteEvent(id)
+      const index = events.value.findIndex((event) => event.id === id)
+      if (index !== -1) {
+        events.value.splice(index, 1)
       }
-      events.value.splice(index, 1)
-      saveEvents()
       console.log('✅ Evento eliminado')
     } catch (e) {
       error.value = 'Error eliminando evento'

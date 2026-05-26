@@ -16,7 +16,7 @@ export interface CalendarEvent {
   description?: string
   attachments?: EventAttachment[]
   location?: string
-  category?: 'evento' | 'reunion' | 'actividad' | 'otro'
+  category?: string
   capacity?: number
   registeredCount?: number
 }
@@ -49,7 +49,7 @@ export interface CreateEventRequest {
   title: string
   description?: string
   startDate: string | Date
-  endDate: string | Date
+  endDate?: string | Date
   location?: string
   category?: string
   attachments?: EventAttachment[]
