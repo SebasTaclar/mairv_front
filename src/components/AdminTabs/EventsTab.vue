@@ -70,9 +70,7 @@
             <th>Título</th>
             <th>Fecha Inicio</th>
             <th>Ubicación</th>
-            <th>Categoría</th>
             <th>Estado</th>
-            <th>Asistentes</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -94,19 +92,8 @@
               <span class="location">{{ event.location || 'Sin especificar' }}</span>
             </td>
             <td>
-              <span class="category-badge" :style="{ backgroundColor: getCategoryColor(event.category) }">
-                {{ getCategoryIcon(event.category) }} {{ event.category || 'Otro' }}
-              </span>
-            </td>
-            <td>
               <span :class="['status-badge', event.status]">
                 {{ getStatusLabel(event.status) }}
-              </span>
-            </td>
-            <td>
-              <span class="attendees">
-                <span v-if="event.maxAttendees">{{ event.currentAttendees || 0 }}/{{ event.maxAttendees }}</span>
-                <span v-else>-</span>
               </span>
             </td>
             <td>
@@ -122,6 +109,43 @@
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Vista móvil en tarjetas -->
+    <div class="events-cards-mobile" v-if="filteredEvents.length > 0">
+      <article v-for="event in filteredEvents" :key="event.id" class="event-mobile-card">
+        <div class="event-mobile-card__header">
+          <div class="event-mobile-card__title">
+            <strong>{{ event.title }}</strong>
+            <p v-if="event.description" class="event-mobile-card__desc">
+              {{ truncate(event.description, 90) }}
+            </p>
+          </div>
+          <span :class="['status-badge', event.status]">
+            {{ getStatusLabel(event.status) }}
+          </span>
+        </div>
+
+        <div class="event-mobile-card__meta">
+          <div class="date-cell">
+            <span class="date">{{ formatDate(event.startDate) }}</span>
+            <span class="time">{{ formatTime(event.startDate) }}</span>
+          </div>
+          <div class="event-mobile-card__location">
+            <span class="meta-label">Ubicación</span>
+            <span class="location">{{ event.location || 'Sin especificar' }}</span>
+          </div>
+        </div>
+
+        <div class="action-buttons event-mobile-card__actions">
+          <button class="btn btn-sm btn-secondary" @click="openEventForm(event)" title="Editar">
+            ✏️ Editar
+          </button>
+          <button class="btn btn-sm btn-danger" @click="confirmDelete(event.id)" title="Eliminar">
+            🗑️ Eliminar
+          </button>
+        </div>
+      </article>
     </div>
 
     <!-- Estado vacío -->
@@ -148,7 +172,7 @@
             <div class="form-group">
               <label>Título del Evento *</label>
               <input v-model="eventForm.title" type="text" class="form-input" required
-                placeholder="Ej: Torneo de Fut Todos vs Noobis" />
+                placeholder="Ej: Evento de Presentación" />
             </div>
 
             <!-- Descripción -->
@@ -165,32 +189,21 @@
                 <input v-model="eventForm.startDate" type="datetime-local" class="form-input" required />
               </div>
               <div class="form-group">
-                <label>Fecha de Fin *</label>
-                <input v-model="eventForm.endDate" type="datetime-local" class="form-input" required />
+                  <label>Fecha de Fin</label>
+                  <input v-model="eventForm.endDate" type="datetime-local" class="form-input" />
               </div>
             </div>
 
-            <!-- Ubicación y Categoría -->
+            <!-- Ubicación -->
             <div class="form-row">
               <div class="form-group">
                 <label>Ubicación</label>
                 <input v-model="eventForm.location" type="text" class="form-input"
                   placeholder="Ej: Estadio Central, Bogotá" />
               </div>
-              <div class="form-group">
-                <label>Categoría *</label>
-                <select v-model="eventForm.category" class="form-input" required>
-                  <option value="">Seleccionar categoría</option>
-                  <option value="Torneo">🏆 Torneo</option>
-                  <option value="Evento Social">🎉 Evento Social</option>
-                  <option value="Capacitación">📚 Capacitación</option>
-                  <option value="Mantenimiento">🔧 Mantenimiento</option>
-                  <option value="Otro">📌 Otro</option>
-                </select>
-              </div>
             </div>
 
-            <!-- Estado y Máximo de Asistentes -->
+            <!-- Estado -->
             <div class="form-row">
               <div class="form-group">
                 <label>Estado *</label>
@@ -200,11 +213,6 @@
                   <option value="completed">✅ Completado</option>
                   <option value="cancelled">❌ Cancelado</option>
                 </select>
-              </div>
-              <div class="form-group">
-                <label>Máximo de Asistentes</label>
-                <input v-model.number="eventForm.maxAttendees" type="number" class="form-input" min="0"
-                  placeholder="Dejar vacío para ilimitado" />
               </div>
             </div>
 
@@ -312,11 +320,17 @@ const eventForm = ref<EventFormData>(createEmptyEventForm())
 
 // Validación
 const isEventFormValid = computed(() => {
+  const startDate = eventForm.value.startDate
+  const endDate = eventForm.value.endDate
+
+  if (!endDate) {
+    return eventForm.value.title.trim().length > 0 && !!startDate
+  }
+
   return (
     eventForm.value.title.trim().length > 0 &&
-    eventForm.value.startDate &&
-    eventForm.value.endDate &&
-    new Date(eventForm.value.startDate) < new Date(eventForm.value.endDate)
+    !!startDate &&
+    new Date(startDate) < new Date(endDate)
   )
 })
 
@@ -360,28 +374,6 @@ const formatTime = (date: Date | string) => {
     hour: '2-digit',
     minute: '2-digit'
   })
-}
-
-const getCategoryIcon = (category?: string) => {
-  const categoryMap: Record<string, string> = {
-    'Torneo': '🏆',
-    'Evento Social': '🎉',
-    'Capacitación': '📚',
-    'Mantenimiento': '🔧',
-    'Otro': '📌'
-  }
-  return categoryMap[category || 'Otro'] || '📌'
-}
-
-const getCategoryColor = (category?: string) => {
-  const categoryMap: Record<string, string> = {
-    'Torneo': '#ff6b6b',
-    'Evento Social': '#4ecdc4',
-    'Capacitación': '#45b7d1',
-    'Mantenimiento': '#ffd93d',
-    'Otro': '#95a5a6'
-  }
-  return categoryMap[category || 'Otro'] || '#95a5a6'
 }
 
 const getStatusLabel = (status: string) => {
@@ -431,8 +423,10 @@ const closeEventForm = () => {
 const saveEvent = async () => {
   if (!isEventFormValid.value) return
 
+  const { endDate, ...basePayload } = eventForm.value
+
   const payload: CreateEventRequest = {
-    ...eventForm.value,
+    ...basePayload,
     organizers: eventForm.value.organizers.map(organizer => organizer.trim()).filter(Boolean),
     attachments: eventForm.value.attachments
       .map((attachment) => ({
@@ -441,6 +435,10 @@ const saveEvent = async () => {
         url: attachment.url.trim(),
       }))
       .filter((attachment) => attachment.url.length > 0),
+  }
+
+  if (endDate) {
+    payload.endDate = endDate
   }
 
   try {
@@ -498,4 +496,12 @@ const formatDateTimeInput = (date: Date | string): string => {
   const d = new Date(date)
   return d.toISOString().slice(0, 16)
 }
+
 </script>
+
+<style scoped>
+.modal-header h3{
+  color: #ffffff;
+}
+
+</style>

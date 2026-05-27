@@ -199,18 +199,24 @@ const exploreProduct = (slide: ProductSlide) => {
 }
 
 const visit = () => {
-  const footerEl = document.querySelector('.footer-cosmic') as HTMLElement | null
-  if (footerEl && typeof footerEl.scrollIntoView === 'function') {
-    footerEl.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    return
+  // Intentar varios selectores conocidos para el footer, con fallbacks
+  const footerSelectors = ['#footer', '.footer-ref', 'footer', '.footer-cosmic']
+  for (const sel of footerSelectors) {
+    const el = document.querySelector(sel) as HTMLElement | null
+    if (el && typeof el.scrollIntoView === 'function') {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      return
+    }
   }
 
+  // Fallback a sección de contacto si no se encuentra el footer
   const contactEl = document.querySelector('.contact-section') as HTMLElement | null
   if (contactEl && typeof contactEl.scrollIntoView === 'function') {
     contactEl.scrollIntoView({ behavior: 'smooth', block: 'start' })
     return
   }
 
+  // Último recurso: navegar a la ruta de contacto
   if (router) router.push('/contact').catch(() => { })
 }
 
