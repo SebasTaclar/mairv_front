@@ -14,18 +14,16 @@
 
       <!-- Navegación principal (centrada) -->
       <div class="nav-menu desktop-nav">
-        <RouterLink to="/" class="nav-link" :class="{ active: activeSection === 'home' }" @click.prevent="scrollToMainBanner">INICIO
+        <RouterLink to="/" class="nav-link" :class="{ active: currentRoute.path === '/' && activeSection === 'home' }"
+          @click.prevent="scrollToMainBanner">INICIO
         </RouterLink>
-        <div class="nav-item dropdown nosotros-nav-item" @mouseenter="isNosotrosOpen = true" @mouseleave="isNosotrosOpen = false">
-          <a class="nav-link dropdown-toggle" :class="{ active: activeSection === 'stories' }" href="#" @click.prevent="toggleNosotros">NOSOTROS</a>
+        <div class="nav-item dropdown nosotros-nav-item" @mouseenter="isNosotrosOpen = true"
+          @mouseleave="isNosotrosOpen = false">
+          <a class="nav-link dropdown-toggle" :class="{ active: activeSection === 'stories' }" href="#"
+            @click.prevent="toggleNosotros">NOSOTROS</a>
           <div class="dropdown-menu nosotros-dropdown" :class="{ open: isNosotrosOpen }">
-            <RouterLink
-              to="/mision-vision"
-              class="dropdown-item nosotros-item"
-              :class="{ active: currentRoute.path === '/mision-vision' && !currentRoute.hash }
-              "
-              @click="closeMobileMenu"
-            >
+            <RouterLink to="/mision-vision" class="dropdown-item nosotros-item" :class="{ active: currentRoute.path === '/mision-vision' && !currentRoute.hash }
+              " @click="closeMobileMenu">
               NUESTRA VISIÓN
             </RouterLink>
 
@@ -35,18 +33,24 @@
 
             <a href="#stories" class="dropdown-item nosotros-item" @click.prevent="scrollToStories">HISTORIA</a>
 
-            <RouterLink to="/ministerios" class="dropdown-item nosotros-item" :class="{ active: isCurrentRoute('/ministerios') }" @click="closeMobileMenu">
+            <RouterLink to="/ministerios" class="dropdown-item nosotros-item"
+              :class="{ active: isCurrentRoute('/ministerios') }" @click="closeMobileMenu">
               MINISTERIOS
             </RouterLink>
 
-            <RouterLink to="/nuestro-adn" class="dropdown-item nosotros-item" :class="{ active: isCurrentRoute('/nuestro-adn') }" @click="closeMobileMenu">
+            <RouterLink to="/nuestro-adn" class="dropdown-item nosotros-item"
+              :class="{ active: isCurrentRoute('/nuestro-adn') }" @click="closeMobileMenu">
               NUESTRO ADN
             </RouterLink>
           </div>
         </div>
 
-        <RouterLink to="/ministerios" class="nav-link" :class="{ active: isCurrentRoute('/ministerios') }" @click="closeMobileMenu">MINISTERIOS</RouterLink>
-        <RouterLink to="/calendar" class="nav-link" :class="{ active: currentRoute.path === '/calendar' }" @click="closeMobileMenu">CONÉCTATE</RouterLink>
+        <RouterLink to="/ministerios" class="nav-link" :class="{ active: isCurrentRoute('/ministerios') }"
+          @click="closeMobileMenu">MINISTERIOS</RouterLink>
+        <RouterLink to="/calendar" class="nav-link" :class="{ active: currentRoute.path === '/calendar' }"
+          @click="closeMobileMenu">CONÉCTATE</RouterLink>
+        <RouterLink to="/games" class="nav-link" :class="{ active: currentRoute.path === '/games' }"
+          @click="closeMobileMenu">JUEGOS</RouterLink>
       </div>
 
       <!-- Controles de usuario -->
@@ -56,7 +60,8 @@
 
         <!-- Botón de búsqueda: solo icono que abre modal -->
         <button class="header-search-button" type="button" aria-label="Abrir búsqueda" @click="openSearchModal">
-          <svg class="search-icon-inline" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <svg class="search-icon-inline" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+            stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="11" cy="11" r="6" />
             <path d="M21 21l-4.35-4.35" />
           </svg>
@@ -83,13 +88,15 @@
         <div class="mobile-menu-content">
           <!-- Mobile: icono que abre modal de búsqueda -->
           <button class="mobile-search-button" type="button" aria-label="Abrir búsqueda" @click="openSearchModal">
-            <svg class="search-icon-inline" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg class="search-icon-inline" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+              stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="11" cy="11" r="6" />
               <path d="M21 21l-4.35-4.35" />
             </svg>
           </button>
           <div class="mobile-nav-links">
-            <RouterLink to="/" class="mobile-link" :class="{ active: activeSection === 'home' }" @click="closeMobileMenu">
+            <RouterLink to="/" class="mobile-link"
+              :class="{ active: currentRoute.path === '/' && activeSection === 'home' }" @click="closeMobileMenu">
               Inicio</RouterLink>
             <button class="mobile-link mobile-nosotros-toggle" @click="isNosotrosOpen = !isNosotrosOpen">
               Nosotros <span class="mobile-nosotros-chevron" :class="{ open: isNosotrosOpen }">▾</span>
@@ -97,12 +104,17 @@
             <div v-if="isNosotrosOpen" class="mobile-nosotros-items">
               <RouterLink to="/pastores" class="mobile-link mobile-sub" @click="closeMobileMenu">Pst</RouterLink>
               <a href="#stories" class="mobile-link mobile-sub" @click.prevent="scrollToStories">Historia</a>
-              <RouterLink to="/mision-vision" class="mobile-link mobile-sub" @click="closeMobileMenu">Misión / Visión</RouterLink>
+              <RouterLink to="/mision-vision" class="mobile-link mobile-sub" @click="closeMobileMenu">Misión / Visión
+              </RouterLink>
             </div>
 
 
-            <RouterLink to="/ministerios" class="mobile-link" :class="{ active: isCurrentRoute('/ministerios') }" @click="closeMobileMenu">Ministerios</RouterLink>
-            <RouterLink to="/calendar" class="mobile-link" :class="{ active: currentRoute.path === '/calendar' }" @click="closeMobileMenu">CONÉCTATE</RouterLink>
+            <RouterLink to="/ministerios" class="mobile-link" :class="{ active: isCurrentRoute('/ministerios') }"
+              @click="closeMobileMenu">Ministerios</RouterLink>
+            <RouterLink to="/calendar" class="mobile-link" :class="{ active: currentRoute.path === '/calendar' }"
+              @click="closeMobileMenu">CONÉCTATE</RouterLink>
+            <RouterLink to="/games" class="mobile-link" :class="{ active: currentRoute.path === '/games' }"
+              @click="closeMobileMenu">JUEGOS</RouterLink>
 
           </div>
 
@@ -133,9 +145,11 @@
       <button class="search-modal-close" aria-label="Cerrar búsqueda" @click="closeSearchModal">✕</button>
       <form class="search-modal-form" @submit.prevent="submitFromModal">
         <label for="modal-search-input" class="visually-hidden">Buscar</label>
-        <input id="modal-search-input" ref="searchInputRef" type="search" v-model="searchTerm" placeholder="Buscar..." aria-label="Buscar" class="search-modal-input" />
+        <input id="modal-search-input" ref="searchInputRef" type="search" v-model="searchTerm" placeholder="Buscar..."
+          aria-label="Buscar" class="search-modal-input" />
         <button type="submit" class="search-modal-go" aria-label="Buscar">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M21 21l-4.35-4.35" />
             <circle cx="11" cy="11" r="6" />
           </svg>
@@ -717,7 +731,8 @@ watch(route, () => {
 .nav-link.active:hover::after,
 .mobile-link.active::after {
   width: 70%;
-  background: #F5C542; /* amarillo */
+  background: #F5C542;
+  /* amarillo */
 }
 
 
@@ -1025,7 +1040,7 @@ watch(route, () => {
   }
 
   /* En móviles, evitar que el navbar sea transparente al inicio */
-  .navbar.transparent{
+  .navbar.transparent {
     background: linear-gradient(180deg, #22265D 0%, #0b2545 100%) !important;
     box-shadow: 0 2px 24px rgba(34, 211, 238, 0.15), 0 1px 3px rgba(0, 0, 0, 0.3) !important;
     border-bottom: 1px solid rgba(34, 211, 238, 0.2) !important;
@@ -1038,6 +1053,10 @@ watch(route, () => {
 
   .hamburger-menu {
     display: flex;
+  }
+
+  .hamburger-menu span {
+    background-color: #22265D;
   }
 
   .mobile-menu {
@@ -1080,7 +1099,7 @@ watch(route, () => {
   }
 
   /* En móviles pequeños, mantener fondo del navbar aunque tenga la clase 'transparent' */
-  .navbar.transparent{
+  .navbar.transparent {
     background: linear-gradient(180deg, #22265D 0%, #0b2545 100%) !important;
     box-shadow: 0 2px 24px rgba(34, 211, 238, 0.15), 0 1px 3px rgba(0, 0, 0, 0.3) !important;
     border-bottom: 1px solid rgba(34, 211, 238, 0.2) !important;
@@ -1202,7 +1221,7 @@ watch(route, () => {
 }
 
 .btn-donar:hover {
-  background: rgba(245,197,66,0.06);
+  background: rgba(245, 197, 66, 0.06);
 }
 
 .search-submit {
@@ -1210,8 +1229,8 @@ watch(route, () => {
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   width: 36px;
   height: 36px;
   border-radius: 999px;
@@ -1223,7 +1242,7 @@ watch(route, () => {
 }
 
 .search-submit:hover {
-  background: rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 /* Header search icon button */
@@ -1236,7 +1255,7 @@ watch(route, () => {
   height: 40px;
   border-radius: 999px;
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   color: #fff;
   cursor: pointer;
   margin-right: 8px;
@@ -1252,14 +1271,14 @@ watch(route, () => {
 
 .header-search-button:hover,
 .mobile-search-button:hover {
-  background: rgba(255,255,255,0.06);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 /* Modal styles */
 .search-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1268,10 +1287,10 @@ watch(route, () => {
 
 .search-modal {
   width: min(760px, 94%);
-  background: linear-gradient(180deg,#0b1220,#071028);
+  background: linear-gradient(180deg, #0b1220, #071028);
   padding: 24px;
   border-radius: 12px;
-  box-shadow: 0 20px 60px rgba(2,6,23,0.6);
+  box-shadow: 0 20px 60px rgba(2, 6, 23, 0.6);
   position: relative;
 }
 
@@ -1281,7 +1300,7 @@ watch(route, () => {
   right: 12px;
   background: transparent;
   border: none;
-  color: rgba(255,255,255,0.8);
+  color: rgba(255, 255, 255, 0.8);
   font-size: 18px;
   cursor: pointer;
 }
@@ -1296,8 +1315,8 @@ watch(route, () => {
   flex: 1;
   padding: 14px 16px;
   border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
   color: #fff;
   font-size: 16px;
 }
@@ -1307,7 +1326,7 @@ watch(route, () => {
   height: 48px;
   border-radius: 999px;
   border: none;
-  background: linear-gradient(135deg,#2dd4bf,#2563eb);
+  background: linear-gradient(135deg, #2dd4bf, #2563eb);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1315,7 +1334,14 @@ watch(route, () => {
   cursor: pointer;
 }
 
-.visually-hidden { position: absolute !important; height: 1px; width: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px); white-space: nowrap; }
+.visually-hidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
 
 .mobile-search {
   display: none;
@@ -1573,5 +1599,4 @@ watch(route, () => {
 .mobile-calendar-chevron.open {
   transform: rotate(180deg);
 }
-
 </style>

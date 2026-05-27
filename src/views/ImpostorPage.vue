@@ -43,9 +43,22 @@
       <div class="names-card">
         <h2>Nombres de Jugadores</h2>
 
+        <p class="player-order-hint">Arrastra los jugadores para cambiar el orden antes de empezar.</p>
+
         <div class="all-names-inputs">
-          <div v-for="(name, idx) in playerNames" :key="idx" class="single-name-input">
-            <label>Jugador {{ idx + 1 }}:</label>
+          <div v-for="(name, idx) in playerNames" :key="playerNameIds[idx] || idx"
+            class="single-name-input player-name-card"
+            :class="{ dragging: draggingPlayerIndex === idx, 'drag-over': dragOverPlayerIndex === idx }"
+            :data-player-index="idx">
+            <div class="player-name-header">
+              <label>Jugador {{ idx + 1 }}:</label>
+              <button type="button" class="drag-handle" :aria-label="'Arrastrar jugador ' + (idx + 1)"
+                @pointerdown="startPlayerDrag(idx, $event)">
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
+            </div>
             <input v-model="playerNames[idx]" type="text" :placeholder="'Nombre del jugador ' + (idx + 1)"
               class="name-input" />
           </div>
@@ -75,13 +88,13 @@
     <div v-if="showConfirmClearNames" class="popup-overlay">
       <div class="popup-dialog">
         <h2>Ojo!</h2>
-        <p class="popup-message">Vas a borrar los nombres de los jugadores, estás seguro?</p>
+        <p class="popup-message">Vas a borrar los nombres de los jugadores, estï¿½s seguro?</p>
         <div class="button-group">
           <button @click="cancelClearNames" class="btn-next">
             Cancelar
           </button>
           <button @click="confirmClearNames" class="btn-back">
-            Sí, Borrar Nombres
+            Sï¿½, Borrar Nombres
           </button>
         </div>
       </div>
@@ -162,24 +175,39 @@
           <div v-if="wordMode === 'random'" class="word-categories">
             <p>Categoria (opcional):</p>
 
+            <div class="category-buttons category-buttons-all">
+              <button type="button" @click="selectedCategory = null"
+                :class="['category-btn', { active: !selectedCategory }]">
+                Todas
+              </button>
+            </div>
+
             <div class="biblical-section">
-              <h3 class="section-title">?? Bíblica</h3>
+              <h3 class="section-title">Biblica</h3>
               <div class="category-buttons">
-                <button v-for="cat in categoryList.slice(0, 5)" :key="cat"
-                  @click="selectedCategory = selectedCategory === cat ? null : cat"
-                  :class="['category-btn', { active: selectedCategory === cat }]">
-                  {{ cat }}
+                <button type="button" @click="selectedCategory = 'biblical_all'"
+                  :class="['category-btn', { active: selectedCategory === 'biblical_all' }]">
+                  Todas BÃ­blicas
+                </button>
+                <button v-for="cat in biblicalCategories" :key="cat.key" type="button"
+                  @click="selectedCategory = selectedCategory === cat.key ? null : cat.key"
+                  :class="['category-btn', { active: selectedCategory === cat.key }]">
+                  {{ cat.label }}
                 </button>
               </div>
             </div>
 
             <div class="other-section">
-              <h3 class="section-title">?? Otras</h3>
+              <h3 class="section-title">Otras</h3>
               <div class="category-buttons">
-                <button v-for="cat in categoryList.slice(5)" :key="cat"
-                  @click="selectedCategory = selectedCategory === cat ? null : cat"
-                  :class="['category-btn', { active: selectedCategory === cat }]">
-                  {{ cat }}
+                <button type="button" @click="selectedCategory = 'other_all'"
+                  :class="['category-btn', { active: selectedCategory === 'other_all' }]">
+                  Todas Otras
+                </button>
+                <button v-for="cat in otherCategories" :key="cat.key" type="button"
+                  @click="selectedCategory = selectedCategory === cat.key ? null : cat.key"
+                  :class="['category-btn', { active: selectedCategory === cat.key }]">
+                  {{ cat.label }}
                 </button>
               </div>
             </div>
@@ -224,10 +252,14 @@
         </div>
       </div>
 
-      <p class="card-hint">Mantén presionado para voltear la tarjeta</p>
+      <p class="card-hint">Manten presionado para voltear la tarjeta</p>
 
       <div class="button-group">
-        <button @click="nextCardPreview" class="btn-next">
+        <button @click="requestNavigationConfirmation('previewBack')" class="btn-back"
+          :disabled="previewOrderIndex === 0">
+          Anterior Jugador
+        </button>
+        <button @click="requestNavigationConfirmation('previewNext')" class="btn-next">
           {{ previewOrderIndex === playerNames.length - 1 ? 'Continuar' : 'Siguiente Jugador' }}
         </button>
       </div>
@@ -280,15 +312,32 @@
         </div>
       </div>
 
-      <p class="card-hint">Mantén presionado para voltear la tarjeta</p>
+      <p class="card-hint">Manten presionado para voltear la tarjeta</p>
 
       <div class="button-group">
-        <button @click="previousPlayer" class="btn-back" :disabled="currentOrderIndex === 0">
+        <button @click="requestNavigationConfirmation('gameplayBack')" class="btn-back"
+          :disabled="currentOrderIndex === 0">
           Anterior Jugador
         </button>
-        <button @click="nextPlayer" class="btn-next">
+        <button @click="requestNavigationConfirmation('gameplayNext')" class="btn-next">
           {{ currentOrderIndex === playerOrder.length - 1 ? 'Terminar Juego' : 'Siguiente Jugador' }}
         </button>
+      </div>
+    </div>
+
+    <!-- Confirm Navigation Action -->
+    <div v-if="showNavigationConfirm" class="popup-overlay">
+      <div class="popup-dialog navigation-dialog">
+        <h2>{{ navigationConfirmTitle }}</h2>
+        <p class="popup-message">{{ navigationConfirmMessage }}</p>
+        <div class="button-group">
+          <button @click="closeNavigationConfirm" class="btn-back">
+            Cancelar
+          </button>
+          <button @click="confirmNavigationAction" class="btn-next">
+            {{ navigationConfirmButton }}
+          </button>
+        </div>
       </div>
     </div>
 
@@ -296,14 +345,14 @@
     <div v-if="currentStep === 'confirmEnd'" class="setup-screen">
       <div class="game-end-card">
         <h2>Confirmar Terminar</h2>
-        <p class="end-message">Estás seguro que deseas terminar el juego?</p>
+        <p class="end-message">Estï¿½s seguro que deseas terminar el juego?</p>
 
         <div class="button-group">
           <button @click="currentStep = 'gameplay'" class="btn-back">
             Continuar Jugando
           </button>
           <button @click="goToGameEnd" class="btn-next">
-            Sí, Terminar Juego
+            Sï¿½, Terminar Juego
           </button>
         </div>
       </div>
@@ -332,7 +381,7 @@
 
 <script setup lang="ts">
 import './styles/ImpostorPage.css'
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import wordDictionary from '../data/impostor-words.json'
 
 // Load configuration from localStorage
@@ -345,6 +394,8 @@ const loadGameConfig = () => {
       showHintsToImpostor.value = config.showHintsToImpostor !== false
       wordMode.value = config.wordMode || 'random'
       selectedCategory.value = config.selectedCategory || null
+      customWord.value = config.customWord || customWord.value
+      customHint.value = config.customHint || customHint.value
     } catch (e) {
       console.error('Error loading game config:', e)
     }
@@ -362,7 +413,11 @@ const loadGameState = () => {
         currentStep.value = state.currentStep
         numPlayers.value = state.numPlayers || 3
         playerNames.value = state.playerNames || []
+        playerNameIds.value = Array.isArray(state.playerNameIds) && state.playerNameIds.length === state.playerNames?.length
+          ? state.playerNameIds
+          : Array.from({ length: state.playerNames?.length || 0 }, () => createPlayerNameId())
         numImpostors.value = state.numImpostors || 1
+        showHintsToImpostor.value = state.showHintsToImpostor ?? showHintsToImpostor.value
         currentWord.value = state.currentWord || ''
         currentHint.value = state.currentHint || ''
         customWord.value = state.customWord || ''
@@ -386,7 +441,9 @@ const saveGameConfig = () => {
     numImpostors: numImpostors.value,
     showHintsToImpostor: showHintsToImpostor.value,
     wordMode: wordMode.value,
-    selectedCategory: selectedCategory.value
+    selectedCategory: selectedCategory.value,
+    customWord: customWord.value,
+    customHint: customHint.value
   }
   localStorage.setItem('impostorGameConfig', JSON.stringify(config))
 }
@@ -397,7 +454,9 @@ const saveGameState = () => {
     currentStep: currentStep.value,
     numPlayers: numPlayers.value,
     playerNames: playerNames.value,
+    playerNameIds: playerNameIds.value,
     numImpostors: numImpostors.value,
+    showHintsToImpostor: showHintsToImpostor.value,
     currentWord: currentWord.value,
     currentHint: currentHint.value,
     customWord: customWord.value,
@@ -425,7 +484,10 @@ const impostorIndices = ref<number[]>([])
 const wordMode = ref<'random' | 'custom'>('random')
 const customWord = ref('')
 const customHint = ref('')
-const selectedCategory = ref<string | null>(null)
+type CategoryKey = keyof typeof wordDictionary
+type CategorySelection = CategoryKey | 'biblical_all' | 'other_all' | null
+
+const selectedCategory = ref<CategorySelection>(null)
 const startingPlayerIndex = ref(0)
 const playerOrder = ref<number[]>([])
 const currentOrderIndex = ref(0)
@@ -433,15 +495,33 @@ const showConfirmClearNames = ref(false)
 const previewCardFlipped = ref(false)
 const previewOrderIndex = ref(0)
 const showHintsToImpostor = ref(true)
+const showNavigationConfirm = ref(false)
+const pendingNavigationAction = ref<'previewNext' | 'previewBack' | 'gameplayNext' | 'gameplayBack' | null>(null)
+const playerNameIds = ref<string[]>([])
+const draggingPlayerIndex = ref<number | null>(null)
+const dragOverPlayerIndex = ref<number | null>(null)
 
-// Get categories from word dictionary - ordered by biblical first, then others
-const categoryList = computed(() => {
-  const categories = Object.keys(wordDictionary) as Array<keyof typeof wordDictionary>
-  const biblicalCategories = ['biblia', 'libros', 'personajes_biblicos', 'acontecimientos', 'dichos_o_refranes']
-  const biblicalCats = categories.filter(cat => biblicalCategories.includes(cat as string))
-  const otherCats = categories.filter(cat => !biblicalCategories.includes(cat as string))
-  return [...biblicalCats, ...otherCats]
-})
+const categoryCatalog: Array<{
+  key: CategoryKey
+  label: string
+  section: 'biblical' | 'other'
+}> = [
+  { key: 'biblia', label: 'Biblia', section: 'biblical' },
+  { key: 'libros', label: 'Libros', section: 'biblical' },
+  { key: 'personajes_biblicos', label: 'Personajes bÃ­blicos', section: 'biblical' },
+  { key: 'acontecimientos', label: 'Acontecimientos', section: 'biblical' },
+  { key: 'dichos_o_refranes', label: 'Dichos o refranes', section: 'biblical' },
+  { key: 'personas', label: 'Personas', section: 'other' },
+  { key: 'lugares', label: 'Lugares', section: 'other' },
+  { key: 'comidas_y_bebidas', label: 'Comidas y bebidas', section: 'other' },
+  { key: 'animales', label: 'Animales', section: 'other' },
+  { key: 'peliculas', label: 'PelÃ­culas', section: 'other' },
+  { key: 'equipos_de_futbol', label: 'Equipos de fÃºtbol', section: 'other' },
+  { key: 'vida_cotidiana', label: 'Vida cotidiana', section: 'other' }
+] as const
+
+const biblicalCategories = categoryCatalog.filter(category => category.section === 'biblical')
+const otherCategories = categoryCatalog.filter(category => category.section === 'other')
 
 // Computed
 const allNamesComplete = computed(() => {
@@ -457,6 +537,50 @@ const isWordValid = computed(() => {
     return customWord.value.trim().length > 0
   }
   return true
+})
+
+const navigationConfirmTitle = computed(() => {
+  switch (pendingNavigationAction.value) {
+    case 'previewBack':
+    case 'gameplayBack':
+      return 'Volver al jugador anterior?'
+    case 'gameplayNext':
+      return 'Pasar al siguiente jugador?'
+    case 'previewNext':
+    default:
+      return 'Continuar con el siguiente jugador?'
+  }
+})
+
+const navigationConfirmMessage = computed(() => {
+  switch (pendingNavigationAction.value) {
+    case 'previewBack':
+      return 'Vas a retroceder al jugador anterior. Esto puede hacer que vea la tarjeta de nuevo.'
+    case 'gameplayBack':
+      return 'Vas a regresar al jugador anterior. AsegÃºrate de que sea necesario.'
+    case 'gameplayNext':
+      return currentOrderIndex.value === playerOrder.value.length - 1
+        ? 'Vas a cerrar la ronda actual y pasar a la confirmaciÃ³n final del juego.'
+        : 'Vas a avanzar al siguiente jugador. Revisa que el jugador actual ya vio su tarjeta.'
+    case 'previewNext':
+    default:
+      return previewOrderIndex.value === playerNames.value.length - 1
+        ? 'Este fue el Ãºltimo jugador de la vista previa y vas a continuar al inicio del juego.'
+        : 'Vas a avanzar al siguiente jugador. Revisa que el jugador actual ya vio su tarjeta.'
+  }
+})
+
+const navigationConfirmButton = computed(() => {
+  switch (pendingNavigationAction.value) {
+    case 'previewBack':
+    case 'gameplayBack':
+      return 'Volver'
+    case 'gameplayNext':
+      return currentOrderIndex.value === playerOrder.value.length - 1 ? 'Terminar' : 'Continuar'
+    case 'previewNext':
+    default:
+      return previewOrderIndex.value === playerNames.value.length - 1 ? 'Continuar' : 'Siguiente'
+  }
 })
 
 // Methods
@@ -479,7 +603,93 @@ const decreasePlayerCount = () => {
 
 const goToNamesStep = () => {
   playerNames.value = Array(numPlayers.value).fill('')
+  playerNameIds.value = Array.from({ length: numPlayers.value }, () => createPlayerNameId())
   currentStep.value = 'playerNames'
+}
+
+const createPlayerNameId = () => {
+  return `player-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+}
+
+const reorderPlayerNames = (fromIndex: number, toIndex: number) => {
+  if (fromIndex === toIndex) {
+    return
+  }
+
+  const names = [...playerNames.value]
+  const ids = [...playerNameIds.value]
+  const [movedName] = names.splice(fromIndex, 1)
+  const [movedId] = ids.splice(fromIndex, 1)
+
+  names.splice(toIndex, 0, movedName)
+  ids.splice(toIndex, 0, movedId)
+
+  playerNames.value = names
+  playerNameIds.value = ids
+  draggingPlayerIndex.value = toIndex
+  dragOverPlayerIndex.value = toIndex
+}
+
+const startPlayerDrag = (index: number, event: PointerEvent) => {
+  event.preventDefault()
+  draggingPlayerIndex.value = index
+  dragOverPlayerIndex.value = index
+}
+
+const handlePlayerDragMove = (event: PointerEvent) => {
+  if (draggingPlayerIndex.value === null) {
+    return
+  }
+
+  const targetElement = document.elementFromPoint(event.clientX, event.clientY) as HTMLElement | null
+  const targetCard = targetElement?.closest('[data-player-index]') as HTMLElement | null
+
+  if (!targetCard) {
+    return
+  }
+
+  const targetIndex = Number(targetCard.dataset.playerIndex)
+  if (Number.isNaN(targetIndex) || targetIndex === draggingPlayerIndex.value) {
+    return
+  }
+
+  reorderPlayerNames(draggingPlayerIndex.value, targetIndex)
+}
+
+const endPlayerDrag = () => {
+  draggingPlayerIndex.value = null
+  dragOverPlayerIndex.value = null
+}
+
+const closeNavigationConfirm = () => {
+  showNavigationConfirm.value = false
+  pendingNavigationAction.value = null
+}
+
+const requestNavigationConfirmation = (action: 'previewNext' | 'previewBack' | 'gameplayNext' | 'gameplayBack') => {
+  pendingNavigationAction.value = action
+  showNavigationConfirm.value = true
+}
+
+const confirmNavigationAction = () => {
+  const action = pendingNavigationAction.value
+
+  closeNavigationConfirm()
+
+  switch (action) {
+    case 'previewNext':
+      nextCardPreview()
+      break
+    case 'previewBack':
+      previousCardPreview()
+      break
+    case 'gameplayNext':
+      nextPlayer()
+      break
+    case 'gameplayBack':
+      previousPlayer()
+      break
+  }
 }
 
 const goBackToCount = () => {
@@ -490,6 +700,7 @@ const confirmClearNames = () => {
   showConfirmClearNames.value = false
   currentStep.value = 'playerCount'
   playerNames.value = []
+  playerNameIds.value = []
 }
 
 const cancelClearNames = () => {
@@ -499,6 +710,7 @@ const cancelClearNames = () => {
 const addPlayer = () => {
   if (playerNames.value.length < 25) {
     playerNames.value.push('')
+    playerNameIds.value.push(createPlayerNameId())
     numPlayers.value = playerNames.value.length
   }
 }
@@ -506,6 +718,7 @@ const addPlayer = () => {
 const removePlayer = () => {
   if (playerNames.value.length > 3) {
     playerNames.value.pop()
+    playerNameIds.value.pop()
     numPlayers.value = playerNames.value.length
   }
 }
@@ -532,10 +745,6 @@ const decreaseImpostorCount = () => {
 }
 
 const goToSelectWord = () => {
-  wordMode.value = 'random'
-  customWord.value = ''
-  customHint.value = ''
-  selectedCategory.value = null
   currentStep.value = 'selectWord'
 }
 
@@ -545,10 +754,21 @@ const selectWord = () => {
     currentHint.value = customHint.value.trim()
   } else {
     // Select random word
-    let categoriesToUse = categoryList.value
-    if (selectedCategory.value) {
-      categoriesToUse = [selectedCategory.value as keyof typeof wordDictionary]
-    }
+    const categoriesToUse: CategoryKey[] = (() => {
+      if (!selectedCategory.value) {
+        return categoryCatalog.map(category => category.key)
+      }
+
+      if (selectedCategory.value === 'biblical_all') {
+        return biblicalCategories.map(category => category.key)
+      }
+
+      if (selectedCategory.value === 'other_all') {
+        return otherCategories.map(category => category.key)
+      }
+
+      return [selectedCategory.value]
+    })()
 
     const randomCategory = categoriesToUse[Math.floor(Math.random() * categoriesToUse.length)]
     const words = wordDictionary[randomCategory]
@@ -587,11 +807,18 @@ const goToStartGame = () => {
 
 const nextCardPreview = () => {
   if (previewOrderIndex.value === playerOrder.value.length - 1) {
-    // Todos los jugadores vieron - seleccionar quién comienza
+    // Todos los jugadores vieron - seleccionar quiï¿½n comienza
     selectNewStart()
     currentStep.value = 'startGame'
   } else {
     previewOrderIndex.value++
+    previewCardFlipped.value = false
+  }
+}
+
+const previousCardPreview = () => {
+  if (previewOrderIndex.value > 0) {
+    previewOrderIndex.value--
     previewCardFlipped.value = false
   }
 }
@@ -612,7 +839,7 @@ const initializeGameplay = () => {
 
 const nextPlayer = () => {
   if (currentOrderIndex.value === playerOrder.value.length - 1) {
-    // Último jugador - confirmar terminar
+    // ï¿½ltimo jugador - confirmar terminar
     currentStep.value = 'confirmEnd'
   } else {
     // Siguiente jugador en el orden
@@ -636,21 +863,18 @@ const goToGameEnd = () => {
 
 const quickRestartGame = () => {
   // Reinicia a pantalla de nombres pero mantiene los nombres de jugadores
-  numImpostors.value = 1
   currentPlayerIndex.value = 0
   cardFlipped.value = false
   currentWord.value = ''
   currentHint.value = ''
   impostorIndices.value = []
-  wordMode.value = 'random'
-  customWord.value = ''
-  customHint.value = ''
-  selectedCategory.value = null
   startingPlayerIndex.value = 0
   playerOrder.value = []
   currentOrderIndex.value = 0
   previewCardFlipped.value = false
   previewOrderIndex.value = 0
+  endPlayerDrag()
+  closeNavigationConfirm()
   currentStep.value = 'playerNames'
 }
 
@@ -658,6 +882,15 @@ const quickRestartGame = () => {
 onMounted(() => {
   loadGameConfig()
   loadGameState()
+  window.addEventListener('pointermove', handlePlayerDragMove)
+  window.addEventListener('pointerup', endPlayerDrag)
+  window.addEventListener('pointercancel', endPlayerDrag)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('pointermove', handlePlayerDragMove)
+  window.removeEventListener('pointerup', endPlayerDrag)
+  window.removeEventListener('pointercancel', endPlayerDrag)
 })
 
 // Auto-save when important settings change
@@ -665,10 +898,14 @@ watch(() => numImpostors.value, saveGameConfig)
 watch(() => showHintsToImpostor.value, saveGameConfig)
 watch(() => wordMode.value, saveGameConfig)
 watch(() => selectedCategory.value, saveGameConfig)
+watch(() => customWord.value, saveGameConfig)
+watch(() => customHint.value, saveGameConfig)
 
 // Auto-save game state when major changes occur
 watch(() => currentStep.value, saveGameState)
+watch(() => numPlayers.value, saveGameState)
 watch(() => playerNames.value, saveGameState, { deep: true })
+watch(() => playerNameIds.value, saveGameState, { deep: true })
 watch(() => currentWord.value, saveGameState)
 watch(() => currentHint.value, saveGameState)
 watch(() => customWord.value, saveGameState)
@@ -680,6 +917,3 @@ watch(() => currentOrderIndex.value, saveGameState)
 watch(() => previewOrderIndex.value, saveGameState)
 watch(() => startingPlayerIndex.value, saveGameState)
 </script>
-
-
-
