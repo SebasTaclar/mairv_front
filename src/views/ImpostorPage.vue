@@ -52,6 +52,10 @@
             :data-player-index="idx">
             <div class="player-name-header">
               <label>Jugador {{ idx + 1 }}:</label>
+              <button type="button" class="drag-handle remove-single-player"
+                :aria-label="'Eliminar jugador ' + (idx + 1)" @click.stop="promptDeletePlayer(idx)">
+                &times;
+              </button>
               <button type="button" class="drag-handle" :aria-label="'Arrastrar jugador ' + (idx + 1)"
                 @pointerdown="startPlayerDrag(idx, $event)">
                 <span></span>
@@ -99,6 +103,20 @@
         </div>
       </div>
     </div> <!-- Select Number of Impostors -->
+
+    <!-- Confirm Delete Player Popup -->
+    <div v-if="showDeleteConfirm" class="popup-overlay">
+      <div class="popup-dialog">
+        <h2>Eliminar Jugador</h2>
+        <p class="popup-message">Estás seguro que deseas eliminar a <strong>{{ deleteIndexToConfirm !== null ?
+          (playerNames[deleteIndexToConfirm] || ('Jugador ' + (deleteIndexToConfirm + 1))) : 'este jugador'
+            }}</strong>?</p>
+        <div class="button-group">
+          <button @click="closeDeleteConfirm" class="btn-back">Cancelar</button>
+          <button @click="confirmDeletePlayer" class="btn-next">Sí, eliminar</button>
+        </div>
+      </div>
+    </div>
     <div v-if="currentStep === 'selectImpostors'" class="setup-screen">
       <div class="setup-card">
         <h2>Numero de Impostores</h2>
@@ -255,11 +273,10 @@
       <p class="card-hint">Manten presionado para voltear la tarjeta</p>
 
       <div class="button-group">
-        <button @click="requestNavigationConfirmation('previewBack')" class="btn-back"
-          :disabled="previewOrderIndex === 0">
+        <button @click="previousCardPreview" class="btn-back" :disabled="previewOrderIndex === 0">
           Anterior Jugador
         </button>
-        <button @click="requestNavigationConfirmation('previewNext')" class="btn-next">
+        <button @click="nextCardPreview" class="btn-next">
           {{ previewOrderIndex === playerNames.length - 1 ? 'Continuar' : 'Siguiente Jugador' }}
         </button>
       </div>
@@ -273,6 +290,10 @@
         <div class="start-player-box">
           <p class="start-player-name">{{ playerNames[startingPlayerIndex] }}</p>
         </div>
+
+        <button @click="openImpostorCheck" class="btn-next impostor-check-trigger">
+          Verificar si alguien era impostor
+        </button>
 
         <div class="button-group">
           <button @click="selectNewStart" class="btn-back">
@@ -315,28 +336,40 @@
       <p class="card-hint">Manten presionado para voltear la tarjeta</p>
 
       <div class="button-group">
-        <button @click="requestNavigationConfirmation('gameplayBack')" class="btn-back"
-          :disabled="currentOrderIndex === 0">
+        <button @click="previousPlayer" class="btn-back" :disabled="currentOrderIndex === 0">
           Anterior Jugador
         </button>
-        <button @click="requestNavigationConfirmation('gameplayNext')" class="btn-next">
+        <button @click="nextPlayer" class="btn-next">
           {{ currentOrderIndex === playerOrder.length - 1 ? 'Terminar Juego' : 'Siguiente Jugador' }}
         </button>
       </div>
     </div>
 
-    <!-- Confirm Navigation Action -->
-    <div v-if="showNavigationConfirm" class="popup-overlay">
-      <div class="popup-dialog navigation-dialog">
-        <h2>{{ navigationConfirmTitle }}</h2>
-        <p class="popup-message">{{ navigationConfirmMessage }}</p>
+    <!-- navigation confirmations removed to simplify flow -->
+
+    <!-- Impositor Check Popup -->
+    <div v-if="showImpostorCheck" class="popup-overlay">
+      <div class="popup-dialog">
+        <h2>Verificar Jugador</h2>
+        <p class="popup-message">Selecciona un jugador para ver si era impostor</p>
+
+        <div class="impostor-check-grid">
+          <button v-for="(name, idx) in playerNames" :key="playerNameIds[idx] || idx"
+            @click="selectImpostorCheckPlayer(idx)"
+            :class="['impostor-check-player-btn', { selected: selectedImpostorCheckIndex === idx }]">
+            {{ idx + 1 }}. {{ name || 'Jugador ' + (idx + 1) }}
+          </button>
+        </div>
+
+        <div v-if="selectedImpostorCheckIndex !== null" class="impostor-check-result">
+          <p v-if="isSelectedPlayerImpostor" class="result-yes">El jugador {{ playerNames[selectedImpostorCheckIndex] }}
+            ERA
+            IMPOSTOR</p>
+          <p v-else class="result-no">El jugador {{ playerNames[selectedImpostorCheckIndex] }} NO era impostor</p>
+        </div>
+
         <div class="button-group">
-          <button @click="closeNavigationConfirm" class="btn-back">
-            Cancelar
-          </button>
-          <button @click="confirmNavigationAction" class="btn-next">
-            {{ navigationConfirmButton }}
-          </button>
+          <button @click="closeImpostorCheck" class="btn-back">Cerrar</button>
         </div>
       </div>
     </div>
@@ -495,11 +528,13 @@ const showConfirmClearNames = ref(false)
 const previewCardFlipped = ref(false)
 const previewOrderIndex = ref(0)
 const showHintsToImpostor = ref(true)
-const showNavigationConfirm = ref(false)
-const pendingNavigationAction = ref<'previewNext' | 'previewBack' | 'gameplayNext' | 'gameplayBack' | null>(null)
+const showDeleteConfirm = ref(false)
+const deleteIndexToConfirm = ref<number | null>(null)
 const playerNameIds = ref<string[]>([])
 const draggingPlayerIndex = ref<number | null>(null)
 const dragOverPlayerIndex = ref<number | null>(null)
+const showImpostorCheck = ref(false)
+const selectedImpostorCheckIndex = ref<number | null>(null)
 
 const categoryCatalog: Array<{
   key: CategoryKey
@@ -539,48 +574,12 @@ const isWordValid = computed(() => {
   return true
 })
 
-const navigationConfirmTitle = computed(() => {
-  switch (pendingNavigationAction.value) {
-    case 'previewBack':
-    case 'gameplayBack':
-      return 'Volver al jugador anterior?'
-    case 'gameplayNext':
-      return 'Pasar al siguiente jugador?'
-    case 'previewNext':
-    default:
-      return 'Continuar con el siguiente jugador?'
-  }
-})
+// navigation confirmation removed — direct navigation now
 
-const navigationConfirmMessage = computed(() => {
-  switch (pendingNavigationAction.value) {
-    case 'previewBack':
-      return 'Vas a retroceder al jugador anterior. Esto puede hacer que vea la tarjeta de nuevo.'
-    case 'gameplayBack':
-      return 'Vas a regresar al jugador anterior. Asegúrate de que sea necesario.'
-    case 'gameplayNext':
-      return currentOrderIndex.value === playerOrder.value.length - 1
-        ? 'Vas a cerrar la ronda actual y pasar a la confirmación final del juego.'
-        : 'Vas a avanzar al siguiente jugador. Revisa que el jugador actual ya vio su tarjeta.'
-    case 'previewNext':
-    default:
-      return previewOrderIndex.value === playerNames.value.length - 1
-        ? 'Este fue el último jugador de la vista previa y vas a continuar al inicio del juego.'
-        : 'Vas a avanzar al siguiente jugador. Revisa que el jugador actual ya vio su tarjeta.'
-  }
-})
-
-const navigationConfirmButton = computed(() => {
-  switch (pendingNavigationAction.value) {
-    case 'previewBack':
-    case 'gameplayBack':
-      return 'Volver'
-    case 'gameplayNext':
-      return currentOrderIndex.value === playerOrder.value.length - 1 ? 'Terminar' : 'Continuar'
-    case 'previewNext':
-    default:
-      return previewOrderIndex.value === playerNames.value.length - 1 ? 'Continuar' : 'Siguiente'
-  }
+const isSelectedPlayerImpostor = computed(() => {
+  return selectedImpostorCheckIndex.value !== null
+    ? impostorIndices.value.includes(selectedImpostorCheckIndex.value)
+    : false
 })
 
 // Methods
@@ -661,36 +660,27 @@ const endPlayerDrag = () => {
   dragOverPlayerIndex.value = null
 }
 
-const closeNavigationConfirm = () => {
-  showNavigationConfirm.value = false
-  pendingNavigationAction.value = null
+const openImpostorCheck = () => {
+  selectedImpostorCheckIndex.value = null
+  showImpostorCheck.value = true
 }
 
-const requestNavigationConfirmation = (action: 'previewNext' | 'previewBack' | 'gameplayNext' | 'gameplayBack') => {
-  pendingNavigationAction.value = action
-  showNavigationConfirm.value = true
+const closeImpostorCheck = () => {
+  showImpostorCheck.value = false
+  selectedImpostorCheckIndex.value = null
 }
 
-const confirmNavigationAction = () => {
-  const action = pendingNavigationAction.value
-
-  closeNavigationConfirm()
-
-  switch (action) {
-    case 'previewNext':
-      nextCardPreview()
-      break
-    case 'previewBack':
-      previousCardPreview()
-      break
-    case 'gameplayNext':
-      nextPlayer()
-      break
-    case 'gameplayBack':
-      previousPlayer()
-      break
-  }
+const selectImpostorCheckPlayer = (index: number) => {
+  selectedImpostorCheckIndex.value = index
 }
+
+// Reference popup helpers so TypeScript does not mark them as unused
+void isSelectedPlayerImpostor.value
+void openImpostorCheck
+void closeImpostorCheck
+void selectImpostorCheckPlayer
+
+// navigation confirmation handlers removed
 
 const goBackToCount = () => {
   showConfirmClearNames.value = true
@@ -721,6 +711,33 @@ const removePlayer = () => {
     playerNameIds.value.pop()
     numPlayers.value = playerNames.value.length
   }
+}
+
+const removePlayerAt = (index: number) => {
+  if (playerNames.value.length <= 3) return
+  if (index < 0 || index >= playerNames.value.length) return
+  playerNames.value.splice(index, 1)
+  playerNameIds.value.splice(index, 1)
+  numPlayers.value = playerNames.value.length
+}
+
+const promptDeletePlayer = (index: number) => {
+  if (index < 0 || index >= playerNames.value.length) return
+  deleteIndexToConfirm.value = index
+  showDeleteConfirm.value = true
+}
+
+const closeDeleteConfirm = () => {
+  showDeleteConfirm.value = false
+  deleteIndexToConfirm.value = null
+}
+
+const confirmDeletePlayer = () => {
+  const idx = deleteIndexToConfirm.value
+  if (idx !== null) {
+    removePlayerAt(idx)
+  }
+  closeDeleteConfirm()
 }
 
 const goToSelectImpostors = () => {
@@ -873,8 +890,8 @@ const quickRestartGame = () => {
   currentOrderIndex.value = 0
   previewCardFlipped.value = false
   previewOrderIndex.value = 0
+  closeImpostorCheck()
   endPlayerDrag()
-  closeNavigationConfirm()
   currentStep.value = 'playerNames'
 }
 

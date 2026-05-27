@@ -772,6 +772,45 @@
 	margin-top: 18px;
 }
 
+.impostor-check-trigger {
+	width: 100%;
+	margin: 18px 0 0;
+}
+
+/* Make the verify button white with blue text to match secondary CTA */
+.btn-next.impostor-check-trigger,
+.impostor-check-trigger.btn-next {
+	background: #ffffff !important;
+	color: var(--mai-blue) !important;
+	box-shadow: 0 10px 24px rgba(34, 38, 93, 0.08) !important;
+	border: 1px solid rgba(34, 38, 93, 0.08) !important;
+}
+
+.impostor-check-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+	gap: 10px;
+	margin-top: 12px;
+}
+
+.impostor-check-player-btn {
+	padding: 10px 12px;
+	border-radius: 12px;
+	border: 1px solid rgba(34, 38, 93, 0.06);
+	background: #fff;
+	cursor: pointer;
+	font-weight: 700;
+}
+
+.impostor-check-player-btn.selected {
+	background: rgba(34, 38, 93, 0.06);
+	box-shadow: 0 6px 14px rgba(34, 38, 93, 0.06);
+}
+
+.impostor-check-result { margin-top: 14px; }
+.impostor-check-result .result-yes { color: #c53030; font-weight: 900; }
+.impostor-check-result .result-no { color: var(--mai-blue); font-weight: 800; }
+
 @keyframes impostorFadeIn {
 	from {
 		opacity: 0;
@@ -862,10 +901,26 @@
 	}
 
 	.btn-back,
-	.btn-next,
-	.player-management button {
+	.btn-next {
 		padding: 12px 14px;
 		font-size: 0.94rem;
+	}
+
+	/* Make player-management buttons smaller and centered on very small screens */
+	.player-management {
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+
+	.player-management button {
+		flex: none;
+		min-width: 0;
+		max-width: 160px;
+		width: auto;
+		padding: 10px 12px;
+		font-size: 0.9rem;
+		margin: 6px;
 	}
 
 	.flip-card {
@@ -886,6 +941,29 @@
 		padding: 9px 12px;
 		font-size: 0.88rem;
 	}
+}
+
+/* Remove single player button */
+.remove-single-player {
+	/* inherit drag-handle size and spacing, but show a cross */
+	background: #fff;
+	color: #c53030;
+	font-size: 1.1rem;
+	line-height: 1;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 8px 16px rgba(34, 38, 93, 0.06);
+	border-radius: 12px;
+	border: 1px solid rgba(34, 38, 93, 0.08);
+	width: 42px;
+	height: 42px;
+	cursor: pointer;
+	margin-right: 8px;
+}
+
+.remove-single-player:hover {
+	background: #fff4f4;
 }
 
 
