@@ -34,10 +34,14 @@
                   'other-month': day === 0
                 }" @click="selectDay(day)">
                   <div v-if="day !== 0" class="day-number">{{ day }}</div>
-                  <div v-if="day !== 0" class="day-event-titles">
-                    <div v-for="(event, idx) in getEventsForDay(day).slice(0, 2)" :key="event.id" class="day-event-title" :title="event.name">
-                      {{ event.name }}
-                    </div>
+                  <div v-if="day !== 0 && getEventsForDay(day).length > 0" class="day-events" aria-label="Días con eventos">
+                    <span
+                      v-for="(event, idx) in getEventsForDay(day).slice(0, 4)"
+                      :key="`${event.id}-${idx}`"
+                      class="event-dot"
+                      :style="{ background: getCategoryColor(event.category) }"
+                      :title="event.name"
+                    ></span>
                   </div>
                 </div>
               </div>
@@ -51,10 +55,11 @@
         <aside class="calendar-aside">
           <div class="aside-cards">
             <div v-for="event in upcomingList" :key="event.id" class="aside-card">
-              <div class="aside-icon" :style="{ backgroundColor: getCategoryColor(event.category) }">
-                <!-- simple icon placeholder -->
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><circle cx="12" cy="8" r="3"/><path d="M6 20c1-4 4-6 6-6s5 2 6 6"/></svg>
+              <div class="aside-date-badge">
+                <span class="aside-date-day">{{ formatDayFromString(event.date) }}</span>
+                <span class="aside-date-month">{{ formatShortMonthFromString(event.date) }}</span>
               </div>
+
               <div class="aside-body">
                 <div class="aside-title">{{ event.name }}</div>
                 <div class="aside-meta">{{ formatDateFromString(event.date) }} • {{ event.startTime }}</div>
@@ -288,6 +293,16 @@ const upcomingList = computed(() => {
 const formatDateFromString = (dateStr: string) => {
   const d = new Date(dateStr)
   return d.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' })
+}
+
+const formatDayFromString = (dateStr: string) => {
+  const d = new Date(dateStr)
+  return String(d.getDate()).padStart(2, '0')
+}
+
+const formatShortMonthFromString = (dateStr: string) => {
+  const d = new Date(dateStr)
+  return d.toLocaleDateString('es-ES', { month: 'short' }).replace('.', '')
 }
 
 const goToFullCalendar = () => {
@@ -547,10 +562,46 @@ const goToFullCalendar = () => {
   gap: 8px;
   cursor: pointer;
   box-sizing: border-box;
+  position: relative;
 }
 
 .calendar-day.other-month {
   opacity: 0.45;
+}
+
+/* Highlight days that have events */
+.calendar-day.has-events {
+  border-color: rgba(255, 193, 7, 0.95); /* accent gold */
+  box-shadow: 0 6px 18px rgba(255, 193, 7, 0.08);
+}
+
+.calendar-day.has-events::after {
+  content: '';
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, rgba(255,193,7,1), rgba(34,38,93,0.9));
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+
+/* Highlight today's date */
+.calendar-day.today {
+  border-color: rgba(15,34,70,0.08);
+}
+
+.calendar-day.today .day-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: left;
+  width: 32px;
+  height: 30px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--brand-blue, #0f2246);
+  color: #fff;
 }
 
 
@@ -567,24 +618,27 @@ const goToFullCalendar = () => {
   justify-content: center;
 }
 
-.day-event-titles {
+.day-events {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
-  margin-top: 3px;
-  width: 100%;
-  overflow: hidden;
+  min-height: 10px;
+  margin-top: auto;
+  padding-bottom: 2px;
 }
 
-.day-event-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: #0f2246;
-  text-align: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.event-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+}
+
+.calendar-day.today .event-dot {
+  box-shadow: 0 1px 3px rgba(15,34,70,0.25);
 }
 
 .mini-day {
@@ -627,6 +681,34 @@ const goToFullCalendar = () => {
   padding: 14px;
   box-shadow: 0 6px 18px rgba(16,32,58,0.06);
   border: 1px solid rgba(15,34,70,0.06);
+}
+
+.aside-date-badge {
+  width: 58px;
+  min-width: 58px;
+  height: 58px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #0f2246 0%, #1e3a72 100%);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-shadow: 0 8px 18px rgba(15,34,70,0.16);
+}
+
+.aside-date-day {
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+
+.aside-date-month {
+  margin-top: 2px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  opacity: 0.9;
 }
 
 .aside-icon {
@@ -818,12 +900,29 @@ const goToFullCalendar = () => {
 }
 
 @media (max-width: 900px) {
+  .calendar-layout {
+    grid-template-columns: 1fr;
+  }
+
   .calendar-wrapper {
     padding: 1rem;
   }
 
+  .calendar-card {
+    padding: 20px 18px 16px;
+    border-radius: 18px;
+  }
+
+  .calendar-card-header {
+    justify-content: center;
+  }
+
   .calendar-grid {
     gap: 0.3rem;
+  }
+
+  .calendar-aside {
+    width: 100%;
   }
 
   .calendar-day {
@@ -842,31 +941,76 @@ const goToFullCalendar = () => {
 
 @media (max-width: 600px) {
   .calendar-section {
-    padding: 2rem 0;
+    padding: 1.6rem 0 2.25rem;
+  }
+
+  .container {
+    overflow-x: hidden;
+  }
+
+  .section-title {
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
   }
 
   .calendar-header {
     flex-direction: column;
   }
 
+  .month-pill-group {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .pill-arrow-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+
+  .month-pill {
+    flex: 1;
+    justify-content: center;
+    padding: 10px 14px;
+  }
+
+  .month-pill .pill-label {
+    font-size: 0.82rem;
+    letter-spacing: 0.3px;
+  }
+
+  .calendar-card {
+    padding: 16px 14px 14px;
+    overflow: hidden;
+  }
+
   .calendar-grid {
     gap: 0.25rem;
-    grid-template-rows: auto repeat(6, 96px);
+    grid-template-rows: auto repeat(6, minmax(64px, 1fr));
+    grid-auto-rows: minmax(64px, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    width: 100%;
+    min-width: 0;
   }
 
   .calendar-day {
     padding: 0.3rem;
     font-size: 0.75rem;
     height: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .day-header {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .day-number {
     font-size: 0.7rem;
-  }
-
-  .event-dot {
-    width: 4px;
-    height: 4px;
   }
 
   .mini-calendars {
@@ -885,7 +1029,7 @@ const goToFullCalendar = () => {
   }
 
   .calendar-controls {
-    padding: 12px;
+    padding: 10px;
     border-radius: 12px;
   }
 
@@ -908,39 +1052,19 @@ const goToFullCalendar = () => {
 
   /* Reduce row heights so calendar fits vertically */
   .calendar-grid {
-    grid-template-rows: auto repeat(6, 64px);
-    gap: 0.2rem;
+    grid-template-rows: auto repeat(6, 52px);
+    gap: 0.18rem;
   }
 
   /* Allow days to grow vertically but remove fixed aspect ratio */
   .calendar-day {
     aspect-ratio: auto;
     height: 100%;
-    padding: 0.35rem 0.35rem;
+    width: 100%;
+    min-width: 0;
+    padding: 0.28rem 0.28rem;
     align-items: flex-start;
     justify-content: flex-start;
-  }
-
-  /* On mobile monthly view: hide small dots and show short titles instead */
-  .calendar-wrapper .day-events {
-    display: none;
-  }
-
-  .calendar-wrapper .day-event-titles {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    align-items: flex-start;
-    width: 100%;
-  }
-
-  .calendar-wrapper .day-event-title {
-    font-size: 11px;
-    font-weight: 800;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
   }
 
   .day-header {
@@ -954,12 +1078,48 @@ const goToFullCalendar = () => {
   }
 
   .calendar-wrapper {
-    padding: 0.9rem;
+    padding: 0.55rem;
+    overflow: hidden;
   }
 
-  .section-title {
-    font-size: 1.4rem;
-    margin-bottom: 1.25rem;
+  .calendar-card {
+    padding: 14px 10px 12px;
+  }
+
+  .aside-cards {
+    gap: 10px;
+  }
+
+  .aside-card {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .aside-date-badge {
+    width: 50px;
+    min-width: 50px;
+    height: 50px;
+    border-radius: 12px;
+  }
+
+  .aside-title {
+    font-size: 0.95rem;
+  }
+
+  .aside-meta,
+  .aside-location {
+    font-size: 12px;
+  }
+
+  .full-agenda-btn {
+    padding: 10px 12px;
+    font-size: 0.84rem;
+  }
+
+  .calendar-aside,
+  .aside-card,
+  .aside-body {
+    min-width: 0;
   }
 }
 

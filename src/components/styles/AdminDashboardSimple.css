@@ -47,20 +47,20 @@
   }
 }
 
-/* Dark theme tuning for admin dashboard */
+/* Light tone enforced for admin dashboard */
 .admin-dashboard {
-  background: radial-gradient(circle at top, #1a2b4f 0%, #0f172a 45%, #0b1120 100%);
-  color: #e5edf9;
+  background: linear-gradient(135deg, #f7fbff 0%, #eef5fb 100%);
+  color: #1a2942;
 }
 
 .dashboard-header {
-  background: linear-gradient(135deg, #1f2f55 0%, #13253f 100%);
-  border: 1px solid rgba(148, 163, 184, 0.24);
-  box-shadow: 0 14px 34px rgba(2, 6, 23, 0.5);
+  background: linear-gradient(135deg, #8fd3f4 0%, #5fb7e3 100%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 14px 34px rgba(69, 183, 209, 0.22);
 }
 
 .dashboard-subtitle {
-  color: #cdd8ec;
+  color: rgba(255, 255, 255, 0.92);
 }
 
 

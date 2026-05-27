@@ -97,24 +97,29 @@
           <div class="mobile-nav-links">
             <RouterLink to="/" class="mobile-link"
               :class="{ active: currentRoute.path === '/' && activeSection === 'home' }" @click="closeMobileMenu">
-              Inicio</RouterLink>
+              INICIO</RouterLink>
             <button class="mobile-link mobile-nosotros-toggle" @click="isNosotrosOpen = !isNosotrosOpen">
-              Nosotros <span class="mobile-nosotros-chevron" :class="{ open: isNosotrosOpen }">▾</span>
+              NOSOTROS <span class="mobile-nosotros-chevron" :class="{ open: isNosotrosOpen }">▾</span>
             </button>
             <div v-if="isNosotrosOpen" class="mobile-nosotros-items">
-              <RouterLink to="/pastores" class="mobile-link mobile-sub" @click="closeMobileMenu">Pst</RouterLink>
-              <a href="#stories" class="mobile-link mobile-sub" @click.prevent="scrollToStories">Historia</a>
-              <RouterLink to="/mision-vision" class="mobile-link mobile-sub" @click="closeMobileMenu">Misión / Visión
+              <RouterLink to="/mision-vision" class="mobile-link mobile-sub" @click="closeMobileMenu">NUESTRA VISIÓN
+              </RouterLink>
+              <RouterLink to="/pastores" class="mobile-link mobile-sub" @click="closeMobileMenu">PASTORES</RouterLink>
+              <a href="#stories" class="mobile-link mobile-sub" @click.prevent="scrollToStories">HISTORIA</a>
+              <RouterLink to="/ministerios" class="mobile-link mobile-sub" @click="closeMobileMenu">MINISTERIOS</RouterLink>
+              <RouterLink to="/nuestro-adn" class="mobile-link mobile-sub" @click="closeMobileMenu">NUESTRO ADN
               </RouterLink>
             </div>
 
 
             <RouterLink to="/ministerios" class="mobile-link" :class="{ active: isCurrentRoute('/ministerios') }"
-              @click="closeMobileMenu">Ministerios</RouterLink>
+              @click="closeMobileMenu">MINISTERIOS</RouterLink>
             <RouterLink to="/calendar" class="mobile-link" :class="{ active: currentRoute.path === '/calendar' }"
               @click="closeMobileMenu">CONÉCTATE</RouterLink>
             <RouterLink to="/games" class="mobile-link" :class="{ active: currentRoute.path === '/games' }"
               @click="closeMobileMenu">JUEGOS</RouterLink>
+
+            <RouterLink to="/donate" class="mobile-link" @click="closeMobileMenu">DONAR</RouterLink>
 
           </div>
 
@@ -1041,10 +1046,10 @@ watch(route, () => {
 
   /* En móviles, evitar que el navbar sea transparente al inicio */
   .navbar.transparent {
-    background: linear-gradient(180deg, #22265D 0%, #0b2545 100%) !important;
-    box-shadow: 0 2px 24px rgba(34, 211, 238, 0.15), 0 1px 3px rgba(0, 0, 0, 0.3) !important;
-    border-bottom: 1px solid rgba(34, 211, 238, 0.2) !important;
-    backdrop-filter: blur(20px) !important;
+    background: rgba(235, 235, 235, 0.96) !important;
+    box-shadow: 0 2px 18px rgba(15, 34, 70, 0.08) !important;
+    border-bottom: 1px solid rgba(15, 34, 70, 0.08) !important;
+    backdrop-filter: blur(16px) !important;
   }
 
   .desktop-nav {
@@ -1081,6 +1086,14 @@ watch(route, () => {
     height: 45px;
     font-size: 20px;
   }
+
+  .site-logo {
+    filter: brightness(0) !important;
+  }
+
+  .navbar.transparent .site-logo {
+    filter: brightness(0) !important;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1100,15 +1113,16 @@ watch(route, () => {
 
   /* En móviles pequeños, mantener fondo del navbar aunque tenga la clase 'transparent' */
   .navbar.transparent {
-    background: linear-gradient(180deg, #22265D 0%, #0b2545 100%) !important;
-    box-shadow: 0 2px 24px rgba(34, 211, 238, 0.15), 0 1px 3px rgba(0, 0, 0, 0.3) !important;
-    border-bottom: 1px solid rgba(34, 211, 238, 0.2) !important;
-    backdrop-filter: blur(20px) !important;
+    background: rgba(235, 235, 235, 0.96) !important;
+    box-shadow: 0 2px 18px rgba(15, 34, 70, 0.08) !important;
+    border-bottom: 1px solid rgba(15, 34, 70, 0.08) !important;
+    backdrop-filter: blur(16px) !important;
   }
 
   .site-logo {
     width: 44px;
     height: 44px;
+    filter: brightness(0) !important;
   }
 
   .brand-title {
@@ -1124,6 +1138,10 @@ watch(route, () => {
     width: 40px;
     height: 40px;
     font-size: 18px;
+  }
+
+  .navbar.transparent .site-logo {
+    filter: brightness(0) !important;
   }
 }
 

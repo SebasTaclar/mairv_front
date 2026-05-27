@@ -17,8 +17,6 @@
        <p v-if="event.description" class="event-short">{{ event.description }}</p>
       </div>
       <div class="right">
-       <span class="badge" :style="{ backgroundColor: getCategoryColor(event.category) }">{{
-        getCategoryLabel(event.category) }}</span>
        <div v-if="event.attachments?.length" class="attach-count">📎 {{ event.attachments.length }}</div>
       </div>
      </div>

@@ -556,6 +556,120 @@
   }
 }
 
+/* Mobile banner cleanup: keep content readable and more compact */
+@media (max-width: 768px) {
+  .hero-carousel {
+    margin-top: 0;
+    height: 72vh;
+    min-height: 520px;
+  }
+
+  .carousel-slide img {
+    object-position: center center;
+  }
+
+  .hero-content {
+    top: 44%;
+    left: 50%;
+    width: min(92vw, 560px);
+    max-width: none;
+    transform: translate(-50%, -44%);
+    padding: 0 14px;
+    text-align: center;
+  }
+
+  .banner-topline {
+    font-size: 0.95rem;
+    letter-spacing: 1.8px;
+    margin-bottom: 0.45rem;
+  }
+
+  .hero-title {
+    font-size: clamp(1.8rem, 6.4vw, 2.8rem);
+    line-height: 1.04;
+    margin-bottom: 0.55rem;
+  }
+
+  .hero-handwritten {
+    font-size: clamp(1.5rem, 7vw, 2.5rem);
+    letter-spacing: 0.2rem;
+    margin-top: 0;
+  }
+
+  .explore-button-container {
+    margin-top: 14px;
+  }
+
+  .visit-btn {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    margin-top: 0;
+  }
+
+  .visit-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .scroll-next-btn {
+    bottom: 4.2rem;
+    width: 44px;
+    height: 44px;
+  }
+
+  .carousel-navigation {
+    bottom: 0.9rem;
+    gap: 1rem;
+  }
+
+  .nav-arrows {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-carousel {
+    height: 68vh;
+    min-height: 520px;
+  }
+
+  .hero-content {
+    width: min(94vw, 420px);
+    padding: 0 12px;
+    top: 40%;
+    transform: translate(-50%, -40%);
+  }
+
+  .banner-topline {
+    font-size: 0.8rem;
+    letter-spacing: 1.2px;
+  }
+
+  .hero-title {
+    font-size: clamp(1.65rem, 8vw, 2.2rem);
+  }
+
+  .hero-handwritten {
+    font-size: clamp(1.35rem, 9vw, 2rem);
+    letter-spacing: 0.12rem;
+  }
+
+  .visit-btn {
+    padding: 9px 14px;
+    border-radius: 12px;
+  }
+
+  .scroll-next-btn {
+    bottom: 3.8rem;
+    width: 40px;
+    height: 40px;
+  }
+
+  .carousel-navigation {
+    bottom: 0.65rem;
+  }
+}
+
 .hero-banner {
   position: relative;
   width: 100%;

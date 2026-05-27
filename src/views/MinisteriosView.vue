@@ -22,11 +22,11 @@
 
 <script setup lang="ts">
 const cards = [
-  { key: 'ministerio', title: 'Ministerio', img: 'https://res.cloudinary.com/dvu7fperb/image/upload/v1778073286/testimonios_m33dsm.jpg' },
-  { key: 'adoracion', title: 'Adoración', img: 'https://res.cloudinary.com/dlwzazojt/image/upload/q_auto/f_auto/v1779766084/Screenshot_16_bnmtwe.jpg' },
-  { key: 'comunion', title: 'Comunión', img: 'https://res.cloudinary.com/dlwzazojt/image/upload/q_auto/f_auto/v1779766084/Screenshot_18_qcemef.jpg' },
-  { key: 'evangelismo', title: 'Evangelismo', img: 'https://res.cloudinary.com/dlwzazojt/image/upload/q_auto/f_auto/v1779766084/Screenshot_19_d3xp8l.jpg' },
-  { key: 'discipulado', title: 'Discipulado', img: 'https://res.cloudinary.com/dlwzazojt/image/upload/q_auto/f_auto/v1779766084/Screenshot_17_tjbygo.jpg' }
+  { key: 'ministerio', title: 'Ministerio', img: 'https://res.cloudinary.com/dlwzazojt/image/upload/q_auto/f_auto/v1779912065/ministerio_jxsbpp.jpg' },
+  { key: 'adoracion', title: 'Adoración', img: 'https://res.cloudinary.com/dlwzazojt/image/upload/q_auto/f_auto/v1779912063/adoraci%C3%B3n_ig5wz6.jpg' },
+  { key: 'comunion', title: 'Comunión', img: 'https://res.cloudinary.com/dlwzazojt/image/upload/q_auto/f_auto/v1779912065/Comunion_ithesa.jpg' },
+  { key: 'evangelismo', title: 'Evangelismo', img: 'https://res.cloudinary.com/dlwzazojt/image/upload/q_auto/f_auto/v1779912065/Evangelismo_z16en6.jpg' },
+  { key: 'discipulado', title: 'Discipulado', img: 'https://res.cloudinary.com/dlwzazojt/image/upload/q_auto/f_auto/v1779912065/Discipulado_s6jwcm.jpg' }
 ]
 </script>
 
@@ -36,9 +36,16 @@ const cards = [
   padding: 6.5rem 0 4.5rem;
   padding-bottom: 6.71rem;
   color: #22265D;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.95)),
-    url('https://res.cloudinary.com/dvu7fperb/image/upload/v1778073286/familiaycomunidad_zp0w4b.jpg') center/cover no-repeat;
+  /* Fondo sólido para evitar que se vea el fondo global (negro) al hacer zoom/scroll */
+  background-color: var(--bg-secondary, #ffffff);
+  background-image: url('https://res.cloudinary.com/dvu7fperb/image/upload/v1778073286/familiaycomunidad_zp0w4b.jpg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  /* capa opaca encima de la imagen */
+  --overlay: linear-gradient(180deg, rgba(255,255,255,1), rgba(255,255,255,1));
+  background: var(--overlay), url('https://res.cloudinary.com/dvu7fperb/image/upload/v1778073286/familiaycomunidad_zp0w4b.jpg') center/cover no-repeat;
+  min-height: 100vh;
 }
 
 .container {

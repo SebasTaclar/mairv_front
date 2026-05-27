@@ -46,7 +46,8 @@ const scrollCarousel = (direction: number) => {
   const carousel = carouselRef.value
   if (!carousel) return
 
-  const cardWidth = carousel.clientWidth / 3
+  const firstCard = carousel.querySelector<HTMLElement>('.card')
+  const cardWidth = firstCard?.getBoundingClientRect().width || carousel.clientWidth
   carousel.scrollBy({ left: direction * cardWidth, behavior: 'smooth' })
 }
 </script>
@@ -88,6 +89,8 @@ const scrollCarousel = (direction: number) => {
   overflow-y: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
 }
 .carousel-viewport::-webkit-scrollbar{
   display: none;
@@ -102,6 +105,7 @@ const scrollCarousel = (direction: number) => {
   flex: 0 0 calc(100% / 3);
   padding: 16px 28px 24px;
   box-sizing: border-box;
+  scroll-snap-align: start;
 }
 .icon{
   width: 120px;
@@ -163,5 +167,48 @@ const scrollCarousel = (direction: number) => {
   .card{ flex-basis: 100%; }
   .icon{ width:96px; height:96px; }
   .title{ font-size:32px }
+}
+
+@media (max-width: 640px){
+  .estamos-section{
+    padding: 44px 14px;
+  }
+
+  .carousel-shell{
+    grid-template-columns: 40px minmax(0, 1fr) 40px;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .carousel-viewport{
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 8px;
+  }
+
+  .carousel-nav{
+    width: 40px;
+    height: 40px;
+    font-size: 42px;
+    align-self: center;
+  }
+
+  .cards{
+    gap: 0;
+  }
+
+  .card{
+    flex: 0 0 100%;
+    padding: 12px 10px 20px;
+  }
+
+  .icon{
+    width: 88px;
+    height: 88px;
+  }
+
+  .card-desc{
+    margin-bottom: 24px;
+  }
 }
 </style>
