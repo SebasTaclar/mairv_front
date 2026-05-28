@@ -1,11 +1,19 @@
 <template>
   <div class="events-tab">
+    <ConfirmationModal v-if="showConfirmationModal" :title="confirmationConfig.title"
+      :message="confirmationConfig.message" :confirmText="confirmationConfig.confirmText"
+      :cancelText="confirmationConfig.cancelText" @confirm="handleConfirmation" @cancel="closeConfirmationModal" />
+
     <div class="section-header">
       <h2>Gestion de Eventos</h2>
       <button class="btn btn-primary" @click="openEventForm()">
         <span class="btn-icon">+</span>
         Nuevo Evento
       </button>
+    </div>
+
+    <div v-if="actionNotice" :class="['action-notice', actionNoticeType]">
+      {{ actionNotice }}
     </div>
 
     <div class="events-stats">
@@ -19,14 +27,14 @@
       <div class="stat-card">
         <div class="stat-icon">🔴</div>
         <div class="stat-content">
-          <div class="stat-number">{{ eventsByStatus.ongoing }}</div>
+          <div class="stat-number">{{ ongoingEvents.length }}</div>
           <div class="stat-label">En Curso</div>
         </div>
       </div>
       <div class="stat-card">
         <div class="stat-icon">✅</div>
         <div class="stat-content">
-          <div class="stat-number">{{ eventsByStatus.completed }}</div>
+          <div class="stat-number">{{ pastEvents.length }}</div>
           <div class="stat-label">Completados</div>
         </div>
       </div>
@@ -88,7 +96,8 @@
             <td>
               <div class="action-buttons">
                 <button class="btn btn-sm btn-secondary" @click="openEventForm(event)" title="Editar">✏️</button>
-                <button class="btn btn-sm btn-danger" @click="confirmDelete(event.id)" title="Eliminar">🗑️</button>
+                <button class="btn btn-sm btn-danger" @click="requestDeleteConfirmation(event.id)"
+                  title="Eliminar">🗑️</button>
               </div>
             </td>
           </tr>
@@ -119,7 +128,8 @@
 
         <div class="action-buttons event-mobile-card__actions">
           <button class="btn btn-sm btn-secondary" @click="openEventForm(event)" title="Editar">✏️ Editar</button>
-          <button class="btn btn-sm btn-danger" @click="confirmDelete(event.id)" title="Eliminar">🗑️ Eliminar</button>
+          <button class="btn btn-sm btn-danger" @click="requestDeleteConfirmation(event.id)" title="Eliminar">🗑️
+            Eliminar</button>
         </div>
       </article>
     </div>
@@ -139,7 +149,7 @@
           <button class="modal-close" @click="closeEventForm">X</button>
         </div>
         <div class="modal-body">
-          <form @submit.prevent="saveEvent">
+          <form @submit.prevent="requestSaveConfirmation">
             <div class="form-group">
               <label>Titulo del Evento *</label>
               <input v-model="eventForm.title" type="text" class="form-input" required
@@ -231,13 +241,19 @@ import './styles/EventsTab.css'
 import { computed, ref } from 'vue'
 import { useEvents } from '@/composables/useEvents'
 import type { CreateEventRequest, Event, EventAttachment } from '@/types/EventType'
+import ConfirmationModal from '../ConfirmationModal.vue'
 
-const { events, addEvent, updateEvent, deleteEvent, upcomingEvents, eventsByStatus } = useEvents()
+const { events, addEvent, updateEvent, deleteEvent, upcomingEvents, ongoingEvents, pastEvents } = useEvents()
 
 const showEventForm = ref(false)
 const editingEvent = ref<Event | null>(null)
 const searchQuery = ref('')
 const filterStatus = ref('')
+const showConfirmationModal = ref(false)
+const pendingAction = ref<'create' | 'update' | 'delete' | null>(null)
+const pendingEventId = ref<string | null>(null)
+const actionNotice = ref('')
+const actionNoticeType = ref<'success' | 'error'>('success')
 
 type EventFormData = CreateEventRequest & {
   organizers: string[]
@@ -263,6 +279,48 @@ const createEmptyEventForm = (): EventFormData => ({
   attachments: [],
   tags: [],
 })
+
+const confirmationConfig = computed(() => {
+  if (pendingAction.value === 'delete') {
+    return {
+      title: 'Confirmar eliminación',
+      message: '¿Estás seguro de que deseas eliminar este evento? Esta acción no se puede deshacer.',
+      confirmText: 'Eliminar',
+      cancelText: 'Cancelar',
+    }
+  }
+
+  if (pendingAction.value === 'update') {
+    return {
+      title: 'Confirmar actualización',
+      message: '¿Deseas guardar los cambios de este evento?',
+      confirmText: 'Actualizar',
+      cancelText: 'Cancelar',
+    }
+  }
+
+  return {
+    title: 'Confirmar creación',
+    message: '¿Deseas crear este nuevo evento?',
+    confirmText: 'Crear',
+    cancelText: 'Cancelar',
+  }
+})
+
+const closeConfirmationModal = () => {
+  showConfirmationModal.value = false
+  pendingAction.value = null
+  pendingEventId.value = null
+}
+
+const setActionNotice = (message: string, type: 'success' | 'error') => {
+  actionNotice.value = message
+  actionNoticeType.value = type
+}
+
+const clearActionNotice = () => {
+  actionNotice.value = ''
+}
 
 const eventForm = ref<EventFormData>(createEmptyEventForm())
 
@@ -401,6 +459,7 @@ const openEventForm = (event?: Event) => {
   }
 
   showEventForm.value = true
+  clearActionNotice()
 }
 
 const closeEventForm = () => {
@@ -409,9 +468,14 @@ const closeEventForm = () => {
   eventForm.value = createEmptyEventForm()
 }
 
-const saveEvent = async () => {
+const requestSaveConfirmation = () => {
   if (!isEventFormValid.value) return
 
+  pendingAction.value = editingEvent.value ? 'update' : 'create'
+  showConfirmationModal.value = true
+}
+
+const buildPayload = (): CreateEventRequest => {
   const { endDate, ...basePayload } = eventForm.value
   const payload: CreateEventRequest = {
     ...basePayload,
@@ -429,34 +493,64 @@ const saveEvent = async () => {
     payload.endDate = endDate
   }
 
+  return payload
+}
+
+const performSave = async () => {
+  if (!isEventFormValid.value) return
+
+  const payload = buildPayload()
+
   try {
     if (editingEvent.value) {
-      if (!confirm(`Estas seguro de actualizar el evento "${editingEvent.value.title}"?`)) {
-        return
-      }
       await updateEvent(editingEvent.value.id, payload)
+      setActionNotice('Evento actualizado correctamente.', 'success')
     } else {
       await addEvent(payload)
+      setActionNotice('Evento creado correctamente.', 'success')
     }
     closeEventForm()
+    closeConfirmationModal()
   } catch (error) {
-    alert('Error al guardar el evento')
+    setActionNotice('No se pudo guardar el evento. Intenta nuevamente.', 'error')
     console.error(error)
+    closeConfirmationModal()
   }
 }
 
-const confirmDelete = async (id: string) => {
-  const event = events.value.find((item) => item.id === id)
-  if (!event) return
+const requestDeleteConfirmation = (id: string) => {
+  pendingAction.value = 'delete'
+  pendingEventId.value = id
+  showConfirmationModal.value = true
+}
 
-  if (confirm(`Estas seguro de eliminar el evento "${event.title}"?`)) {
+const handleConfirmation = async () => {
+  if (pendingAction.value === 'delete') {
+    const id = pendingEventId.value
+    if (!id) {
+      closeConfirmationModal()
+      return
+    }
+
+    const event = events.value.find((item) => item.id === id)
+    if (!event) {
+      closeConfirmationModal()
+      return
+    }
+
     try {
       await deleteEvent(id)
+      setActionNotice(`Evento "${event.title}" eliminado correctamente.`, 'success')
     } catch (error) {
-      alert('Error al eliminar el evento')
+      setActionNotice('No se pudo eliminar el evento. Intenta nuevamente.', 'error')
       console.error(error)
+    } finally {
+      closeConfirmationModal()
     }
+    return
   }
+
+  await performSave()
 }
 
 const addOrganizer = () => {

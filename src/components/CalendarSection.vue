@@ -38,10 +38,8 @@
                   }" @click="selectDay(day)">
                   <div v-if="day !== 0" class="day-number">{{ day }}</div>
                   <div v-if="day !== 0 && getEventsForDay(day).length > 0" class="day-events"
-                    aria-label="Días con eventos">
-                    <span v-for="(event, idx) in getEventsForDay(day).slice(0, 4)" :key="`${event.id}-${idx}`"
-                      class="event-dot" :style="{ background: getCategoryColor(event.category) }"
-                      :title="event.name"></span>
+                    :aria-label="`${getEventsForDay(day).length} evento(s) en este día`">
+                    <span class="event-count-badge">{{ getEventsForDay(day).length }}</span>
                   </div>
                 </div>
               </div>
@@ -218,16 +216,6 @@ const getEventsForDay = (day: number, month?: number): CalendarEvent[] => {
 
   const eventsByMonthMap = getEventsByMonth(currentYear.value, m)
   return eventsByMonthMap.get(day) || []
-}
-
-const getCategoryColor = (category?: string): string => {
-  const colors: Record<string, string> = {
-    'evento': '#FF6B6B',
-    'reunion': '#4ECDC4',
-    'actividad': '#45B7D1',
-    'otro': '#95A5A6'
-  }
-  return colors[category || 'otro']
 }
 
 const getCategoryLabel = (category?: string): string => {
@@ -582,18 +570,6 @@ const goToFullCalendar = () => {
   box-shadow: 0 6px 18px rgba(255, 193, 7, 0.08);
 }
 
-.calendar-day.has-events::after {
-  content: '';
-  position: absolute;
-  right: 8px;
-  bottom: 8px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: linear-gradient(90deg, rgba(255, 193, 7, 1), rgba(34, 38, 93, 0.9));
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-}
-
 /* Highlight today's date */
 .calendar-day.today {
   border-color: rgba(15, 34, 70, 0.08);
@@ -620,32 +596,30 @@ const goToFullCalendar = () => {
 
 .day-events {
   display: flex;
-  gap: 0.3rem;
-  flex-wrap: wrap;
   justify-content: center;
 }
 
 .day-events {
   display: flex;
-  gap: 0.25rem;
-  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  min-height: 10px;
   margin-top: auto;
   padding-bottom: 2px;
 }
 
-.event-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  flex: 0 0 auto;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+.event-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #d9a313;
+  letter-spacing: 0.02em;
 }
 
-.calendar-day.today .event-dot {
-  box-shadow: 0 1px 3px rgba(15, 34, 70, 0.25);
+.calendar-day.today .event-count-badge {
+  color: #0f2246;
 }
 
 .mini-day {

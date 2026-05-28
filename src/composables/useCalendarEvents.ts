@@ -111,12 +111,15 @@ const fromCalendarEvent = (event: Omit<CalendarEvent, 'id'>): CreateEventRequest
   const startDate = event.startTime
     ? `${event.date}T${event.startTime}:00`
     : `${event.date}T00:00:00`
+  const parsedStartDate = parseBackendDateTime(startDate)
+
+  if (!parsedStartDate) {
+    throw new Error('Invalid calendar event start date')
+  }
 
   const calculatedEndDate = event.endTime
     ? `${event.date}T${event.endTime}:00`
-    : formatBackendDateTime(
-        new Date(parseBackendDateTime(startDate).getTime() + (event.duration || 60) * 60000),
-      )
+    : formatBackendDateTime(new Date(parsedStartDate.getTime() + (event.duration || 60) * 60000))
 
   return {
     title: event.name,

@@ -44,6 +44,17 @@ let loadPromise: Promise<void> | null = null
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
+const startOfDay = (date: Date) => {
+  const normalized = new Date(date)
+  normalized.setHours(0, 0, 0, 0)
+  return normalized
+}
+
+const getEventDay = (value: Date | string | null | undefined) => {
+  const parsed = value ? parseBackendDateTime(value) : null
+  return parsed ? startOfDay(parsed) : null
+}
+
 export function useEvents() {
   const loadEvents = async () => {
     if (loadPromise) {
@@ -130,19 +141,34 @@ export function useEvents() {
 
   // Computed properties
   const upcomingEvents = computed(() => {
-    const now = new Date()
+    const today = startOfDay(new Date())
     return events.value
-      .filter((e) => parseBackendDateTime(e.startDate) > now && e.status !== 'cancelled')
+      .filter((e) => {
+        const eventDay = getEventDay(e.startDate)
+        return eventDay !== null && eventDay > today
+      })
       .sort(
         (a, b) =>
           parseBackendDateTime(a.startDate).getTime() - parseBackendDateTime(b.startDate).getTime(),
       )
   })
 
+  const ongoingEvents = computed(() => {
+    const today = startOfDay(new Date())
+
+    return events.value.filter((e) => {
+      const eventDay = getEventDay(e.startDate)
+      return eventDay !== null && eventDay.getTime() === today.getTime()
+    })
+  })
+
   const pastEvents = computed(() => {
-    const now = new Date()
+    const today = startOfDay(new Date())
     return events.value
-      .filter((e) => parseBackendDateTime(e.endDate) < now || e.status === 'completed')
+      .filter((e) => {
+        const eventDay = getEventDay(e.startDate)
+        return eventDay !== null && eventDay < today
+      })
       .sort(
         (a, b) =>
           parseBackendDateTime(b.endDate).getTime() - parseBackendDateTime(a.endDate).getTime(),
@@ -177,6 +203,7 @@ export function useEvents() {
     deleteEvent,
     getEventById,
     upcomingEvents,
+    ongoingEvents,
     pastEvents,
     eventsByStatus,
     eventsByCategory,
