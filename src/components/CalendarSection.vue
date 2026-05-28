@@ -13,6 +13,12 @@
           <button class="pill-arrow-btn" @click="nextMonth" aria-label="Mes siguiente">›</button>
         </div>
       </div>
+      <div class="calendar-legend" aria-label="Leyenda del calendario">
+        <span class="legend-item">
+          <span class="legend-swatch holiday"></span>
+          Festivo en Colombia
+        </span>
+      </div>
       <div class="calendar-layout">
         <!-- Left: Large calendar -->
         <div class="calendar-main">
@@ -34,8 +40,9 @@
                   class="calendar-day" :class="{
                     'has-events': getEventsForDay(day).length > 0,
                     'today': isToday(day),
-                    'other-month': day === 0
-                  }" @click="selectDay(day)">
+                    'other-month': day === 0,
+                    'holiday': day !== 0 && !!getHolidayLabel(day)
+                  }" :title="getHolidayLabel(day) || undefined" @click="selectDay(day)">
                   <div v-if="day !== 0" class="day-number">{{ day }}</div>
                   <div v-if="day !== 0 && getEventsForDay(day).length > 0" class="day-events"
                     :aria-label="`${getEventsForDay(day).length} evento(s) en este día`">
@@ -86,6 +93,86 @@ import DayEventsModal from './DayEventsModal.vue'
 
 const { getEventsByMonth, isLoading } = useCalendarEvents()
 
+const formatDateKey = (date: Date) => {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0'),
+  ].join('-')
+}
+
+const addDays = (date: Date, days: number) => {
+  const result = new Date(date)
+  result.setDate(result.getDate() + days)
+  return result
+}
+
+const moveHolidayToMonday = (date: Date) => {
+  const result = new Date(date)
+  const dayOfWeek = result.getDay()
+  const daysToAdd = dayOfWeek === 1 ? 0 : (8 - dayOfWeek) % 7
+  result.setDate(result.getDate() + daysToAdd)
+  return result
+}
+
+const getEasterSunday = (year: number) => {
+  const a = year % 19
+  const b = Math.floor(year / 100)
+  const c = year % 100
+  const d = Math.floor(b / 4)
+  const e = b % 4
+  const f = Math.floor((b + 8) / 25)
+  const g = Math.floor((b - f + 1) / 3)
+  const h = (19 * a + b - d - g + 15) % 30
+  const i = Math.floor(c / 4)
+  const k = c % 4
+  const l = (32 + 2 * e + 2 * i - h - k) % 7
+  const m = Math.floor((a + 11 * h + 22 * l) / 451)
+  const month = Math.floor((h + l - 7 * m + 114) / 31)
+  const day = ((h + l - 7 * m + 114) % 31) + 1
+
+  return new Date(year, month - 1, day)
+}
+
+const getColombiaHolidayMap = (year: number) => {
+  const holidays = new Map<string, string>()
+
+  const addHoliday = (date: Date, label: string) => {
+    holidays.set(formatDateKey(date), label)
+  }
+
+  const addFixedHoliday = (monthIndex: number, day: number, label: string) => {
+    addHoliday(new Date(year, monthIndex, day), label)
+  }
+
+  const addMondayHoliday = (monthIndex: number, day: number, label: string) => {
+    addHoliday(moveHolidayToMonday(new Date(year, monthIndex, day)), label)
+  }
+
+  const easterSunday = getEasterSunday(year)
+
+  addFixedHoliday(0, 1, 'Año Nuevo')
+  addMondayHoliday(0, 6, 'Día de Reyes Magos')
+  addMondayHoliday(2, 19, 'Día de San José')
+  addHoliday(addDays(easterSunday, -3), 'Jueves Santo')
+  addHoliday(addDays(easterSunday, -2), 'Viernes Santo')
+  addFixedHoliday(4, 1, 'Día del Trabajo')
+  addHoliday(addDays(easterSunday, 43), 'Ascensión del Señor')
+  addHoliday(addDays(easterSunday, 64), 'Corpus Christi')
+  addHoliday(addDays(easterSunday, 71), 'Sagrado Corazón de Jesús')
+  addFixedHoliday(6, 20, 'Independencia de Colombia')
+  addFixedHoliday(7, 7, 'Batalla de Boyacá')
+  addMondayHoliday(5, 29, 'San Pedro y San Pablo')
+  addMondayHoliday(7, 15, 'Asunción de la Virgen')
+  addMondayHoliday(9, 12, 'Día de la Raza')
+  addMondayHoliday(10, 1, 'Todos los Santos')
+  addMondayHoliday(10, 11, 'Independencia de Cartagena')
+  addFixedHoliday(11, 8, 'Inmaculada Concepción')
+  addFixedHoliday(11, 25, 'Navidad')
+
+  return holidays
+}
+
 const currentYear = ref(2026)
 const currentMonth = ref(new Date().getMonth())
 const showMonthPicker = ref(false)
@@ -101,6 +188,7 @@ const monthNames = [
 ]
 
 const currentMonthName = computed(() => monthNames[currentMonth.value])
+const holidayMap = computed(() => getColombiaHolidayMap(currentYear.value))
 
 // Get days in current month
 const daysInMonth = computed(() => {
@@ -212,10 +300,18 @@ const getEventsForDay = (day: number, month?: number): CalendarEvent[] => {
   if (day === 0) return []
 
   const m = month ?? currentMonth.value
-  const dateStr = `${currentYear.value}-${String(m + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
 
   const eventsByMonthMap = getEventsByMonth(currentYear.value, m)
   return eventsByMonthMap.get(day) || []
+}
+
+const getHolidayLabel = (day: number, month?: number): string | null => {
+  if (day === 0) return null
+
+  const m = month ?? currentMonth.value
+  const dateKey = `${currentYear.value}-${String(m + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+
+  return holidayMap.value.get(dateKey) ?? null
 }
 
 const getCategoryLabel = (category?: string): string => {
@@ -346,6 +442,38 @@ const goToFullCalendar = () => {
   box-shadow: 0 8px 24px rgba(16, 32, 58, 0.06);
   border: 3px solid #0f2246;
   /* navy border like image */
+}
+
+.calendar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #f7f8fc;
+  border: 1px solid rgba(15, 34, 70, 0.08);
+  color: #51657d;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  flex: 0 0 auto;
+}
+
+.legend-swatch.holiday {
+  background: #c1121f;
+  box-shadow: 0 0 0 4px rgba(193, 18, 31, 0.12);
 }
 
 .calendar-card-header {
@@ -570,6 +698,12 @@ const goToFullCalendar = () => {
   box-shadow: 0 6px 18px rgba(255, 193, 7, 0.08);
 }
 
+.calendar-day.holiday {
+  border-color: rgba(193, 18, 31, 0.38);
+  background: linear-gradient(180deg, rgba(193, 18, 31, 0.08), rgba(255, 255, 255, 1));
+  box-shadow: 0 8px 20px rgba(193, 18, 31, 0.08);
+}
+
 /* Highlight today's date */
 .calendar-day.today {
   border-color: rgba(15, 34, 70, 0.08);
@@ -592,6 +726,15 @@ const goToFullCalendar = () => {
   font-weight: 800;
   color: #0f2246;
   font-size: 0.95rem;
+}
+
+.calendar-day.holiday .day-number {
+  color: #c1121f;
+}
+
+.calendar-day.holiday.today .day-number {
+  background: #c1121f;
+  color: #fff;
 }
 
 .day-events {

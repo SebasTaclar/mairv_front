@@ -43,10 +43,10 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 18% 12%, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.1) 28%, transparent 42%),
-    radial-gradient(circle at 80% 18%, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.08) 24%, transparent 40%),
-    radial-gradient(circle at 10% 82%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.08) 28%, transparent 44%),
-    linear-gradient(180deg, rgba(255,255,255,0.86), rgba(255,255,255,0.9));
+    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.1) 28%, transparent 42%),
+    radial-gradient(circle at 80% 18%, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.08) 24%, transparent 40%),
+    radial-gradient(circle at 10% 82%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.08) 28%, transparent 44%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.9));
   pointer-events: none;
 }
 
@@ -142,7 +142,7 @@
 
 @media (max-width: 560px) {
   .mission-section {
-    padding: 4rem 0 3.5rem;
+    padding: calc(70px + env(safe-area-inset-top, 0px) + 1.15rem) 0 3.5rem;
   }
 
   .eyebrow {
