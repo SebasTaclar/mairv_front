@@ -25,6 +25,16 @@
   position: relative;
 }
 
+@media (max-width: 768px) {
+  .home-main {
+    padding-top: calc(70px + env(safe-area-inset-top));
+  }
+
+  .section {
+    scroll-margin-top: calc(70px + env(safe-area-inset-top));
+  }
+}
+
 /* Global section spacing improvements */
 .section {
   margin: 0;

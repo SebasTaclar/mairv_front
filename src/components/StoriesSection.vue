@@ -1,7 +1,7 @@
 <template>
   <section class="stories-section section" aria-labelledby="stories-heading">
     <div class="container">
-      <p class="kicker">TRANSFORMADO VIDAS</p>
+      <p class="kicker">TRANSFORMANDO VIDAS</p>
       <h2 id="estamos-title" class="title">HISTORIAS DE BENDICIÓN</h2>
 
       <div class="stories-carousel" ref="carouselRef">
@@ -393,7 +393,7 @@ onUnmounted(() => {
   z-index: 3;
 }
 
-.kicker{
+.kicker {
   color: #D9A313;
   font-weight: 400;
   margin-bottom: 8px;
@@ -401,7 +401,8 @@ onUnmounted(() => {
   line-height: 1.2rem;
   text-align: center;
 }
-.title{
+
+.title {
   color: #1b2b64;
   font-size: clamp(2.1rem, 5vw, 2.8rem);
   margin: 0 0 36px 0;
@@ -581,6 +582,3 @@ onUnmounted(() => {
   }
 }
 </style>
-
-
-

@@ -98,7 +98,8 @@
             <RouterLink to="/" class="mobile-link"
               :class="{ active: currentRoute.path === '/' && activeSection === 'home' }" @click="closeMobileMenu">
               INICIO</RouterLink>
-            <button class="mobile-link mobile-nosotros-toggle" @click="isNosotrosOpen = !isNosotrosOpen">
+            <button class="mobile-link mobile-nosotros-toggle" :class="{ active: isNosotrosOpen }"
+              @click="isNosotrosOpen = !isNosotrosOpen" :aria-expanded="isNosotrosOpen">
               NOSOTROS <span class="mobile-nosotros-chevron" :class="{ open: isNosotrosOpen }">▾</span>
             </button>
             <div v-if="isNosotrosOpen" class="mobile-nosotros-items">
@@ -106,7 +107,8 @@
               </RouterLink>
               <RouterLink to="/pastores" class="mobile-link mobile-sub" @click="closeMobileMenu">PASTORES</RouterLink>
               <a href="#stories" class="mobile-link mobile-sub" @click.prevent="scrollToStories">HISTORIA</a>
-              <RouterLink to="/ministerios" class="mobile-link mobile-sub" @click="closeMobileMenu">MINISTERIOS</RouterLink>
+              <RouterLink to="/ministerios" class="mobile-link mobile-sub" @click="closeMobileMenu">MINISTERIOS
+              </RouterLink>
               <RouterLink to="/nuestro-adn" class="mobile-link mobile-sub" @click="closeMobileMenu">NUESTRO ADN
               </RouterLink>
             </div>
@@ -1571,21 +1573,63 @@ watch(route, () => {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  padding: 12px;
+  margin-top: -2px;
+  background: rgba(34, 38, 93, 0.22);
+  border: 1px solid rgba(217, 163, 19, 0.22);
+  border-radius: 16px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
 .mobile-nosotros-items .mobile-sub {
   padding-left: 18px;
   width: 100%;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(217, 163, 19, 0.16);
+  color: #f8fafc;
+  font-weight: 600;
+}
+
+.mobile-nosotros-items .mobile-sub:hover {
+  background: rgba(217, 163, 19, 0.16);
+  color: #ffd86b;
+  border-color: rgba(217, 163, 19, 0.4);
+}
+
+.mobile-nosotros-items .mobile-sub.router-link-active,
+.mobile-nosotros-items .mobile-sub.router-link-exact-active {
+  background: rgba(217, 163, 19, 0.2);
+  color: #fff3bf;
+  border-color: rgba(217, 163, 19, 0.55);
 }
 
 .mobile-nosotros-toggle {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.mobile-nosotros-toggle.active {
+  background: linear-gradient(135deg, rgba(217, 163, 19, 0.26), rgba(34, 38, 93, 0.28));
+  color: #fff1b8;
+  border-color: rgba(217, 163, 19, 0.5);
+  box-shadow: 0 0 0 1px rgba(217, 163, 19, 0.16), 0 8px 18px rgba(34, 38, 93, 0.18);
+}
+
+.mobile-nosotros-toggle.active:hover {
+  background: linear-gradient(135deg, rgba(217, 163, 19, 0.32), rgba(34, 38, 93, 0.32));
+  color: #fff3bf;
 }
 
 .mobile-nosotros-chevron {
   transition: transform 0.2s ease;
+}
+
+.mobile-nosotros-toggle.active .mobile-nosotros-chevron {
+  color: #fff1b8;
 }
 
 .mobile-nosotros-chevron.open {

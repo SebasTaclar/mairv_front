@@ -7,13 +7,51 @@ const parseLocalDate = (dateStr: string): Date => {
   return new Date(year, month - 1, day)
 }
 
+const parseBackendDateTime = (value: Date | string | null | undefined) => {
+  if (!value) {
+    return null
+  }
+
+  const raw = typeof value === 'string' ? value : value.toISOString()
+  const [datePart, timePart = '00:00:00'] = raw.split('T')
+  const [year, month, day] = datePart.split('-').map(Number)
+  const timeMatch = timePart.match(/^(\d{2}):(\d{2})(?::(\d{2}))?/)
+
+  const hour = timeMatch ? Number(timeMatch[1]) : 0
+  const minute = timeMatch ? Number(timeMatch[2]) : 0
+  const second = timeMatch?.[3] ? Number(timeMatch[3]) : 0
+
+  const parsedDate = new Date(year, month - 1, day, hour, minute, second)
+
+  return Number.isNaN(parsedDate.getTime()) ? null : parsedDate
+}
+
+const formatBackendDateTime = (value: Date | string | null | undefined) => {
+  if (!value) return ''
+
+  const date = typeof value === 'string' ? parseBackendDateTime(value) : value
+
+  if (!date) return ''
+
+  return (
+    [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, '0'),
+      String(date.getDate()).padStart(2, '0'),
+    ].join('-') +
+    `T${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
+  )
+}
+
 const events = ref<CalendarEvent[]>([])
 const selectedEvent = ref<CalendarEvent | null>(null)
 const isLoading = ref(false)
 let loadPromise: Promise<CalendarEvent[]> | null = null
 
-const toLocalDateParts = (value: Date | string) => {
-  const date = new Date(value)
+const toLocalDateParts = (value: Date | string | null | undefined) => {
+  const date = parseBackendDateTime(value)
+  if (!date) return null
+
   return {
     year: date.getFullYear(),
     month: String(date.getMonth() + 1).padStart(2, '0'),
@@ -21,23 +59,39 @@ const toLocalDateParts = (value: Date | string) => {
   }
 }
 
-const toLocalTime = (value: Date | string) => {
-  const date = new Date(value)
-  return date.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false })
+const toLocalTime = (value: Date | string | null | undefined) => {
+  if (!value) return ''
+
+  const raw = typeof value === 'string' ? value : value.toISOString()
+  const timePart = raw.split('T')[1] || ''
+  const match = timePart.match(/^(\d{2}):(\d{2})/)
+
+  return match ? `${match[1]}:${match[2]}` : ''
 }
 
 const toCalendarEvent = (event: Event): CalendarEvent => {
-  const startDate = new Date(event.startDate)
-  const endDate = new Date(event.endDate)
-  const { year, month, day } = toLocalDateParts(startDate)
+  const startDate = parseBackendDateTime(event.startDate)
+  const endDate = parseBackendDateTime(event.endDate)
+
+  if (!startDate) {
+    throw new Error(`Event ${event.id} is missing a valid startDate`)
+  }
+
+  const startDateParts = toLocalDateParts(event.startDate)
+
+  if (!startDateParts) {
+    throw new Error(`Event ${event.id} is missing a valid startDate`)
+  }
+
+  const { year, month, day } = startDateParts
 
   return {
     id: String(event.id),
     name: event.title,
     date: `${year}-${month}-${day}`,
-    startTime: toLocalTime(startDate),
-    endTime: event.endDate ? toLocalTime(endDate) : undefined,
-    duration: event.endDate
+    startTime: toLocalTime(event.startDate),
+    endTime: event.endDate ? toLocalTime(event.endDate) : undefined,
+    duration: endDate
       ? Math.max(0, Math.round((endDate.getTime() - startDate.getTime()) / 60000))
       : undefined,
     createdBy: event.organizers?.[0] || 'Sistema',
@@ -58,13 +112,15 @@ const fromCalendarEvent = (event: Omit<CalendarEvent, 'id'>): CreateEventRequest
 
   const calculatedEndDate = event.endTime
     ? `${event.date}T${event.endTime}:00`
-    : new Date(new Date(startDate).getTime() + (event.duration || 60) * 60000).toISOString()
+    : formatBackendDateTime(
+        new Date(parseBackendDateTime(startDate).getTime() + (event.duration || 60) * 60000),
+      )
 
   return {
     title: event.name,
     description: event.description,
-    startDate: new Date(startDate).toISOString(),
-    endDate: event.endTime ? new Date(calculatedEndDate).toISOString() : calculatedEndDate,
+    startDate,
+    endDate: event.endTime ? calculatedEndDate : calculatedEndDate,
     location: event.location,
     category: event.category,
     attachments: event.attachments,
@@ -104,7 +160,16 @@ export function useCalendarEvents() {
       loadPromise = eventService
         .getEvents()
         .then((response) => {
-          events.value = extractEventsList(response.data).map(toCalendarEvent)
+          events.value = extractEventsList(response.data)
+            .map((event) => {
+              try {
+                return toCalendarEvent(event)
+              } catch (error) {
+                console.warn('Skipping malformed calendar event:', error)
+                return null
+              }
+            })
+            .filter((event): event is CalendarEvent => event !== null)
           return events.value
         })
         .catch((error) => {

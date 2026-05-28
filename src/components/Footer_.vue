@@ -9,20 +9,34 @@
       <div class="footer-social">
         <p class="social-title">SÍGUENOS</p>
         <div class="social-icons" role="list">
-          <a class="social-icon" href="https://www.instagram.com/mairestaurandovidas/" target="_blank" rel="noopener" aria-label="Instagram" role="listitem">
+          <a class="social-icon" href="https://www.instagram.com/mairestaurandovidas/" target="_blank" rel="noopener"
+            aria-label="Instagram" role="listitem">
             <img src="https://cdn.simpleicons.org/instagram/22265D" alt="Instagram" width="25" height="25" />
           </a>
-          <a class="social-icon" href="https://www.facebook.com/MAIRestaurandoVidas/?locale=es_LA" target="_blank" rel="noopener" aria-label="Facebook" role="listitem">
+          <a class="social-icon" href="https://www.facebook.com/MAIRestaurandoVidas/?locale=es_LA" target="_blank"
+            rel="noopener" aria-label="Facebook" role="listitem">
             <img src="https://cdn.simpleicons.org/facebook/ffffff" alt="Facebook" width="21" height="21" />
           </a>
-          <a class="social-icon" href="https://www.tiktok.com/@mai.restaurandovidas" target="_blank" rel="noopener" aria-label="TikTok" role="listitem">
+          <a class="social-icon" href="https://www.tiktok.com/@mai.restaurandovidas" target="_blank" rel="noopener"
+            aria-label="TikTok" role="listitem">
             <img src="https://cdn.simpleicons.org/tiktok/ffffff" alt="TikTok" width="21" height="21" />
           </a>
-          <a class="social-icon" href="https://www.youtube.com/@MAIRestaurandoVidas" target="_blank" rel="noopener" aria-label="YouTube" role="listitem">
+          <a class="social-icon" href="https://www.youtube.com/@MAIRestaurandoVidas" target="_blank" rel="noopener"
+            aria-label="YouTube" role="listitem">
             <img src="https://cdn.simpleicons.org/youtube/ffffff" alt="YouTube" width="21" height="21" />
           </a>
         </div>
         <p class="social-handle">@MAIRestaurandoVidas</p>
+      </div>
+
+      <div class="footer-visit">
+        <p class="visit-title">VISÍTANOS</p>
+        <a class="visit-link"
+          href="https://www.google.com/maps/search/?api=1&query=Av.%2068%20%2312a-18%2C%20Bogot%C3%A1" target="_blank"
+          rel="noopener" aria-label="Abrir ubicación en Google Maps">
+          Av. 68 #12a-18, Bogotá
+        </a>
+        <p class="visit-note">Haz clic para abrir la ruta en Maps</p>
       </div>
 
       <div class="footer-verse">
@@ -51,7 +65,7 @@
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   align-items: center;
   column-gap: 18px;
 }
@@ -70,6 +84,10 @@
 }
 
 .footer-social {
+  text-align: center;
+}
+
+.footer-visit {
   text-align: center;
 }
 
@@ -117,9 +135,42 @@
   letter-spacing: 0.02em;
 }
 
+.visit-title {
+  margin: 0;
+  color: #22265d;
+  font-size: clamp(1.2rem, 1.7vw, 1.35rem);
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.visit-link {
+  display: inline-flex;
+  margin-top: 10px;
+  color: #d9a313;
+  font-size: clamp(1rem, 1.45vw, 1.15rem);
+  font-weight: 700;
+  text-decoration: none;
+  line-height: 1.35;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.visit-link:hover,
+.visit-link:focus-visible {
+  color: #22265d;
+  transform: translateY(-1px);
+}
+
+.visit-note {
+  margin: 6px 0 0;
+  color: rgba(34, 38, 93, 0.7);
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
 .footer-verse {
   text-align: center;
-  justify-self: end;
+  justify-self: center;
 }
 
 .verse-text {
@@ -139,7 +190,7 @@
 
 @media (max-width: 920px) {
   .footer-wrap {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     row-gap: 16px;
     text-align: center;
   }
@@ -150,11 +201,26 @@
     justify-self: center;
   }
 
+  .footer-brand {
+    grid-column: 1 / -1;
+  }
+
+  .footer-social,
+  .footer-visit,
+  .footer-verse {
+    min-width: 0;
+  }
+
   .social-icons {
     gap: 12px;
   }
+
+  .visit-link {
+    margin-top: 8px;
+  }
+
+  .footer-verse {
+    grid-column: 1 / -1;
+  }
 }
 </style>
-
-
-

@@ -2,15 +2,15 @@
   <section class="calendar-section section">
     <div class="container">
       <h2 class="section-title">CALENDARIO DE EVENTOS</h2>
-          <div class="calendar-card-header">
-              <div class="month-pill-group">
-                <button class="pill-arrow-btn" @click="prevMonth" aria-label="Mes anterior">‹</button>
-                <div class="month-pill" @click="showMonthPicker = !showMonthPicker">
-                  <span class="pill-label">{{ currentMonthName.toUpperCase() }}, {{ currentYear }}</span>
-                </div>
-                <button class="pill-arrow-btn" @click="nextMonth" aria-label="Mes siguiente">›</button>
-              </div>
+      <div class="calendar-card-header">
+        <div class="month-pill-group">
+          <button class="pill-arrow-btn" @click="prevMonth" aria-label="Mes anterior">‹</button>
+          <div class="month-pill" @click="showMonthPicker = !showMonthPicker">
+            <span class="pill-label">{{ currentMonthName.toUpperCase() }}, {{ currentYear }}</span>
           </div>
+          <button class="pill-arrow-btn" @click="nextMonth" aria-label="Mes siguiente">›</button>
+        </div>
+      </div>
       <div class="calendar-layout">
         <!-- Left: Large calendar -->
         <div class="calendar-main">
@@ -19,8 +19,8 @@
 
             <!-- Month Picker (small) -->
             <div v-if="showMonthPicker" class="month-picker small">
-              <button v-for="(monthName, index) in monthNames" :key="index" @click="selectMonth(index)" class="month-option"
-                :class="{ active: currentMonth === index }">
+              <button v-for="(monthName, index) in monthNames" :key="index" @click="selectMonth(index)"
+                class="month-option" :class="{ active: currentMonth === index }">
                 {{ monthName }}
               </button>
             </div>
@@ -28,26 +28,25 @@
             <div v-if="viewMode === 'monthly'" class="calendar-wrapper large">
               <div class="calendar-grid">
                 <div v-for="day in dayHeaders" :key="day" class="day-header">{{ day }}</div>
-                <div v-for="(day, index) in daysInMonth" :key="`day-${currentMonth}-${currentYear}-${index}`" class="calendar-day" :class="{
-                  'has-events': getEventsForDay(day).length > 0,
-                  'today': isToday(day),
-                  'other-month': day === 0
-                }" @click="selectDay(day)">
+                <div v-for="(day, index) in daysInMonth" :key="`day-${currentMonth}-${currentYear}-${index}`"
+                  class="calendar-day" :class="{
+                    'has-events': getEventsForDay(day).length > 0,
+                    'today': isToday(day),
+                    'other-month': day === 0
+                  }" @click="selectDay(day)">
                   <div v-if="day !== 0" class="day-number">{{ day }}</div>
-                  <div v-if="day !== 0 && getEventsForDay(day).length > 0" class="day-events" aria-label="Días con eventos">
-                    <span
-                      v-for="(event, idx) in getEventsForDay(day).slice(0, 4)"
-                      :key="`${event.id}-${idx}`"
-                      class="event-dot"
-                      :style="{ background: getCategoryColor(event.category) }"
-                      :title="event.name"
-                    ></span>
+                  <div v-if="day !== 0 && getEventsForDay(day).length > 0" class="day-events"
+                    aria-label="Días con eventos">
+                    <span v-for="(event, idx) in getEventsForDay(day).slice(0, 4)" :key="`${event.id}-${idx}`"
+                      class="event-dot" :style="{ background: getCategoryColor(event.category) }"
+                      :title="event.name"></span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <DayEventsModal v-if="showDayModal" :events="selectedDayEvents" :title="formatSelectedDate()" @open="openEventModal" @close="showDayModal = false" />
+            <DayEventsModal v-if="showDayModal" :events="selectedDayEvents" :title="formatSelectedDate()"
+              @open="openEventModal" @close="showDayModal = false" />
           </div>
         </div>
 
@@ -291,17 +290,20 @@ const upcomingList = computed(() => {
 })
 
 const formatDateFromString = (dateStr: string) => {
-  const d = new Date(dateStr)
+  const [year, month, day] = dateStr.split('-').map(Number)
+  const d = new Date(year, month - 1, day)
   return d.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' })
 }
 
 const formatDayFromString = (dateStr: string) => {
-  const d = new Date(dateStr)
+  const [year, month, day] = dateStr.split('-').map(Number)
+  const d = new Date(year, month - 1, day)
   return String(d.getDate()).padStart(2, '0')
 }
 
 const formatShortMonthFromString = (dateStr: string) => {
-  const d = new Date(dateStr)
+  const [year, month, day] = dateStr.split('-').map(Number)
+  const d = new Date(year, month - 1, day)
   return d.toLocaleDateString('es-ES', { month: 'short' }).replace('.', '')
 }
 
@@ -351,7 +353,8 @@ const goToFullCalendar = () => {
   border-radius: 22px;
   padding: 28px 28px 20px 28px;
   box-shadow: 0 8px 24px rgba(16, 32, 58, 0.06);
-  border: 3px solid #0f2246; /* navy border like image */
+  border: 3px solid #0f2246;
+  /* navy border like image */
 }
 
 .calendar-card-header {
@@ -417,8 +420,8 @@ const goToFullCalendar = () => {
 .view-mode-select {
   padding: 0.55rem 2.2rem 0.55rem 0.85rem;
   border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.06);
-  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
   color: #e6eefc;
   font-weight: 700;
   cursor: pointer;
@@ -437,8 +440,8 @@ const goToFullCalendar = () => {
 
 .view-mode-select:focus {
   outline: none;
-  border-color: rgba(255,209,102,0.35);
-  box-shadow: 0 0 0 3px rgba(255,209,102,0.12);
+  border-color: rgba(255, 209, 102, 0.35);
+  box-shadow: 0 0 0 3px rgba(255, 209, 102, 0.12);
 }
 
 .view-mode-chevron {
@@ -468,7 +471,7 @@ const goToFullCalendar = () => {
 
 .month-selector-btn {
   padding: 0.8rem 1.5rem;
-  background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.02));
   color: white;
   border: none;
   border-radius: 8px;
@@ -483,7 +486,7 @@ const goToFullCalendar = () => {
 
 .month-selector-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(2,6,23,0.45);
+  box-shadow: 0 8px 20px rgba(2, 6, 23, 0.45);
 }
 
 .chevron {
@@ -499,20 +502,20 @@ const goToFullCalendar = () => {
   position: absolute;
   top: 100%;
   right: 1.5rem;
-  background: rgba(2,6,23,0.85);
+  background: rgba(2, 6, 23, 0.85);
   border-radius: 8px;
   padding: 1rem;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.5rem;
   margin-top: 0.5rem;
-  box-shadow: 0 12px 30px rgba(2,6,23,0.6);
+  box-shadow: 0 12px 30px rgba(2, 6, 23, 0.6);
   z-index: 100;
 }
 
 .month-option {
   padding: 0.8rem;
-  border: 1px solid rgba(255,255,255,0.04);
+  border: 1px solid rgba(255, 255, 255, 0.04);
   background: transparent;
   border-radius: 6px;
   font-weight: 600;
@@ -523,14 +526,14 @@ const goToFullCalendar = () => {
 }
 
 .month-option:hover {
-  border-color: rgba(255,209,102,0.18);
-  background: rgba(255,255,255,0.02);
+  border-color: rgba(255, 209, 102, 0.18);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .month-option.active {
-  background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
   color: #ffffff;
-  border-color: rgba(255,255,255,0.06);
+  border-color: rgba(255, 255, 255, 0.06);
 }
 
 .calendar-grid {
@@ -553,7 +556,7 @@ const goToFullCalendar = () => {
 
 .calendar-day {
   background: #ffffff;
-  border: 1px solid rgba(15,34,70,0.08);
+  border: 1px solid rgba(15, 34, 70, 0.08);
   border-radius: 8px;
   padding: 10px;
   display: flex;
@@ -571,7 +574,8 @@ const goToFullCalendar = () => {
 
 /* Highlight days that have events */
 .calendar-day.has-events {
-  border-color: rgba(255, 193, 7, 0.95); /* accent gold */
+  border-color: rgba(255, 193, 7, 0.95);
+  /* accent gold */
   box-shadow: 0 6px 18px rgba(255, 193, 7, 0.08);
 }
 
@@ -583,13 +587,13 @@ const goToFullCalendar = () => {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: linear-gradient(90deg, rgba(255,193,7,1), rgba(34,38,93,0.9));
-  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  background: linear-gradient(90deg, rgba(255, 193, 7, 1), rgba(34, 38, 93, 0.9));
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 /* Highlight today's date */
 .calendar-day.today {
-  border-color: rgba(15,34,70,0.08);
+  border-color: rgba(15, 34, 70, 0.08);
 }
 
 .calendar-day.today .day-number {
@@ -634,30 +638,32 @@ const goToFullCalendar = () => {
   height: 7px;
   border-radius: 50%;
   flex: 0 0 auto;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
 }
 
 .calendar-day.today .event-dot {
-  box-shadow: 0 1px 3px rgba(15,34,70,0.25);
+  box-shadow: 0 1px 3px rgba(15, 34, 70, 0.25);
 }
 
 .mini-day {
   aspect-ratio: 1;
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.03);
+  border: 1px solid rgba(255, 255, 255, 0.03);
   border-radius: 4px;
   font-size: 0.6rem;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .mini-day.has-events {
-  background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-  border-color: rgba(255,255,255,0.06);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.02));
+  border-color: rgba(255, 255, 255, 0.06);
 }
+
 .mini-day.other {
-  background: rgba(255,255,255,0.01);
-  border-color: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.01);
+  border-color: rgba(255, 255, 255, 0.02);
 }
 
 /* Annual View */
@@ -679,8 +685,8 @@ const goToFullCalendar = () => {
   background: #ffffff;
   border-radius: 12px;
   padding: 14px;
-  box-shadow: 0 6px 18px rgba(16,32,58,0.06);
-  border: 1px solid rgba(15,34,70,0.06);
+  box-shadow: 0 6px 18px rgba(16, 32, 58, 0.06);
+  border: 1px solid rgba(15, 34, 70, 0.06);
 }
 
 .aside-date-badge {
@@ -695,7 +701,7 @@ const goToFullCalendar = () => {
   align-items: center;
   justify-content: center;
   line-height: 1;
-  box-shadow: 0 8px 18px rgba(15,34,70,0.16);
+  box-shadow: 0 8px 18px rgba(15, 34, 70, 0.16);
 }
 
 .aside-date-day {
@@ -730,7 +736,8 @@ const goToFullCalendar = () => {
   color: #0f2246;
 }
 
-.aside-meta, .aside-location {
+.aside-meta,
+.aside-location {
   font-size: 13px;
   color: #50677f;
 }
@@ -761,19 +768,19 @@ const goToFullCalendar = () => {
 }
 
 .mini-calendar {
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.02);
   border-radius: 12px;
   padding: 1rem;
-  border: 1px solid rgba(255,255,255,0.03);
+  border: 1px solid rgba(255, 255, 255, 0.03);
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .mini-calendar:hover {
-  border-color: rgba(255,255,255,0.06);
-  background: rgba(255,255,255,0.03);
+  border-color: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.03);
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(2,6,23,0.35);
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.35);
 }
 
 .mini-month-name {
@@ -797,10 +804,11 @@ const goToFullCalendar = () => {
   color: #999;
   padding: 0.3rem;
 }
+
 .mini-day {
   aspect-ratio: 1;
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.03);
+  border: 1px solid rgba(255, 255, 255, 0.03);
   border-radius: 4px;
   font-size: 0.6rem;
   display: flex;
@@ -810,22 +818,22 @@ const goToFullCalendar = () => {
 }
 
 .mini-day.has-events {
-  background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-  border-color: rgba(255,255,255,0.06);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.02));
+  border-color: rgba(255, 255, 255, 0.06);
 }
 
 .mini-day.other {
-  background: rgba(255,255,255,0.01);
-  border-color: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.01);
+  border-color: rgba(255, 255, 255, 0.02);
 }
 
 /* Selected Day Events */
 .selected-day-events {
-  background: rgba(2,6,23,0.7);
+  background: rgba(2, 6, 23, 0.7);
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 12px 40px rgba(2,6,23,0.45);
-  border: 1px solid rgba(255,255,255,0.03);
+  box-shadow: 0 12px 40px rgba(2, 6, 23, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 .events-title {
@@ -842,18 +850,18 @@ const goToFullCalendar = () => {
 }
 
 .event-preview {
-  background: rgba(255,255,255,0.03);
+  background: rgba(255, 255, 255, 0.03);
   border-radius: 12px;
   padding: 1.2rem;
   line-height: 1.1;
-  border-left: 4px solid rgba(255,209,102,0.18);
+  border-left: 4px solid rgba(255, 209, 102, 0.18);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .event-preview:hover {
   transform: translateY(-6px);
-  box-shadow: 0 12px 32px rgba(2,6,23,0.45);
+  box-shadow: 0 12px 32px rgba(2, 6, 23, 0.45);
 }
 
 .event-preview-header {
@@ -941,7 +949,7 @@ const goToFullCalendar = () => {
 
 @media (max-width: 600px) {
   .calendar-section {
-    padding: 1.6rem 0 2.25rem;
+    padding: calc(70px + env(safe-area-inset-top) + 1rem) 0 2.25rem;
   }
 
   .container {
@@ -1045,7 +1053,7 @@ const goToFullCalendar = () => {
     gap: 0.4rem;
     margin-top: 0.6rem;
     padding: 0.6rem;
-    background: rgba(2,6,23,0.85);
+    background: rgba(2, 6, 23, 0.85);
     border-radius: 8px;
     right: auto;
   }
@@ -1161,7 +1169,7 @@ const goToFullCalendar = () => {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  background: linear-gradient(90deg, rgba(255,209,102,1), rgba(255,255,255,0.6));
-  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+  background: linear-gradient(90deg, rgba(255, 209, 102, 1), rgba(255, 255, 255, 0.6));
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 }
 </style>

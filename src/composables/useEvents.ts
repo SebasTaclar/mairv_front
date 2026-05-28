@@ -2,13 +2,26 @@ import { ref, computed } from 'vue'
 import { eventService } from '@/services/api'
 import type { Event, CreateEventRequest } from '@/types/EventType'
 
+const parseBackendDateTime = (value: Date | string): Date => {
+  const raw = typeof value === 'string' ? value : value.toISOString()
+  const [datePart, timePart = '00:00:00'] = raw.split('T')
+  const [year, month, day] = datePart.split('-').map(Number)
+  const timeMatch = timePart.match(/^(\d{2}):(\d{2})(?::(\d{2}))?/)
+
+  const hour = timeMatch ? Number(timeMatch[1]) : 0
+  const minute = timeMatch ? Number(timeMatch[2]) : 0
+  const second = timeMatch?.[3] ? Number(timeMatch[3]) : 0
+
+  return new Date(year, month - 1, day, hour, minute, second)
+}
+
 const normalizeEvent = (event: Event): Event => ({
   ...event,
   id: String(event.id),
-  startDate: new Date(event.startDate),
-  endDate: new Date(event.endDate),
-  createdAt: event.createdAt ? new Date(event.createdAt) : undefined,
-  updatedAt: event.updatedAt ? new Date(event.updatedAt) : undefined,
+  startDate: event.startDate,
+  endDate: event.endDate,
+  createdAt: event.createdAt,
+  updatedAt: event.updatedAt,
 })
 
 const extractEventsList = (payload: unknown): Event[] => {
@@ -115,15 +128,21 @@ export function useEvents() {
   const upcomingEvents = computed(() => {
     const now = new Date()
     return events.value
-      .filter((e) => new Date(e.startDate) > now && e.status !== 'cancelled')
-      .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+      .filter((e) => parseBackendDateTime(e.startDate) > now && e.status !== 'cancelled')
+      .sort(
+        (a, b) =>
+          parseBackendDateTime(a.startDate).getTime() - parseBackendDateTime(b.startDate).getTime(),
+      )
   })
 
   const pastEvents = computed(() => {
     const now = new Date()
     return events.value
-      .filter((e) => new Date(e.endDate) < now || e.status === 'completed')
-      .sort((a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime())
+      .filter((e) => parseBackendDateTime(e.endDate) < now || e.status === 'completed')
+      .sort(
+        (a, b) =>
+          parseBackendDateTime(b.endDate).getTime() - parseBackendDateTime(a.endDate).getTime(),
+      )
   })
 
   const eventsByStatus = computed(() => {

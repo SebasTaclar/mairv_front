@@ -1,21 +1,19 @@
 <template>
   <div class="events-tab">
-    <!-- Header -->
     <div class="section-header">
-      <h2>Gestión de Eventos</h2>
+      <h2>Gestion de Eventos</h2>
       <button class="btn btn-primary" @click="openEventForm()">
-        <span class="btn-icon">➕</span>
+        <span class="btn-icon">+</span>
         Nuevo Evento
       </button>
     </div>
 
-    <!-- Estadísticas rápidas -->
     <div class="events-stats">
       <div class="stat-card">
         <div class="stat-icon">📅</div>
         <div class="stat-content">
           <div class="stat-number">{{ upcomingEvents.length }}</div>
-          <div class="stat-label">Próximos</div>
+          <div class="stat-label">Proximos</div>
         </div>
       </div>
       <div class="stat-card">
@@ -41,17 +39,11 @@
       </div>
     </div>
 
-    <!-- Búsqueda y Filtros -->
     <div class="search-bar">
       <div class="search-input-wrapper">
-        <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-          <path fill="currentColor"
-            d="M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16zm8.707 17.293-4.387-4.387a9 9 0 1 0-1.414 1.414l4.387 4.387a1 1 0 0 0 1.414-1.414z" />
-        </svg>
-        <input type="search" v-model="searchQuery" placeholder="Buscar eventos por título o ubicación..."
-          aria-label="Buscar eventos" class="search-input" />
-        <button v-if="searchQuery" class="search-clear" @click.prevent="searchQuery = ''"
-          aria-label="Limpiar búsqueda">X</button>
+        <input v-model="searchQuery" type="search" class="search-input"
+          placeholder="Buscar eventos por titulo o ubicacion..." />
+        <button v-if="searchQuery" class="search-clear" @click.prevent="searchQuery = ''">X</button>
       </div>
       <select v-model="filterStatus" class="filter-select">
         <option value="">Todos los estados</option>
@@ -62,14 +54,13 @@
       </select>
     </div>
 
-    <!-- Tabla de Eventos -->
-    <div class="events-table-container" v-if="filteredEvents.length > 0">
+    <div v-if="filteredEvents.length > 0" class="events-table-container">
       <table class="events-table">
         <thead>
           <tr>
-            <th>Título</th>
+            <th>Titulo</th>
             <th>Fecha Inicio</th>
-            <th>Ubicación</th>
+            <th>Ubicacion</th>
             <th>Estado</th>
             <th>Acciones</th>
           </tr>
@@ -92,18 +83,12 @@
               <span class="location">{{ event.location || 'Sin especificar' }}</span>
             </td>
             <td>
-              <span :class="['status-badge', event.status]">
-                {{ getStatusLabel(event.status) }}
-              </span>
+              <span :class="['status-badge', event.status]">{{ getStatusLabel(event.status) }}</span>
             </td>
             <td>
               <div class="action-buttons">
-                <button class="btn btn-sm btn-secondary" @click="openEventForm(event)" title="Editar">
-                  ✏️
-                </button>
-                <button class="btn btn-sm btn-danger" @click="confirmDelete(event.id)" title="Eliminar">
-                  🗑️
-                </button>
+                <button class="btn btn-sm btn-secondary" @click="openEventForm(event)" title="Editar">✏️</button>
+                <button class="btn btn-sm btn-danger" @click="confirmDelete(event.id)" title="Eliminar">🗑️</button>
               </div>
             </td>
           </tr>
@@ -111,19 +96,14 @@
       </table>
     </div>
 
-    <!-- Vista móvil en tarjetas -->
-    <div class="events-cards-mobile" v-if="filteredEvents.length > 0">
+    <div v-if="filteredEvents.length > 0" class="events-cards-mobile">
       <article v-for="event in filteredEvents" :key="event.id" class="event-mobile-card">
         <div class="event-mobile-card__header">
           <div class="event-mobile-card__title">
             <strong>{{ event.title }}</strong>
-            <p v-if="event.description" class="event-mobile-card__desc">
-              {{ truncate(event.description, 90) }}
-            </p>
+            <p v-if="event.description" class="event-mobile-card__desc">{{ truncate(event.description, 90) }}</p>
           </div>
-          <span :class="['status-badge', event.status]">
-            {{ getStatusLabel(event.status) }}
-          </span>
+          <span :class="['status-badge', event.status]">{{ getStatusLabel(event.status) }}</span>
         </div>
 
         <div class="event-mobile-card__meta">
@@ -132,130 +112,107 @@
             <span class="time">{{ formatTime(event.startDate) }}</span>
           </div>
           <div class="event-mobile-card__location">
-            <span class="meta-label">Ubicación</span>
+            <span class="meta-label">Ubicacion</span>
             <span class="location">{{ event.location || 'Sin especificar' }}</span>
           </div>
         </div>
 
         <div class="action-buttons event-mobile-card__actions">
-          <button class="btn btn-sm btn-secondary" @click="openEventForm(event)" title="Editar">
-            ✏️ Editar
-          </button>
-          <button class="btn btn-sm btn-danger" @click="confirmDelete(event.id)" title="Eliminar">
-            🗑️ Eliminar
-          </button>
+          <button class="btn btn-sm btn-secondary" @click="openEventForm(event)" title="Editar">✏️ Editar</button>
+          <button class="btn btn-sm btn-danger" @click="confirmDelete(event.id)" title="Eliminar">🗑️ Eliminar</button>
         </div>
       </article>
     </div>
 
-    <!-- Estado vacío -->
     <div v-else class="empty-state">
       <div class="empty-icon">📅</div>
       <h3>No hay eventos</h3>
-      <p v-if="searchQuery || filterStatus">Intenta cambiar los filtros o búsqueda</p>
+      <p v-if="searchQuery || filterStatus">Intenta cambiar los filtros o la busqueda</p>
       <p v-else>Comienza creando tu primer evento</p>
-      <button class="btn btn-primary" @click="openEventForm()">
-        Crear Primer Evento
-      </button>
+      <button class="btn btn-primary" @click="openEventForm()">Crear Primer Evento</button>
     </div>
 
-    <!-- Modal de Evento -->
     <div v-if="showEventForm" class="modal-overlay" @click="closeEventForm">
       <div class="modal" @click.stop>
         <div class="modal-header">
           <h3>{{ editingEvent ? 'Editar Evento' : 'Nuevo Evento' }}</h3>
-          <button class="modal-close" @click="closeEventForm">✕</button>
+          <button class="modal-close" @click="closeEventForm">X</button>
         </div>
         <div class="modal-body">
           <form @submit.prevent="saveEvent">
-            <!-- Título -->
             <div class="form-group">
-              <label>Título del Evento *</label>
+              <label>Titulo del Evento *</label>
               <input v-model="eventForm.title" type="text" class="form-input" required
-                placeholder="Ej: Evento de Presentación" />
+                placeholder="Ej: Evento de Presentacion" />
             </div>
 
-            <!-- Descripción -->
             <div class="form-group">
-              <label>Descripción</label>
+              <label>Descripcion</label>
               <textarea v-model="eventForm.description" class="form-input" rows="3"
                 placeholder="Describe el evento en detalle..."></textarea>
             </div>
 
-            <!-- Fila: Fecha inicio y fin -->
             <div class="form-row">
               <div class="form-group">
                 <label>Fecha de Inicio *</label>
                 <input v-model="eventForm.startDate" type="datetime-local" class="form-input" required />
               </div>
               <div class="form-group">
-                  <label>Fecha de Fin</label>
-                  <input v-model="eventForm.endDate" type="datetime-local" class="form-input" />
+                <label>Fecha de Fin</label>
+                <input v-model="eventForm.endDate" type="datetime-local" class="form-input" />
               </div>
             </div>
 
-            <!-- Ubicación -->
             <div class="form-row">
               <div class="form-group">
-                <label>Ubicación</label>
+                <label>Ubicacion</label>
                 <input v-model="eventForm.location" type="text" class="form-input"
-                  placeholder="Ej: Estadio Central, Bogotá" />
+                  placeholder="Ej: Estadio Central, Bogota" />
               </div>
             </div>
 
-            <!-- Estado -->
             <div class="form-row">
               <div class="form-group">
                 <label>Estado *</label>
                 <select v-model="eventForm.status" class="form-input" required>
-                  <option value="scheduled">📅 Programado</option>
-                  <option value="ongoing">🔴 En Curso</option>
-                  <option value="completed">✅ Completado</option>
-                  <option value="cancelled">❌ Cancelado</option>
+                  <option value="scheduled">Programado</option>
+                  <option value="ongoing">En Curso</option>
+                  <option value="completed">Completado</option>
+                  <option value="cancelled">Cancelado</option>
                 </select>
               </div>
             </div>
 
-            <!-- Organizador -->
             <div class="form-group">
               <label>Organizadores</label>
-              <p class="field-help">Puedes agregar varios responsables y se enviarán como una lista al backend.</p>
+              <p class="field-help">Puedes agregar varios responsables y se enviaran como lista al backend.</p>
               <div v-for="(organizer, index) in eventForm.organizers" :key="`organizer-${index}`" class="dynamic-row">
                 <input v-model="eventForm.organizers[index]" type="text" class="form-input"
                   :placeholder="`Organizador ${index + 1}`" />
                 <button v-if="eventForm.organizers.length > 1" type="button" class="btn btn-sm btn-danger"
-                  @click="removeOrganizer(index)">
-                  ✕
-                </button>
+                  @click="removeOrganizer(index)">X</button>
               </div>
-              <button type="button" class="btn btn-secondary" @click="addOrganizer">
-                + Agregar organizador
-              </button>
+              <button type="button" class="btn btn-secondary" @click="addOrganizer">+ Agregar organizador</button>
             </div>
 
-            <!-- Adjuntos -->
             <div class="form-group">
               <label>Adjuntos por enlace</label>
-              <p class="field-help">Solo enlaces. Sirve para imágenes, PDF, Excel, Drive o cualquier recurso accesible
-                por URL.</p>
+              <p class="field-help">Solo enlaces. Sirve para imagenes, PDF, Excel, Drive o cualquier recurso accesible
+                por URL.
+              </p>
               <div v-for="(attachment, index) in eventForm.attachments" :key="attachment.id" class="attachment-row">
                 <input v-model="attachment.title" type="text" class="form-input attachment-title"
-                  placeholder="Título del adjunto" />
+                  placeholder="Titulo del adjunto" />
                 <input v-model="attachment.url" type="url" class="form-input attachment-url"
                   placeholder="https://..." />
-                <button type="button" class="btn btn-sm btn-danger" @click="removeAttachment(index)">
-                  ✕
-                </button>
+                <button type="button" class="btn btn-sm btn-danger" @click="removeAttachment(index)">X</button>
               </div>
-              <button type="button" class="btn btn-secondary" @click="addAttachment">
-                + Agregar adjunto
-              </button>
+              <button type="button" class="btn btn-secondary" @click="addAttachment">+ Agregar adjunto</button>
               <div v-if="eventForm.attachments.length > 0" class="images-info">
                 <span class="images-badge">{{ eventForm.attachments.length }} adjunto(s)</span>
               </div>
             </div>
 
-            <!-- Botones de acción -->
             <div class="form-actions">
               <button type="button" class="btn btn-secondary" @click="closeEventForm">Cancelar</button>
               <button type="submit" class="btn btn-primary" :disabled="!isEventFormValid">
@@ -271,20 +228,12 @@
 
 <script setup lang="ts">
 import './styles/EventsTab.css'
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useEvents } from '@/composables/useEvents'
-import type { Event, CreateEventRequest, EventAttachment } from '@/types/EventType'
+import type { CreateEventRequest, Event, EventAttachment } from '@/types/EventType'
 
-const {
-  events,
-  addEvent,
-  updateEvent,
-  deleteEvent,
-  upcomingEvents,
-  eventsByStatus
-} = useEvents()
+const { events, addEvent, updateEvent, deleteEvent, upcomingEvents, eventsByStatus } = useEvents()
 
-// Estado reactivo
 const showEventForm = ref(false)
 const editingEvent = ref<Event | null>(null)
 const searchQuery = ref('')
@@ -301,7 +250,6 @@ const createAttachment = (): EventAttachment => ({
   url: '',
 })
 
-// Formulario
 const createEmptyEventForm = (): EventFormData => ({
   title: '',
   description: '',
@@ -313,12 +261,11 @@ const createEmptyEventForm = (): EventFormData => ({
   maxAttendees: undefined,
   organizers: [''],
   attachments: [],
-  tags: []
+  tags: [],
 })
 
 const eventForm = ref<EventFormData>(createEmptyEventForm())
 
-// Validación
 const isEventFormValid = computed(() => {
   const startDate = eventForm.value.startDate
   const endDate = eventForm.value.endDate
@@ -327,66 +274,105 @@ const isEventFormValid = computed(() => {
     return eventForm.value.title.trim().length > 0 && !!startDate
   }
 
-  return (
-    eventForm.value.title.trim().length > 0 &&
-    !!startDate &&
-    new Date(startDate) < new Date(endDate)
-  )
+  return eventForm.value.title.trim().length > 0 && !!startDate && new Date(startDate) < new Date(endDate)
 })
 
-// Filtrado
+const parseBackendDateTime = (value: Date | string | null | undefined): Date | null => {
+  if (!value) return null
+
+  const raw = typeof value === 'string' ? value : value.toISOString()
+  const [datePart, timePart = '00:00:00'] = raw.split('T')
+  const [year, month, day] = datePart.split('-').map(Number)
+  const timeMatch = timePart.match(/^(\d{2}):(\d{2})(?::(\d{2}))?/)
+
+  const hour = timeMatch ? Number(timeMatch[1]) : 0
+  const minute = timeMatch ? Number(timeMatch[2]) : 0
+  const second = timeMatch?.[3] ? Number(timeMatch[3]) : 0
+
+  return new Date(year, month - 1, day, hour, minute, second)
+}
+
+const getDateTimeValue = (value: Date | string | null | undefined): number => {
+  return parseBackendDateTime(value)?.getTime() ?? Number.POSITIVE_INFINITY
+}
+
 const filteredEvents = computed(() => {
   let result = [...events.value]
 
   if (filterStatus.value) {
-    result = result.filter(e => e.status === filterStatus.value)
+    result = result.filter((event) => event.status === filterStatus.value)
   }
 
   if (searchQuery.value.trim()) {
-    const q = searchQuery.value.toLowerCase()
-    result = result.filter(e =>
-      e.title.toLowerCase().includes(q) ||
-      e.description?.toLowerCase().includes(q) ||
-      e.location?.toLowerCase().includes(q) ||
-      e.organizers?.some(organizer => organizer.toLowerCase().includes(q))
+    const query = searchQuery.value.toLowerCase()
+    result = result.filter((event) =>
+      event.title.toLowerCase().includes(query) ||
+      event.description?.toLowerCase().includes(query) ||
+      event.location?.toLowerCase().includes(query) ||
+      event.organizers?.some((organizer) => organizer.toLowerCase().includes(query)),
     )
   }
 
-  return result.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+  return result.sort((a, b) => getDateTimeValue(a.startDate) - getDateTimeValue(b.startDate))
 })
 
-// Helpers
 const truncate = (text: string = '', length: number) => {
   if (text.length <= length) return text
-  return text.substring(0, length) + '...'
+  return `${text.substring(0, length)}...`
 }
 
-const formatDate = (date: Date | string) => {
-  return new Date(date).toLocaleDateString('es-CO', {
+const formatDate = (date: Date | string | null | undefined) => {
+  if (!date) return ''
+
+  const raw = typeof date === 'string' ? date : date.toISOString()
+  const [datePart] = raw.split('T')
+  const [year, month, day] = datePart.split('-').map(Number)
+
+  if (!year || !month || !day) return raw
+
+  return new Date(year, month - 1, day).toLocaleDateString('es-CO', {
     year: 'numeric',
     month: 'short',
-    day: 'numeric'
+    day: 'numeric',
   })
 }
 
-const formatTime = (date: Date | string) => {
-  return new Date(date).toLocaleTimeString('es-CO', {
-    hour: '2-digit',
-    minute: '2-digit'
-  })
+const formatTime = (date: Date | string | null | undefined) => {
+  if (!date) return ''
+
+  const raw = typeof date === 'string' ? date : date.toISOString()
+  const timePart = raw.split('T')[1] || ''
+  const match = timePart.match(/^(\d{2}):(\d{2})/)
+
+  return match ? `${match[1]}:${match[2]}` : timePart
 }
 
 const getStatusLabel = (status: string) => {
   const statusMap: Record<string, string> = {
-    'scheduled': '📅 Programado',
-    'ongoing': '🔴 En Curso',
-    'completed': '✅ Completado',
-    'cancelled': '❌ Cancelado'
+    scheduled: 'Programado',
+    ongoing: 'En Curso',
+    completed: 'Completado',
+    cancelled: 'Cancelado',
   }
+
   return statusMap[status] || status
 }
 
-// Acciones
+const formatDateTimeInput = (date: Date | string | null | undefined): string => {
+  if (!date) return ''
+
+  const raw = typeof date === 'string' ? date : date.toISOString()
+  const [datePart, timePart = '00:00:00'] = raw.split('T')
+  const [year, month, day] = datePart.split('-')
+  const timeMatch = timePart.match(/^(\d{2}):(\d{2})/)
+
+  if (!year || !month || !day || !timeMatch) {
+    return ''
+  }
+
+  return `${year}-${month}-${day}T${timeMatch[1]}:${timeMatch[2]}`
+}
+
 const openEventForm = (event?: Event) => {
   if (event) {
     editingEvent.value = event
@@ -400,17 +386,20 @@ const openEventForm = (event?: Event) => {
       status: event.status,
       maxAttendees: event.maxAttendees,
       organizers: event.organizers && event.organizers.length > 0 ? [...event.organizers] : [''],
-      attachments: event.attachments ? event.attachments.map((attachment, index) => ({
-        id: attachment.id || `${Date.now()}-${index}`,
-        title: attachment.title || `Adjunto ${index + 1}`,
-        url: attachment.url,
-      })) : [],
-      tags: event.tags || []
+      attachments: event.attachments
+        ? event.attachments.map((attachment, index) => ({
+          id: attachment.id || `${Date.now()}-${index}`,
+          title: attachment.title || `Adjunto ${index + 1}`,
+          url: attachment.url,
+        }))
+        : [],
+      tags: event.tags || [],
     }
   } else {
     editingEvent.value = null
     eventForm.value = createEmptyEventForm()
   }
+
   showEventForm.value = true
 }
 
@@ -424,10 +413,9 @@ const saveEvent = async () => {
   if (!isEventFormValid.value) return
 
   const { endDate, ...basePayload } = eventForm.value
-
   const payload: CreateEventRequest = {
     ...basePayload,
-    organizers: eventForm.value.organizers.map(organizer => organizer.trim()).filter(Boolean),
+    organizers: eventForm.value.organizers.map((organizer) => organizer.trim()).filter(Boolean),
     attachments: eventForm.value.attachments
       .map((attachment) => ({
         ...attachment,
@@ -443,7 +431,7 @@ const saveEvent = async () => {
 
   try {
     if (editingEvent.value) {
-      if (!confirm(`¿Estás seguro de actualizar el evento "${editingEvent.value.title}"?`)) {
+      if (!confirm(`Estas seguro de actualizar el evento "${editingEvent.value.title}"?`)) {
         return
       }
       await updateEvent(editingEvent.value.id, payload)
@@ -451,22 +439,22 @@ const saveEvent = async () => {
       await addEvent(payload)
     }
     closeEventForm()
-  } catch (e) {
+  } catch (error) {
     alert('Error al guardar el evento')
-    console.error(e)
+    console.error(error)
   }
 }
 
 const confirmDelete = async (id: string) => {
-  const event = events.value.find(e => e.id === id)
+  const event = events.value.find((item) => item.id === id)
   if (!event) return
 
-  if (confirm(`¿Estás seguro de eliminar el evento "${event.title}"?`)) {
+  if (confirm(`Estas seguro de eliminar el evento "${event.title}"?`)) {
     try {
       await deleteEvent(id)
-    } catch (e) {
+    } catch (error) {
       alert('Error al eliminar el evento')
-      console.error(e)
+      console.error(error)
     }
   }
 }
@@ -491,17 +479,4 @@ const addAttachment = () => {
 const removeAttachment = (index: number) => {
   eventForm.value.attachments.splice(index, 1)
 }
-
-const formatDateTimeInput = (date: Date | string): string => {
-  const d = new Date(date)
-  return d.toISOString().slice(0, 16)
-}
-
 </script>
-
-<style scoped>
-.modal-header h3{
-  color: #ffffff;
-}
-
-</style>

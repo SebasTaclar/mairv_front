@@ -16,16 +16,6 @@
       <StoriesSection />
     </section>
 
-    <!-- Eventos Recientes y Próximos (eliminado) -->
-
-    <section class="section">
-      <EventCard />
-    </section>
-
-    <section class="section">
-      <MessageCard />
-    </section>
-
     <!-- LiveNowStrip removed per request -->
 
 

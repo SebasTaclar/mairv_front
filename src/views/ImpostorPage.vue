@@ -253,7 +253,7 @@
       <div class="card-container">
         <div :class="['flip-card', { flipped: previewCardFlipped }]" @mousedown="previewCardFlipped = true"
           @mouseup="previewCardFlipped = false" @mouseleave="previewCardFlipped = false"
-          @touchstart="previewCardFlipped = true" @touchend="previewCardFlipped = false">
+          @touchstart.passive="previewCardFlipped = true" @touchend.passive="previewCardFlipped = false">
           <div class="flip-card-inner">
             <div class="flip-card-front">
               <p>Presiona para ver</p>
@@ -315,8 +315,8 @@
 
       <div class="card-container">
         <div :class="['flip-card', { flipped: cardFlipped }]" @mousedown="cardFlipped = true"
-          @mouseup="cardFlipped = false" @mouseleave="cardFlipped = false" @touchstart="cardFlipped = true"
-          @touchend="cardFlipped = false">
+          @mouseup="cardFlipped = false" @mouseleave="cardFlipped = false" @touchstart.passive="cardFlipped = true"
+          @touchend.passive="cardFlipped = false">
           <div class="flip-card-inner">
             <div class="flip-card-front">
               <p>Presiona para ver</p>
@@ -899,7 +899,7 @@ const quickRestartGame = () => {
 onMounted(() => {
   loadGameConfig()
   loadGameState()
-  window.addEventListener('pointermove', handlePlayerDragMove)
+  window.addEventListener('pointermove', handlePlayerDragMove, { passive: true })
   window.addEventListener('pointerup', endPlayerDrag)
   window.addEventListener('pointercancel', endPlayerDrag)
 })
