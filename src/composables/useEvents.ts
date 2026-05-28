@@ -42,6 +42,8 @@ const isLoading = ref(false)
 const error = ref('')
 let loadPromise: Promise<void> | null = null
 
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
 export function useEvents() {
   const loadEvents = async () => {
     if (loadPromise) {
@@ -52,9 +54,11 @@ export function useEvents() {
       isLoading.value = true
       loadPromise = eventService
         .getEvents()
-        .then((response) => {
+        .then(async (response) => {
           events.value = extractEventsList(response.data).map(normalizeEvent)
           error.value = ''
+
+          await wait(1000)
         })
         .catch((e) => {
           error.value = 'Error cargando eventos'

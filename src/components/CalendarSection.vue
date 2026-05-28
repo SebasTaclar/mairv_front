@@ -1,5 +1,7 @@
 <template>
   <section class="calendar-section section">
+    <Spinner v-if="isLoading" />
+
     <div class="container">
       <h2 class="section-title">CALENDARIO DE EVENTOS</h2>
       <div class="calendar-card-header">
@@ -80,10 +82,11 @@
 import { ref, computed } from 'vue'
 import { useCalendarEvents } from '@/composables/useCalendarEvents'
 import type { CalendarEvent } from '@/types/EventType'
+import Spinner from '@/components/Spinner.vue'
 import EventModal from './EventModal.vue'
 import DayEventsModal from './DayEventsModal.vue'
 
-const { getEventsByMonth, getEventsByDate, getMonthName } = useCalendarEvents()
+const { getEventsByMonth, isLoading } = useCalendarEvents()
 
 const currentYear = ref(2026)
 const currentMonth = ref(new Date().getMonth())

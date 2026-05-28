@@ -48,6 +48,8 @@ const selectedEvent = ref<CalendarEvent | null>(null)
 const isLoading = ref(false)
 let loadPromise: Promise<CalendarEvent[]> | null = null
 
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
 const toLocalDateParts = (value: Date | string | null | undefined) => {
   const date = parseBackendDateTime(value)
   if (!date) return null
@@ -159,7 +161,7 @@ export function useCalendarEvents() {
       isLoading.value = true
       loadPromise = eventService
         .getEvents()
-        .then((response) => {
+        .then(async (response) => {
           events.value = extractEventsList(response.data)
             .map((event) => {
               try {

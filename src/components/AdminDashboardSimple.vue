@@ -1,5 +1,7 @@
 <template>
   <div class="admin-dashboard">
+    <Spinner v-if="isLoading" />
+
     <!-- Header -->
     <div class="dashboard-header">
       <h1 class="dashboard-title">
@@ -18,9 +20,10 @@
 import './styles/AdminDashboardSimple.css'
 import { onMounted } from 'vue'
 import { useEvents } from '@/composables/useEvents'
+import Spinner from '@/components/Spinner.vue'
 import EventsTab from './AdminTabs/EventsTab.vue'
 
-const { loadEvents } = useEvents()
+const { loadEvents, isLoading } = useEvents()
 
 // Lifecycle
 onMounted(async () => {
@@ -29,6 +32,3 @@ onMounted(async () => {
   console.log('✅ Eventos cargados')
 })
 </script>
-
-
-
