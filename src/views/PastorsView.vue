@@ -3,25 +3,52 @@
     <div class="container">
       <h1 id="pastors-title" class="title">Nuestros Pastores</h1>
 
-      <div class="cards-grid">
-        <article
-          v-for="pastor in pastors"
-          :key="pastor.id"
-          class="pastor-card"
-          tabindex="0"
-          role="button"
-          @click="openModal(pastor)"
-          @keydown.enter.prevent="openModal(pastor)"
-        >
-          <div class="card-image-wrap">
-            <div class="card-image" :style="{ backgroundImage: `url(${pastor.photo})` }" :aria-label="`Foto de ${pastor.name}`" role="img"></div>
-          </div>
+      <div class="subsection">
+        <h2 class="subsection-title">Nuestros Pastores Fundadores</h2>
+        <div class="cards-grid cards-grid--two">
+          <article
+            v-for="pastor in pastorsFundadores"
+            :key="pastor.id"
+            class="pastor-card"
+            tabindex="0"
+            role="button"
+            @click="openModal(pastor)"
+            @keydown.enter.prevent="openModal(pastor)"
+          >
+            <div class="card-image-wrap">
+              <div class="card-image" :style="{ backgroundImage: `url(${pastor.photo})` }" :aria-label="`Foto de ${pastor.name}`" role="img"></div>
+            </div>
 
-          <div class="card-body">
-            <p class="card-role">{{ pastor.role }}</p>
-            <h2 class="card-name">{{ pastor.name }}</h2>
-          </div>
-        </article>
+            <div class="card-body">
+              <p class="card-role">{{ pastor.role }}</p>
+              <h2 class="card-name">{{ pastor.name }}</h2>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h2 class="subsection-title">Nuestros Pastores Administrativos</h2>
+        <div class="cards-grid cards-grid--one">
+          <article
+            v-for="pastor in pastorsAdministrativos"
+            :key="pastor.id"
+            class="pastor-card"
+            tabindex="0"
+            role="button"
+            @click="openModal(pastor)"
+            @keydown.enter.prevent="openModal(pastor)"
+          >
+            <div class="card-image-wrap">
+              <div class="card-image" :style="{ backgroundImage: `url(${pastor.photo})` }" :aria-label="`Foto de ${pastor.name}`" role="img"></div>
+            </div>
+
+            <div class="card-body">
+              <p class="card-role">{{ pastor.role }}</p>
+              <h2 class="card-name">{{ pastor.name }}</h2>
+            </div>
+          </article>
+        </div>
       </div>
     </div>
 
@@ -54,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 
 type Pastor = {
   id: string
@@ -75,7 +102,7 @@ const pastors = [
     id: 'p1',
     name: 'Apóstol Guillermo Puentes',
     role: 'Pastor Fundador',
-    photo: 'https://scontent-bog2-2.xx.fbcdn.net/v/t51.75761-15/499234730_18409466635096993_901778914946656855_n.jpg?stp=dst-jpegr_tt6&_nc_cat=111&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeEZ-IirFIpxwYmLzX-bh2pOxeLm9rjW_CHF4ub2uNb8IfgqWHu8wbQewTOQvRcJWjo&_nc_ohc=y1FtrQAMecAQ7kNvwFBI4qd&_nc_oc=Ado4XOuTe9c43kshPIon_xN0SAPMVdluHE3ybMP1z-WJTF7OEOdZU4SsTBjvfCB2OhY&_nc_zt=23&se=-1&_nc_ht=scontent-bog2-2.xx&_nc_gid=Erm1ZC0tsgMsZCy-QWfnvw&_nc_ss=7b2a8&oh=00_Af7BDtLQ5dDfnxISJxUxwYAV9ZXaytQUYhPQnrQ5XLNrpA&oe=6A1AE6A4',
+    photo: 'https://scontent.fbog19-1.fna.fbcdn.net/v/t51.75761-15/499234730_18409466635096993_901778914946656855_n.jpg?stp=dst-jpegr_tt6&cstp=mx1440x1800&ctp=s1440x1800&_nc_cat=111&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeEZ-IirFIpxwYmLzX-bh2pOxeLm9rjW_CHF4ub2uNb8IfgqWHu8wbQewTOQvRcJWjo&_nc_ohc=bZ0vZ36mn2IQ7kNvwG11Euw&_nc_oc=AdqMQ58Kq5uhdDTyYcslAISP4yte_1M8CNsPlhNvJbJxZkAOSevmCSepSBCIYUN82ts&_nc_zt=23&se=-1&_nc_ht=scontent.fbog19-1.fna&_nc_gid=OH3RpnfaUADqIV9jH_HUNw&_nc_ss=7b2a8&oh=00_Af-cHsnlZyAuvb3Z9luyLRKMb0ySrtKogIhbqw398lZ8iA&oe=6A431C64',
     bio: 'Guillermo lidera la casa con una visión enfocada en el evangelio, el discipulado y el cuidado pastoral de toda la comunidad.',
     email: 'guillermo@mairv.org',
     phone: '+57-300-0000000',
@@ -85,7 +112,7 @@ const pastors = [
     id: 'p2',
     name: 'Profeta Jeannette Camacho',
     role: 'Pastora Fundadora',
-    photo: 'https://scontent-bog2-2.xx.fbcdn.net/v/t51.75761-15/499585324_18409466623096993_5499295061207099992_n.jpg?stp=dst-jpegr_tt6&_nc_cat=109&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeGrCVXYGp32xjdQrpeXgCYLVYMMzRx5qTdVgwzNHHmpN4W93x0Sezxd09550wHNiBA&_nc_ohc=CWNmOB-Unz8Q7kNvwGa5s5D&_nc_oc=AdpE_xA_HTTVHMEuXe3gIiradV_u_zx2Cq9ZCFMj0MTSwokvM-TO0ODQfVknkPkwVPY&_nc_zt=23&se=-1&_nc_ht=scontent-bog2-2.xx&_nc_gid=jTRskjLGUckTC-1fvg6Zqg&_nc_ss=7a2a8&oh=00_Af6_em1K_gP388hBOP7I5czGu2l5l02vyJQR9sPtY5Q1Lw&oe=6A1AFBE0',
+    photo: 'https://scontent.fbog19-1.fna.fbcdn.net/v/t51.75761-15/499585324_18409466623096993_5499295061207099992_n.jpg?stp=dst-jpegr_tt6&cstp=mx1440x1800&ctp=s1440x1800&_nc_cat=109&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeGrCVXYGp32xjdQrpeXgCYLVYMMzRx5qTdVgwzNHHmpN4W93x0Sezxd09550wHNiBA&_nc_ohc=5pUrZuhYLWIQ7kNvwHDQhZN&_nc_oc=AdpeqMBwzDpTP1GmqcfWJeOEf84FzD9h0me172yZ6mmGDk0dfonS1kjYXjvykmtaRXI&_nc_zt=23&se=-1&_nc_ht=scontent.fbog19-1.fna&_nc_gid=GC-g8liQ63pf1BNNJESTvA&_nc_ss=7b2a8&oh=00_Af8WQr8TWVYiHL4LHQL-9i_hr3kwGlOZHwGyTc4r3RUX3Q&oe=6A42F960',
     bio: 'Jeannette sirve con una palabra cercana y compasiva, impulsando la restauración y la vida familiar en la iglesia.',
     email: 'jeannette@mairv.org',
     phone: '+57-310-0000000',
@@ -95,14 +122,17 @@ const pastors = [
   {
     id: 'p3',
     name: 'Pastor Sebastián Buitrago',
-    role: '',
-    photo: 'https://scontent-bog2-1.xx.fbcdn.net/v/t51.82787-15/504047569_18415105114096993_8071677090345308012_n.jpg?stp=dst-jpegr_tt6&_nc_cat=105&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeFuUi7OvdfufnqwEB4yL-UPj77AIyYwbQqPvsAjJjBtCglXf6iyx2iPLKTeNtjJA00&_nc_ohc=gDrf8r6v_58Q7kNvwEuZpt0&_nc_oc=AdokNZVPPJZndQUKPkWupbMp2xLFuuvKrAFkImKWWenXGnyHAvLGMKBw_zbWAR4zKj8&_nc_zt=23&se=-1&_nc_ht=scontent-bog2-1.xx&_nc_gid=20rSHISf3yREVJ-x7DCN-Q&_nc_ss=7b2a8&oh=00_Af6EBNGf-KdGmpV_LOTcVVSwofIXehI12qckhpAQ9xSwEg&oe=6A1AEB71',
+    role: 'Pastor Administrativo',
+    photo: 'https://scontent.fbog19-1.fna.fbcdn.net/v/t51.82787-15/504047569_18415105114096993_8071677090345308012_n.jpg?stp=dst-jpegr_tt6&cstp=mx1440x1085&ctp=s1440x1085&_nc_cat=105&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeFuUi7OvdfufnqwEB4yL-UPj77AIyYwbQqPvsAjJjBtCglXf6iyx2iPLKTeNtjJA00&_nc_ohc=6MK9Bm93XLMQ7kNvwGxVwzm&_nc_oc=Adqb0V7YeS0j4a__LYws0hw6Z7ITNbb53NCRy5AutLyizw7Fyg0gK15kvMYbEqmodmE&_nc_zt=23&se=-1&_nc_ht=scontent.fbog19-1.fna&_nc_gid=wHywxpaTMkHxiWKSAjJurQ&_nc_ss=7b2a8&oh=00_Af8Kl2lIrEE5XHDEO2zC-XfjSaZnbnhJAn4gKeE8a5c1GA&oe=6A42E8F1',
     bio: 'Sebastián acompaña a la congregación con enseñanza bíblica, servicio y una visión práctica para crecer en comunidad.',
     email: 'sebastian@mairv.org',
     phone: '+57-320-0000000',
     focus: 'Enseñanza, servicio y acompañamiento pastoral.'
   }
 ] as const
+
+const pastorsFundadores = computed(() => pastors.filter(p => p.role.includes('Fundador')))
+const pastorsAdministrativos = computed(() => pastors.filter(p => p.role.includes('Administrativo')))
 
 function openModal(p: Pastor) {
   selectedPastor.value = p
@@ -167,11 +197,35 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
   padding-top: 2rem;
 }
 
+.subsection {
+  margin-bottom: 3rem;
+}
+
+.subsection-title {
+  text-align: center;
+  color: #22265D;
+  font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+  font-weight: 500;
+  margin-bottom: 2rem;
+  padding-top: 1rem;
+}
+
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(7.6rem, 3vw, 40px);
+  gap: clamp(1.5rem, 3vw, 40px);
   align-items: stretch;
+}
+
+.cards-grid--two {
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.cards-grid--one {
+  grid-template-columns: 1fr;
+  max-width: 350px;
+  margin: 0 auto;
 }
 
 .pastor-card {
@@ -319,10 +373,13 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
 }
 
 @media (max-width: 980px) {
-  .cards-grid {
+  .cards-grid--two {
     grid-template-columns: 1fr;
-    max-width: 560px;
-    margin: 0 auto;
+    max-width: 350px;
+  }
+
+  .cards-grid--one {
+    max-width: 350px;
   }
 
   .card-image {

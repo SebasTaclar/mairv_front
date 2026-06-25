@@ -90,7 +90,7 @@ const heroSectionRef = ref<HTMLElement | null>(null)
 const slides = ref<ProductSlide[]>([
    {
     id: 'banner_facebook_1',
-    image: 'https://scontent-bog2-2.xx.fbcdn.net/v/t51.82787-15/627267971_18450337594096993_322642957206204506_n.jpg?stp=dst-jpegr_tt6&_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeECqXLO2CNs6VU3476pttB3LPrxMwekU-ks-vEzB6RT6dO80ljPFoUNdURwk417RmU&_nc_ohc=FR3rnOOrxKQQ7kNvwG6zGmN&_nc_oc=AdrsB_Juyko65rBwolP6e5AxNJ0jVKsHr_jIeRckqN8Uopob6oz0pEkdNp7OC8qNqmU&_nc_zt=23&se=-1&_nc_ht=scontent-bog2-2.xx&_nc_gid=AEgaKFQV2uTRiKya0Peq3Q&_nc_ss=7b2a8&oh=00_Af68MMO_BD59il_eJFEW5v9kdKIWJCf46Ci6ewjeUZ7Bdw&oe=6A1AA0F6',
+    image: 'https://scontent.fbog19-1.fna.fbcdn.net/v/t51.82787-15/625985282_18450337678096993_5943226494737763345_n.jpg?stp=dst-jpegr_tt6&cstp=mx1440x1080&ctp=s1440x1080&_nc_cat=105&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeEGjEUasMDtTSn5N6G5HgJDV7XlGeMz3d5XteUZ4zPd3rKRWhQrIa7Ke-wKKJ9UCi0&_nc_ohc=EGBW3emMz6YQ7kNvwHDLgkJ&_nc_oc=AdoMr-vL9Mns4QrUtriwZLoWYhrKXmf95aOREGnvVOsjqZ8iUmCrCHt95-DLPrN-Utk&_nc_zt=23&se=-1&_nc_ht=scontent.fbog19-1.fna&_nc_gid=epDqcYx_IOKXbDgZybv4jw&_nc_ss=7b2a8&oh=00_Af8jg1pfmsvSlwIyKs7sD52WXJSWa-rZxfJI0Isv5SuRgQ&oe=6A431A46',
     category: 'Principal',
     title: 'Banner adicional',
     description: '',
